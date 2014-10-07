@@ -171,7 +171,7 @@ public class WechatSession extends ResponseHandler
   public void onMessage(InMessage message)
   {
     this.logger.info(message.getXml());
-    MsgType type = MsgType.getType(message.getMsgType());
+    MsgType type = message.getMsgType();
     if ((type == MsgType.image) || (type == MsgType.video) || (type == MsgType.voice))
     {
       if ((message.getMediaId() != null) && (message.getMedia() == null)) {

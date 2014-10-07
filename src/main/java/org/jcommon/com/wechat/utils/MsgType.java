@@ -43,6 +43,6 @@ public enum MsgType
       return news;
     if (video.toString().equalsIgnoreCase(name))
       return video;
-    return null;
+    return text;
   }
 }
