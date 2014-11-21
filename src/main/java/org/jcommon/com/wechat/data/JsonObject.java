@@ -16,6 +16,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -113,7 +114,7 @@ public class JsonObject
     return toJson(this);
   }
 
-  private String list2Json(List<?> list) {
+  protected static String list2Json(List<?> list) {
     if (list == null) return null;
     StringBuilder sb = new StringBuilder();
     sb.append("[");
@@ -128,7 +129,7 @@ public class JsonObject
   }
 
   @SuppressWarnings("unchecked")
-private String toJson(JsonObject o)
+  private static String toJson(JsonObject o)
   {
     if (o == null) return null;
     StringBuilder sb = new StringBuilder();
@@ -140,6 +141,8 @@ private String toJson(JsonObject o)
         Field[] fs = clazz.getDeclaredFields();
 
         for (Field f : fs) {
+          if(Modifier.isStatic(f.getModifiers()))
+        	  continue;
           String value = null;
           String name = f.getName();
           boolean json = false;
@@ -163,7 +166,7 @@ private String toJson(JsonObject o)
               } else if (JsonObject.class.isAssignableFrom(type)) {
                 Object o1 = m.invoke(o, new Object[0]);
                 JsonObject jsonObj = o1 != null ? (JsonObject)o1 : null;
-                value = toJson(jsonObj);
+                value = jsonObj!=null?jsonObj.toJson():null;
                 json = true;
               } else if (Collection.class.isAssignableFrom(type)) {
             	  List<Object> jsonObj = (List<Object>) m.invoke(o, new Object[0]);
@@ -189,7 +192,7 @@ private String toJson(JsonObject o)
     return sb.toString();
   }
 
-  private Object encode(String s)
+  private static Object encode(String s)
   {
     StringBuffer sb = new StringBuffer();
     for (int i = 0; i < s.length(); i++) {

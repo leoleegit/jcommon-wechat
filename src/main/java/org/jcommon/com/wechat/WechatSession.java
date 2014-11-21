@@ -13,6 +13,7 @@
 package org.jcommon.com.wechat;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -29,10 +30,13 @@ import org.jcommon.com.wechat.data.App;
 import org.jcommon.com.wechat.data.Articles;
 import org.jcommon.com.wechat.data.Error;
 import org.jcommon.com.wechat.data.Event;
+import org.jcommon.com.wechat.data.Group;
+import org.jcommon.com.wechat.data.GroupFilter;
 import org.jcommon.com.wechat.data.Image;
 import org.jcommon.com.wechat.data.InMessage;
 import org.jcommon.com.wechat.data.Media;
 import org.jcommon.com.wechat.data.Menus;
+import org.jcommon.com.wechat.data.Mpnews;
 import org.jcommon.com.wechat.data.Music;
 import org.jcommon.com.wechat.data.News;
 import org.jcommon.com.wechat.data.OutMessage;
@@ -219,6 +223,22 @@ public class WechatSession extends ResponseHandler
 	    ThreadManager.instance().execute(msg_re);
 	    return msg_re;
   }
+  
+  public HttpRequest sendNews(RequestCallback callback, List<Articles> articles) throws Exception {
+	    if(articles==null || articles.size() > News.max_size){
+	    	throw new Exception("articles is null or exceed the articles max size limit.\nmax size:"+News.max_size);
+	    }
+	    OutMessage msg = new OutMessage(MsgType.news, null);
+	    msg.setNews(new News(articles));
+	    HttpRequest msg_re = getMsgRequest(callback, msg);
+	    msg_re.setProperty(WECHATMEDIA, msg.toJson());
+	    
+	    HttpRequest request = RequestFactory.createGetUsersReqeust(this, getApp().getAccess_token(), null);
+	    request.setHandler(msg_re);
+	    addHandlerObject(request, User.class);
+	    ThreadManager.instance().execute(request);
+	    return msg_re;
+  }
 
   public HttpRequest sendImage(RequestCallback callback, Image image, String touser) {
     OutMessage msg = new OutMessage(MsgType.image, touser);
@@ -278,6 +298,23 @@ public class WechatSession extends ResponseHandler
       ThreadManager.instance().execute(msg_re);
     }
     return msg_re;
+  }
+  
+  public HttpRequest sendBroadcast(RequestCallback callback, Articles articles){
+	  OutMessage msg = new OutMessage(MsgType.mpnews,null);
+	  HttpRequest msg_re = RequestFactory.createBroadcastRequest(callback, this.app.getAccess_token(), msg.toJson());
+	  
+	  if(articles.getMedia()!=null){
+		  FileRequest request = (FileRequest)RequestFactory.createMediaUploadRequest(this, this.app.getAccess_token(), articles.getMedia(), articles.getType());
+		  
+		  request.setHandler(msg_re);
+		  msg_re.setProperty(WECHATMEDIA, msg.toJson());
+		  msg_re.setAttribute(Articles.class.getName(), articles);
+		  addHandlerObject(request, Media.class);
+		  ThreadManager.instance().execute(request);
+	  }
+	  
+	  return msg_re;
   }
 
   private HttpRequest getMsgRequest(RequestCallback callback, OutMessage msg)
@@ -369,6 +406,11 @@ public class WechatSession extends ResponseHandler
             out.getVideo().setMedia_id(m.getMedia_id());
           else if ((type == MsgType.voice) && (out.getVoice() != null)) {
             out.getVoice().setMedia_id(m.getMedia_id());
+          }else if ((type == MsgType.mpnews)) {
+        	  Articles articles =  (Articles) re_.getAttibute(Articles.class.getName());
+        	  articles.setThumb_media_id(m.getMedia_id());
+        	  handlerAfterUploadMedia(re_,articles);
+        	  return;
           }
           this.logger.info("out:" + out.toJson());
           HttpRequest re_temp = getMsgRequest(null, out);
@@ -385,8 +427,24 @@ public class WechatSession extends ResponseHandler
     }else{
     	 Object handle = request.getHandler();
     	 User u = null;
-         if ((o instanceof User)) {
+    	 Media m = null;
+    	 Group g = null;
+         if ((o instanceof Media)) {
+           m = (Media)o;
+         }else if ((o instanceof User)) {
            u = (User)o;
+         } else if ((o instanceof Group)) {
+           g = (Group)o;
+         } else if ((o instanceof Error)) {
+        	 Error error = (Error)o;
+        	 if ((handle instanceof HttpRequest)){
+        		 HttpRequest re_ = (HttpRequest)handle;
+        		 HttpListener listener = re_.getListener();
+        		 if(listener!=null){
+        			 RequestCallback callback = (RequestCallback) listener;
+        			 callback.onSuccessful(re_, new StringBuilder(error.getJson()));
+        		 }
+        	 }
          } else {
            u = new User(null);
          }
@@ -394,7 +452,73 @@ public class WechatSession extends ResponseHandler
            InMessage h = (InMessage)handle;
            h.setFrom(u);
            onMessage(h);
-         } 
+         }else  if ((handle instanceof HttpRequest)) {
+        	 HttpRequest re_ = (HttpRequest)handle;
+        	 if (re_.getProperty(WECHATMEDIA) != null) {
+        		 if(g!=null){
+        			 OutMessage out = new OutMessage(re_.getProperty(WECHATMEDIA));
+        			 List<Group> group_list = Group.getGroups();
+                	 if(group_list!=null){
+                		 GroupFilter gf = new GroupFilter(group_list);
+                		 out.setFilter(gf);
+                		 re_.setContent(out.toJson());
+                		 this.logger.info(re_.getContent());
+                         ThreadManager.instance().execute(re_);
+                	 }
+        			 return ;
+        		 }
+        		 
+        		 List<String> tos = User.getOpenids();
+        		 if(tos==null)
+        			 logger.warn("tos is null");
+        		 else{
+        			 OutMessage out = new OutMessage(re_.getProperty(WECHATMEDIA));
+        			 for(String to : tos){
+        				 out.setTouser(to);
+                         HttpRequest re_temp = getMsgRequest(null, out);
+                         if (re_temp != null)
+                             re_.setContent(re_temp.getContent());
+                         else
+                             this.logger.warn("re_temp is null");
+                         this.logger.info(re_.getContent());
+                         ThreadManager.instance().execute(re_);
+        			 }
+        		 }     
+             }else{
+            	 OutMessage out = new OutMessage(MsgType.mpnews,null);
+            	 Mpnews mp      = new Mpnews();
+            	 mp.setMedia_id(m.getMedia_id());
+            	 
+            	 List<Group> group_list = Group.getGroups();
+            	 if(group_list!=null){
+            		 GroupFilter gf = new GroupFilter(group_list);
+            		 out.setFilter(gf);
+            		 re_.setContent(out.toJson());
+            		 this.logger.info(re_.getContent());
+                     ThreadManager.instance().execute(re_);
+            	 }else{
+            		 HttpRequest msg_re = RequestFactory.createGetGroupsReqeust(this,this.app.getAccess_token());
+            		 msg_re.setHandler(re_);
+            		 re_.setProperty(WECHATMEDIA,out.toJson());
+            		 addHandlerObject(msg_re, Group.class);
+            	 }
+             }
+           }  
+         
     }
+  }
+
+  private void handlerAfterUploadMedia(HttpRequest re_, Articles articles) {
+	// TODO Auto-generated method stub
+	  OutMessage msg = new OutMessage();
+	  List<Articles> list = new ArrayList<Articles>();
+	  list.add(articles);
+	  msg.setArticles(list);
+	  
+	  HttpRequest msg_re = RequestFactory.createBroadcastRequest(this, this.app.getAccess_token(), msg.toJson());
+	  re_.getProperties().remove(WECHATMEDIA);
+	  msg_re.setHandler(re_);
+	  addHandlerObject(msg_re, Media.class);
+	  ThreadManager.instance().execute(msg_re);
   }
 }

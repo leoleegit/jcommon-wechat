@@ -9,38 +9,46 @@ import java.util.List;
 
 import org.jcommon.com.util.http.FileRequest;
 import org.jcommon.com.util.http.HttpRequest;
+import org.jcommon.com.util.thread.ThreadManager;
 import org.jcommon.com.wechat.Callback;
 import org.jcommon.com.wechat.RequestCallback;
 import org.jcommon.com.wechat.RequestFactory;
+import org.jcommon.com.wechat.ResponseHandler;
 import org.jcommon.com.wechat.WechatSession;
 import org.jcommon.com.wechat.data.App;
 import org.jcommon.com.wechat.data.Articles;
 import org.jcommon.com.wechat.data.Button;
+import org.jcommon.com.wechat.data.Error;
 import org.jcommon.com.wechat.data.Event;
+import org.jcommon.com.wechat.data.Group;
+import org.jcommon.com.wechat.data.GroupFilter;
 import org.jcommon.com.wechat.data.JsonObject;
 import org.jcommon.com.wechat.data.Media;
 import org.jcommon.com.wechat.data.Menus;
+import org.jcommon.com.wechat.data.Mpnews;
 import org.jcommon.com.wechat.data.OutMessage;
 import org.jcommon.com.wechat.data.Text;
 import org.jcommon.com.wechat.data.User;
 import org.jcommon.com.wechat.utils.ButtonType;
 import org.jcommon.com.wechat.utils.MD5;
+import org.jcommon.com.wechat.utils.MsgType;
 
 public class UtilsTest
-  implements RequestCallback
+  extends ResponseHandler
 {
   public static void main(String[] args) throws Exception
   {
+	  new Callback();
 	  //System.out.println(MD5.getMD5("image/jpeg".getBytes()));
 	  //String url = "file://c://ddd/dfd/media/userid/picname.jsp";
 	  //System.out.println(url.substring(url.indexOf("media")+"media".length()));
 //    new Callback();
-      String access_token = "1yZ8Nbm8US8p3c0N52Ru-G0jS_fCpv_RadCEQkri7IXKmd_ij7VkJ_LaOzrALTFvy-QsQomKP3KO1IrOdXASlHd8EZrHiqg3FTX-ongnwq0";
-//    
-      App app = new App(access_token,"wxe3493e70ee036e60", "bc54d3dee215742ce37c700e2d2bc2a2", "spotlight-wechat");
+//      String access_token = "bxDacvoohUuOU3YfS3okopE1YJJ1ghnH0d2E_OOl1DihDD5KDyRgP8U9zf_r24zolK02dGbIF3S4MtdQHYsjJm7BKmnzL5-Ikd_ZqRH6RyA";
+//////    
+      App app = new App("wxe3493e70ee036e60", "bc54d3dee215742ce37c700e2d2bc2a2", "spotlight-wechat");
       WechatSession session = new WechatSession("gh_e6e86fdce3b9", app, null);
-      //session.startup();
-      Thread.sleep(3000);
+      session.startup();
+      Thread.sleep(10000);
       List<Articles> articles = new ArrayList<Articles>();
       String title = "Welcome to Apache HBase";
       String description = "Apache HBase is the Hadoop database, a distributed, scalable, big data store.";
@@ -56,7 +64,7 @@ public class UtilsTest
 //      art = new Articles(title,description,url,picurl);
 //      articles.add(art);
       
-      session.sendNews(new UtilsTest(), articles, "oB5EKt4-qKs6soTG5fWf0LmZD26k");
+      session.sendNews(new UtilsTest(), articles);
 
 //    
 //    //Thread.sleep(10000);
@@ -95,23 +103,39 @@ public class UtilsTest
     //System.out.println(JsonObject.class.isAssignableFrom(org.jcommon.com.wechat.data.Media.class));
 //	  Event event = new Event("");
 //	  System.out.println(event.toXml());
+	  
+//	  String groups = "{\"groups\": [{\"id\": 0,\"name\": \"未分组\", \"count\": 72596}, {\"id\": 1, \"name\": \"黑名单\", \"count\": 36}]}";
+//	  Group g = new Group(groups);
+//	  
+//	  
+//	  OutMessage out = new OutMessage(MsgType.mpnews,"leolee");
+//	  Mpnews np = new Mpnews();
+//	  np.setMedia_id("123dsdajkasd231jhksad");
+//	  out.setFilter(new GroupFilter(Group.getGroups()));
+//	  out.setMpnews(np);
+//	  System.out.println(out.toJson());
+	  
+//	  UtilsTest ut = new UtilsTest();
+//	  HttpRequest fr = RequestFactory.createGetUsersReqeust(ut, session.getApp().getAccess_token(), null);
+//	  ut.addHandlerObject(fr, User.class);
+//      ThreadManager.instance().execute(fr);
+//	  String str = "{\"total\":5,\"count\":5,\"data\":{\"openid\":[\"oB5EKt-36LlLvmcUJrLUCiNBbXgs\",\"oB5EKt4-qKs6soTG5fWf0LmZD26k\",\"oB5EKt0mScn-cgYtl_W0ipO9qcyM\",\"oB5EKt7ogUYtzdMbrzVXXA6icGxE\",\"oB5EKtyGPfqHv9d1ZUTR29OsRKDQ\"]},\"next_openid\":\"oB5EKtyGPfqHv9d1ZUTR29OsRKDQ\"}";
+//		new User(str);
+//		for(String s : User.getOpenids())
+//			System.out.println(s);
+	  
   }
 
-  public void onSuccessful(HttpRequest reqeust, StringBuilder sResult)
-  {
-    System.out.println(sResult);
-  }
+@Override
+public void onError(HttpRequest paramHttpRequest, Error paramError) {
+	// TODO Auto-generated method stub
+	
+}
 
-  public void onFailure(HttpRequest reqeust, StringBuilder sResult)
-  {
-    System.out.println(sResult);
-  }
-
-  public void onTimeout(HttpRequest reqeust)
-  {
-  }
-
-  public void onException(HttpRequest reqeust, Exception e)
-  {
-  }
+@Override
+public void onOk(HttpRequest paramHttpRequest, Object paramObject) {
+	// TODO Auto-generated method stub
+//	User user = (User) paramObject;
+//	System.out.println(user.getOpenids().size());
+}
 }

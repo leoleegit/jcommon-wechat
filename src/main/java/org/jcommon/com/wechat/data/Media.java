@@ -88,7 +88,7 @@ public class Media extends JsonObject
     		}
     		try {
 				String key = MD5.getMD5(content_type.getBytes());
-				setUrl(wechat_path + File.separator + key  +java.io.File.separator+ path.substring(path.lastIndexOf("\\")+1));
+				setUrl(wechat_path + "/" + key  +"/"+ path.substring(path.lastIndexOf("\\")+1));
 			} catch (NoSuchAlgorithmException e) {
 				// TODO Auto-generated catch block
 				logger.error("", e);

@@ -12,6 +12,13 @@
 // ========================================================================
 package org.jcommon.com.wechat.data;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.jcommon.com.util.Json2Object;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class User extends JsonObject{
 	private String subscribe;
 	private String openid;
@@ -24,8 +31,50 @@ public class User extends JsonObject{
 	private String headimgurl;
 	private long subscribe_time;
 	
+	private static List<String> openids;
+	private static long total;
+	private static long count;
+	private String data;
+	
+	public String getData() {
+		return data;
+	}
+
+	public void setData(String data) {
+		this.data = data;
+	}
+	
 	public User(String json){
 		super(json);
+		
+		if(data!=null){
+			JSONObject jsonObject = null;
+	        try {
+	        	User.openids = new ArrayList<String>();
+	            jsonObject = new JSONObject(data);
+	            if(jsonObject!=null){
+	            	String openids = jsonObject.has("openid")?jsonObject.getString("openid"):null;
+	            	if(openids.startsWith("["))
+	            		openids = openids.substring(1);
+        			if(openids.endsWith("]"))
+        				openids = openids.substring(0, openids.length()-1);
+	            	if(openids!=null){
+	            		String[] ids = openids.split(","); 
+	            		for(String id : ids){
+	            			if(id.startsWith("\""))
+	            				id = id.substring(1);
+	            			if(id.endsWith("\""))
+	            				id = id.substring(0, id.length()-1);
+	            			User.openids.add(id);
+	            		}
+	            	}else{
+	            		logger.info("openids is null:"+data);
+	            	}
+	            }
+	        } catch (JSONException e) {
+	        	 Json2Object.logger.error("", e);
+	        }
+		}
 	}
 
 	public String getSubscribe() {
@@ -106,5 +155,9 @@ public class User extends JsonObject{
 
 	public void setSubscribe_time(long subscribe_time) {
 		this.subscribe_time = subscribe_time;
+	}
+
+	public static List<String> getOpenids() {
+		return openids;
 	}
 }

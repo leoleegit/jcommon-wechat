@@ -86,6 +86,30 @@ public class RequestFactory
     url = JsonUtils.toRequestURL(url, keys, values);
     return new HttpRequest(url, listener, true);
   }
+  
+  public static HttpRequest createGetUsersReqeust(HttpListener listener, String access_token, String next_openid) {
+	String url = api_url+ "/user/get";
+	String[] keys = { "access_token", "next_openid" };
+	String[] values = { access_token, next_openid };
+	url = JsonUtils.toRequestURL(url, keys, values);
+	return new HttpRequest(url, listener, true);
+  }
+  
+  public static HttpRequest createGetGroupsReqeust(HttpListener listener, String access_token) {
+	String url = api_url+ "/groups/get";
+	String[] keys = { "access_token" };
+	String[] values = { access_token };
+	url = JsonUtils.toRequestURL(url, keys, values);
+	return new HttpRequest(url, listener, true);
+  }
+  
+  public static HttpRequest createGreateGroupsReqeust(HttpListener listener, String access_token, String content) {
+	String url = api_url+ "/groups/create";
+	String[] keys = { "access_token" };
+	String[] values = { access_token };
+	url = JsonUtils.toRequestURL(url, keys, values);
+	return new HttpRequest(url, content, "POST", listener, true);
+  }
 
   public static HttpRequest createAccessTokenReqeust(HttpListener listener, App app) {
     String url = api_url+ "/token";

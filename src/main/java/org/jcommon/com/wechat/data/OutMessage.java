@@ -12,10 +12,13 @@
 // ========================================================================
 package org.jcommon.com.wechat.data;
 
+import java.util.List;
+
 import org.jcommon.com.wechat.utils.MsgType;
 
 public class OutMessage extends JsonObject
 {
+  private Filter filter;	
   private String touser;
   private String msgtype;
   private Text text;
@@ -24,6 +27,8 @@ public class OutMessage extends JsonObject
   private Video video;
   private Music music;
   private News news;
+  private Mpnews mpnews;
+  private List<Articles> articles;
 
   public OutMessage(String data)
   {
@@ -33,6 +38,9 @@ public class OutMessage extends JsonObject
   public OutMessage(MsgType type, String touser) {
     this.touser = touser;
     this.msgtype = type.toString();
+  }
+  
+  public OutMessage() {
   }
 
   public String getTouser() {
@@ -97,5 +105,29 @@ public class OutMessage extends JsonObject
 
   public void setNews(News news) {
     this.news = news;
+  }
+
+  public void setMpnews(Mpnews mpnews) {
+	this.mpnews = mpnews;
+  }
+
+  public Mpnews getMpnews() {
+	return mpnews;
+  }
+
+  public void setFilter(Filter filter) {
+	this.filter = filter;
+  }
+
+  public Filter getFilter() {
+	return filter;
+  }
+
+  public void setArticles(List<Articles> articles) {
+	this.articles = articles;
+  }
+
+  public List<Articles> getArticles() {
+	return articles;
   }
 }

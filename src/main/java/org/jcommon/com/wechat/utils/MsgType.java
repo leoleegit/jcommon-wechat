@@ -22,7 +22,8 @@ public enum MsgType
   video, 
   location, 
   link, 
-  event;
+  event,
+  mpnews;
 
   public static MsgType getType(String name) {
     if (text.toString().equalsIgnoreCase(name))
@@ -43,6 +44,8 @@ public enum MsgType
       return news;
     if (video.toString().equalsIgnoreCase(name))
       return video;
+    if (mpnews.toString().equalsIgnoreCase(name))
+        return mpnews;
     return text;
   }
 }

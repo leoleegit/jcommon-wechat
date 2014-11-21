@@ -17,7 +17,8 @@ public enum MediaType
   image, 
   voice, 
   video, 
-  thumb;
+  thumb,
+  mpnews;
 
   public static MediaType getType(String name) {
     if (image.toString().equalsIgnoreCase(name))
@@ -28,6 +29,8 @@ public enum MediaType
       return video;
     if (thumb.toString().equalsIgnoreCase(name))
       return thumb;
+    if (mpnews.toString().equalsIgnoreCase(name))
+        return mpnews;
     return null;
   }
 }
