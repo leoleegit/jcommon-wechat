@@ -17,6 +17,7 @@ import org.apache.log4j.Logger;
 
 public enum ErrorType
 {
+  error_2(-2, "多媒体上传错误"),	
   error_1(-1, "系统繁忙"), 
   error0(0, "请求成功"), 
   error40001(40001, "获取access_token时AppSecret错误，或者access_token无效"), 

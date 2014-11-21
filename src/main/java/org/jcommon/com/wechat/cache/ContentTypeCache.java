@@ -43,7 +43,7 @@ public class ContentTypeCache extends MapStore {
 	public String getContentType(String key){
 		if(super.hasKey(key))
 			return (String) super.getOne(key);
-		return "application/x-msdownload";
+		return "application/unknown";
 	}
 	
 	public void putContentType(String key, String value){

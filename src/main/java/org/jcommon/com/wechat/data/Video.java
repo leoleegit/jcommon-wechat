@@ -24,6 +24,14 @@ public class Video extends Media
     super(data);
     setType(MediaType.video.toString());
   }
+  
+  public Video(String title,String description)
+  {
+    super();
+    setType(MediaType.video.toString());
+    setTitle(title);
+    setDescription(description);
+  }
 
   public String getTitle() {
     return this.title;

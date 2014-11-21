@@ -23,7 +23,8 @@ import org.json.JSONObject;
 public class News extends JsonObject
 {
   private List<Articles> articles;
-
+  public final static int max_size = 10;
+  
   public News(String data)
   {
     super(data);
@@ -39,6 +40,12 @@ public class News extends JsonObject
       catch (JSONException e) {
         Json2Object.logger.error("", e);
       }
+  }
+  
+  public News(List<Articles> articles)
+  {
+    super();
+    setArticles(articles);
   }
 
   private void resetArticles(List<Object> list)

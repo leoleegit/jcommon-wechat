@@ -25,6 +25,10 @@ public class Error extends JsonObject
     super(json);
     setType(ErrorType.getError(this.errcode));
   }
+  public Error()
+  {
+    super();
+  }
 
   public String getErrmsg() {
     return this.errmsg;

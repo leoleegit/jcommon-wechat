@@ -21,4 +21,10 @@ public class Image extends Media
     super(data);
     setType(MediaType.image.toString());
   }
+  
+  public Image()
+  {
+    super();
+    setType(MediaType.image.toString());
+  }
 }

@@ -22,9 +22,12 @@ public class WechatSessionTest extends Monitor
 
   public WechatSessionTest() {
     super("WechatSessionTest");
-    String path = System.getProperty("user.dir")+ java.io.File.separator + "media";
-    System.setProperty(WechatSession.WECHATMEDIAPATH, path);
-    System.setProperty(WechatSession.WECHATMEDIAURL, "media");
+//    String path = System.getProperty("user.dir")+ java.io.File.separator + "media";
+////    System.setProperty(WechatSession.WECHATMEDIAPATH, path);
+////    System.setProperty(WechatSession.WECHATMEDIAURL, "media");
+//    
+//    newWechatSession("wxe3493e70ee036e60","bc54d3dee215742ce37c700e2d2bc2a2","spotlightwechat",
+//    		"gh_e6e86fdce3b9");
   }
 
   public void initOperation()

@@ -54,6 +54,14 @@ public class RequestFactory
     url = JsonUtils.toRequestURL(url, keys, values);
     return new HttpRequest(url, content, "POST", listener, true);
   }
+  
+  public static HttpRequest createBroadcastRequest(HttpListener listener, String access_token, String content){
+	    String url = api_url+ "/media/uploadnews";
+	    String[] keys = { "access_token" };
+	    String[] values = { access_token };
+	    url = JsonUtils.toRequestURL(url, keys, values);
+	    return new HttpRequest(url, content, "POST", listener, true);
+  }
 
   public static HttpRequest createNewMenusReqeust(HttpListener listener, String access_token, String content) {
     String url = api_url+ "/menu/create";

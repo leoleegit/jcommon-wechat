@@ -21,4 +21,10 @@ public class Voice extends Media
     super(data);
     setType(MediaType.voice.toString());
   }
+  
+  public Voice()
+  {
+    super();
+    setType(MediaType.voice.toString());
+  }
 }

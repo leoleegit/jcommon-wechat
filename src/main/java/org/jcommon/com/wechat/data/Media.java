@@ -82,19 +82,21 @@ public class Media extends JsonObject
     if(media!=null){
     	String path = media.getAbsolutePath();
     	String wechat_path = System.getProperty(WechatSession.WECHATMEDIAURL);
-    	if(wechat_path!=null && path.indexOf(wechat_path)!=-1){
-    		if(content_type!=null){
-    			try {
-    				String key = MD5.getMD5(content_type.getBytes());
-    				setUrl(wechat_path + File.separator + key  + path.substring(path.indexOf(wechat_path)+wechat_path.length()));
-    			} catch (NoSuchAlgorithmException e) {
-    				// TODO Auto-generated catch block
-    				logger.error("", e);
-    			}
+    	if(wechat_path!=null){
+    		if(content_type==null){
+    			content_type = WechatSessionManager.instance().getContent_type_cache().getContentType(content_type);
     		}
+    		try {
+				String key = MD5.getMD5(content_type.getBytes());
+				setUrl(wechat_path + File.separator + key  +java.io.File.separator+ path.substring(path.lastIndexOf("\\")+1));
+			} catch (NoSuchAlgorithmException e) {
+				// TODO Auto-generated catch block
+				logger.error("", e);
+			}
     	}
     }
   }
+  
   public String getUrl() {
 	return url;
   }

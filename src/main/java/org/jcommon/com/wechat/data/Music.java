@@ -25,6 +25,14 @@ public class Music extends Media
     super(data);
     setMedia_id(this.thumb_media_id);
   }
+  
+  public Music(String title,String description)
+  {
+    super();
+    setMedia_id(this.thumb_media_id);
+    setTitle(title);
+    setDescription(description);
+  }
 
   public String getTitle() {
     return this.title;

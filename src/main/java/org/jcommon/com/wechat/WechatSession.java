@@ -13,6 +13,7 @@
 package org.jcommon.com.wechat;
 
 import java.io.File;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -25,6 +26,7 @@ import org.jcommon.com.util.thread.ThreadManager;
 import org.jcommon.com.util.thread.TimerTaskManger;
 import org.jcommon.com.wechat.cache.SessionCache;
 import org.jcommon.com.wechat.data.App;
+import org.jcommon.com.wechat.data.Articles;
 import org.jcommon.com.wechat.data.Error;
 import org.jcommon.com.wechat.data.Event;
 import org.jcommon.com.wechat.data.Image;
@@ -32,6 +34,7 @@ import org.jcommon.com.wechat.data.InMessage;
 import org.jcommon.com.wechat.data.Media;
 import org.jcommon.com.wechat.data.Menus;
 import org.jcommon.com.wechat.data.Music;
+import org.jcommon.com.wechat.data.News;
 import org.jcommon.com.wechat.data.OutMessage;
 import org.jcommon.com.wechat.data.Text;
 import org.jcommon.com.wechat.data.User;
@@ -176,7 +179,7 @@ public class WechatSession extends ResponseHandler
     {
       if ((message.getMediaId() != null) && (message.getMedia() == null)) {
         String path = System.getProperty(WECHATMEDIAPATH, System.getProperty("java.io.tmpdir"));
-        File file = new File(path,message.getFromUserName());
+        File file = new File(path);
         if(!file.exists()){
         	logger.info(file.getAbsolutePath() + ":" + file.mkdirs());
         }
@@ -204,6 +207,17 @@ public class WechatSession extends ResponseHandler
     HttpRequest msg_re = getMsgRequest(callback, msg);
     ThreadManager.instance().execute(msg_re);
     return msg_re;
+  }
+  
+  public HttpRequest sendNews(RequestCallback callback, List<Articles> articles, String touser) throws Exception {
+	    if(articles==null || articles.size() > News.max_size){
+	    	throw new Exception("articles is null or exceed the articles max size limit.\nmax size:"+News.max_size);
+	    }
+	    OutMessage msg = new OutMessage(MsgType.news, touser);
+	    msg.setNews(new News(articles));
+	    HttpRequest msg_re = getMsgRequest(callback, msg);
+	    ThreadManager.instance().execute(msg_re);
+	    return msg_re;
   }
 
   public HttpRequest sendImage(RequestCallback callback, Image image, String touser) {

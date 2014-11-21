@@ -18,7 +18,8 @@ public enum EventType
   unsubscribe, 
   scan, 
   LOCATION, 
-  CLICK;
+  CLICK,
+  MASSSENDJOBFINISH;
 
   public EventType getType(String name) {
     if (subscribe.toString().equalsIgnoreCase(name))
@@ -31,6 +32,8 @@ public enum EventType
       return LOCATION;
     if (CLICK.toString().equalsIgnoreCase(name))
       return CLICK;
+    if (MASSSENDJOBFINISH.toString().equalsIgnoreCase(name))
+        return MASSSENDJOBFINISH;
     return null;
   }
 }
