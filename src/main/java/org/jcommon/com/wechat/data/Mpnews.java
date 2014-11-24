@@ -12,6 +12,5 @@ public class Mpnews extends Media{
   public Mpnews()
   {
     super();
-    setType(MediaType.mpnews.toString());
   }
 }

@@ -20,26 +20,27 @@ import org.jcommon.com.wechat.data.InMessage;
 
 public class CopyWechatSession extends WechatSession {
 	private String callback;
-	
-	public CopyWechatSession(String wechatID, App app,
-			WechatSessionListener listener) {
-		super(wechatID, app, listener);
-		// TODO Auto-generated constructor stub
-	}
+	private String mywechat_id;
 
-	public CopyWechatSession(String wechat_key, String callback){
-		super(wechat_key,null,null);
+	public CopyWechatSession(String wechat_key, String callback, String Token){
+		super(wechat_key,new App(null,null,Token),null);
 		this.callback = callback;
+		mywechat_id = wechat_key!=null && wechat_key.indexOf("-")!=-1?wechat_key.substring(0, wechat_key.lastIndexOf("-")):wechat_key;
+		logger.info(callback);
 	}
 	
 	public void onEvent(Event event){
 		logger.info(event.getXml());
-		callback(event!=null?event.getXml():null);
+		String touser = event.getToUserName();
+		if(mywechat_id!=null && mywechat_id.equals(touser))
+			callback(event!=null?event.getXml():null);
 	}
 	
 	public void onMessage(InMessage message){
 		logger.info(message.getXml());
-		callback(message!=null?message.getXml():null);
+		String touser = message.getToUserName();
+		if(mywechat_id!=null && mywechat_id.equals(touser))
+			callback(message!=null?message.getXml():null);
 	}
 	
 	private void callback(String xml){

@@ -11,9 +11,13 @@ import org.jcommon.com.wechat.WechatSession;
 import org.jcommon.com.wechat.WechatSessionListener;
 import org.jcommon.com.wechat.cache.SessionCache;
 import org.jcommon.com.wechat.data.App;
+import org.jcommon.com.wechat.data.Articles;
 import org.jcommon.com.wechat.data.Event;
+import org.jcommon.com.wechat.data.Image;
 import org.jcommon.com.wechat.data.InMessage;
+import org.jcommon.com.wechat.data.Media;
 import org.jcommon.com.wechat.data.Text;
+import org.jcommon.com.wechat.utils.MediaType;
 
 public class WechatSessionTest extends Monitor
   implements WechatSessionListener, RequestCallback
@@ -26,7 +30,7 @@ public class WechatSessionTest extends Monitor
 ////    System.setProperty(WechatSession.WECHATMEDIAPATH, path);
 ////    System.setProperty(WechatSession.WECHATMEDIAURL, "media");
 //    
-//    newWechatSession("wxe3493e70ee036e60","bc54d3dee215742ce37c700e2d2bc2a2","spotlightwechat",
+//    newWechatSession("wxe3493e70ee036e60","bc54d3dee215742ce37c700e2d2bc2a2","spotlight-wechat",
 //    		"gh_e6e86fdce3b9");
   }
 
@@ -41,9 +45,10 @@ public class WechatSessionTest extends Monitor
     super.initOperation();
   }
 
+  WechatSession session = null;
   public void newWechatSession(String appid, String secret, String Token, String wechatID) {
     App app = new App(appid, secret, Token);
-    WechatSession session = new WechatSession(wechatID, app, this);
+    session = new WechatSession(wechatID, app, this);
     session.startup();
   }
 
@@ -93,8 +98,19 @@ public class WechatSessionTest extends Monitor
   {
     this.logger.info(message.getXml());
     if(message.getMedia()!=null){
-    	logger.info(message.getMedia().getMedia() + "	"+message.getMedia().getContent_type());
-    	logger.info(message.getMedia().getUrl());
+    	String from = message.getFrom().getOpenid();
+    	Media media  = message.getMedia();
+    	logger.info(media.getMedia() + "	"+message.getMedia().getContent_type());
+    	logger.info(media.getUrl());
+    	
+//    	Image image = new Image();
+//    	image.setMedia(media.getMedia());
+//    	session.sendImage(this, image, from);
+    	Articles article = new Articles("Title", "Hello World!","description","http://hbase.apache.org/","author");
+    	article.setMedia(media.getMedia());
+    	article.setType(MediaType.image.toString());
+    	session.sendBroadcast(this, article);
+    	
     }
     this.logger.info(message.getFrom()!=null?message.getFrom().getNickname():"from user is null !");
   }

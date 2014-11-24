@@ -29,6 +29,19 @@ public class Error extends JsonObject
   {
     super();
   }
+  public Error(ErrorType type){
+	  super();
+	  this.type = type;
+	  if(type!=null){
+		  errmsg = type.message;
+		  errcode = type.error;
+	  }
+  }
+  public Error(String message,int errcode){
+	  super();
+	  this.errmsg = message;
+	  this.errcode = errcode;
+  }
 
   public String getErrmsg() {
     return this.errmsg;

@@ -45,17 +45,20 @@ public class UtilsTest
 //    new Callback();
 //      String access_token = "bxDacvoohUuOU3YfS3okopE1YJJ1ghnH0d2E_OOl1DihDD5KDyRgP8U9zf_r24zolK02dGbIF3S4MtdQHYsjJm7BKmnzL5-Ikd_ZqRH6RyA";
 //////    
-      App app = new App("wxe3493e70ee036e60", "bc54d3dee215742ce37c700e2d2bc2a2", "spotlight-wechat");
-      WechatSession session = new WechatSession("gh_e6e86fdce3b9", app, null);
-      session.startup();
-      Thread.sleep(10000);
-      List<Articles> articles = new ArrayList<Articles>();
-      String title = "Welcome to Apache HBase";
-      String description = "Apache HBase is the Hadoop database, a distributed, scalable, big data store.";
-      String url = "http://hbase.apache.org/";
-      String picurl = "http://hbase.apache.org/images/hbase_logo.png";
-      Articles art = new Articles(title,description,url,picurl);
-      articles.add(art);
+      App app = new App("wx9b84c7e1c33a29c7", "9cb43ce5e72ea14fefe77e1ae7760fbd", "spotlight-wechat");
+      WechatSession session = new WechatSession("gh_ed5dd6bc3c51", app, null);
+      
+      System.out.println(session.appVerify("aae2b6cda729304c12a81cecae5f484608884c82", "1416817797", "1256576892"));
+      
+//      session.startup();
+//      Thread.sleep(10000);
+//      List<Articles> articles = new ArrayList<Articles>();
+//      String title = "Welcome to Apache HBase";
+//      String description = "Apache HBase is the Hadoop database, a distributed, scalable, big data store.";
+//      String url = "http://hbase.apache.org/";
+//      String picurl = "http://hbase.apache.org/images/hbase_logo.png";
+//      Articles art = new Articles(title,description,url,picurl);
+//      articles.add(art);
       
 //      title = "SpotlightX";
 //      description = "SpotlightX description.";
@@ -64,7 +67,7 @@ public class UtilsTest
 //      art = new Articles(title,description,url,picurl);
 //      articles.add(art);
       
-      session.sendNews(new UtilsTest(), articles);
+//      session.sendNews(new UtilsTest(), articles);
 
 //    
 //    //Thread.sleep(10000);

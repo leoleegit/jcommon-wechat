@@ -56,7 +56,7 @@ public class Callback extends HttpServlet
       String timestamp = request.getParameter("timestamp");
       String nonce = request.getParameter("nonce");
       String echostr = request.getParameter("echostr");
-      if (WechatSessionManager.instance().appVerify(signature, timestamp, nonce, echostr)) {
+      if (WechatSessionManager.instance().appVerify(signature, timestamp, nonce)) {
         PrintWriter servletOutput = response.getWriter();
         response.setContentType("text/html");
         servletOutput.println(echostr);
@@ -90,7 +90,13 @@ public class Callback extends HttpServlet
           logger.info(new StringBuilder().append(key).append("\t:").append(value).toString());
         }
       }
-      WechatSessionManager.instance().onCallback(post_data);
+      String signature = request.getParameter("signature");
+      String timestamp = request.getParameter("timestamp");
+      String nonce = request.getParameter("nonce");
+      if (WechatSessionManager.instance().appVerify(signature, timestamp, nonce)) 
+    	  WechatSessionManager.instance().onCallback(post_data);
+      else
+    	  logger.warn("Illegal Data!");
     } catch (IOException e) {
       logger.error("", e);
     }

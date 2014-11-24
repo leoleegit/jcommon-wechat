@@ -61,7 +61,9 @@ public class WechatSessionManager extends Monitor
 	          new MBeanParameterInfo[]{new MBeanParameterInfo(
 	          		"wechat_key","java.lang.String","wechat_key"),
 	          		new MBeanParameterInfo(
-	    	          		"callback","java.lang.String","callback")},   // no parameters
+	    	          		"callback","java.lang.String","callback"),
+	          		new MBeanParameterInfo(
+	    	          		"Token","java.lang.String","Token")},   // no parameters
 	          "void",
 	          MBeanOperationInfo.ACTION));
 		addOperation(new MBeanOperationInfo(
@@ -80,9 +82,9 @@ public class WechatSessionManager extends Monitor
 		          MBeanOperationInfo.ACTION));
   }
   
-  public void newCopySession(String wechat_key, String callback){
-	  removeSession(wechat_key);
-	  WechatSession session = new CopyWechatSession(wechat_key,callback);
+  public void newCopySession(String wechat_key, String callback, String Token){
+	  wechat_key = wechat_key + "-" + org.jcommon.com.util.BufferUtils.generateRandom(5);
+	  WechatSession session = new CopyWechatSession(wechat_key,callback,Token);
 	  session.startup();
   }
   
@@ -213,8 +215,13 @@ public class WechatSessionManager extends Monitor
     	logger.warn("can't find session of "+touser);
   }
 
-  public boolean appVerify(String signature, String timestamp, String nonce, String echostr) {
-    return true;
+  public boolean appVerify(String signature, String timestamp, String nonce) {
+	List<WechatSession> sessions = SessionCache.instance().getAllWechatSession();  
+	for(WechatSession session : sessions){
+		if(session.appVerify(signature, timestamp, nonce))
+			return true;
+	}
+    return false;
   }
 
   public ContentTypeCache getContent_type_cache() {

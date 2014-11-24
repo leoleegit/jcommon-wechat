@@ -14,6 +14,8 @@ public class GroupFilter extends Filter{
 		sb.append("{");
 		if(groups!=null){
 			for(Group g : groups){
+				if(g.getCount()==0)
+					continue;
 				sb.append("\"group_id\":").append("\"").append(g.getId()).append("\",");
 			}
 		}

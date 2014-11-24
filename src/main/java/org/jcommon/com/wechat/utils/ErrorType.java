@@ -17,6 +17,7 @@ import org.apache.log4j.Logger;
 
 public enum ErrorType
 {
+  error_3(-3, "多媒体 不能为空"),	
   error_2(-2, "多媒体上传错误"),	
   error_1(-1, "系统繁忙"), 
   error0(0, "请求成功"), 
