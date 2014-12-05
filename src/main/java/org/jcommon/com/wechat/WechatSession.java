@@ -91,7 +91,7 @@ public class WechatSession extends ResponseHandler
   }
 
   private void appKeepAlive(final App app) {
-    if (app == null) {
+    if (app == null || app.getAppid()==null | app.getSecret()==null) {
       this.logger.warn("app can't be null");
       return;
     }
@@ -460,7 +460,7 @@ public class WechatSession extends ResponseHandler
        	    
        	    List<Group> group_list = Group.getGroups();
        	    if(group_list!=null){
-       		    GroupFilter gf = new GroupFilter(group_list);
+       		    GroupFilter gf = new GroupFilter(true,group_list);
        		    out.setFilter(gf);
        		    msg_re.setContent(out.toJson());
        		    logger.info("out:" + out.toJson());
@@ -477,7 +477,7 @@ public class WechatSession extends ResponseHandler
     	}else if("GetGroups".equals(request_action) && (o instanceof Group)){
     		 List<Group> group_list = Group.getGroups();
         	 if(group_list!=null){
-        		 GroupFilter gf = new GroupFilter(group_list);
+        		 GroupFilter gf = new GroupFilter(true,group_list);
         		 out.setFilter(gf);
         		 msg_re.setContent(out.toJson());
         		 logger.info("out:" + out.toJson());
@@ -493,7 +493,7 @@ public class WechatSession extends ResponseHandler
   
   public boolean appVerify(String signature, String timestamp, String nonce){
 	  String token = getApp()!=null?getApp().getToken():null;
-	  if(token!=null){
+	  if(token!=null && signature!=null && timestamp!=null && nonce!=null){
 		  List<String> arl = new ArrayList<String>(); 
 		  arl.add(token);
 		  arl.add(timestamp);
@@ -508,7 +508,7 @@ public class WechatSession extends ResponseHandler
 		  
 		  return signature.equalsIgnoreCase(encryptToSHA(sb.toString()));
 	  }
-	  return true;
+	  return false;
   }
   
   public String encryptToSHA(String info) {  

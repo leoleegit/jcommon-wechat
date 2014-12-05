@@ -25,6 +25,7 @@ import org.jcommon.com.wechat.utils.MD5;
 public class Media extends JsonObject
 {
   private String media_id;
+  private String thumb_media_id;
   private String type;
   private long created_at;
   private File media;
@@ -120,5 +121,14 @@ public class Media extends JsonObject
 			logger.error("", e);
 		}
 	}
+  }
+
+  public void setThumb_media_id(String thumb_media_id) {
+	this.thumb_media_id = thumb_media_id;
+	setMedia_id(thumb_media_id);
+  }
+
+  public String getThumb_media_id() {
+	return thumb_media_id;
   }
 }

@@ -84,7 +84,7 @@ public class WechatSessionManager extends Monitor
   
   public void newCopySession(String wechat_key, String callback, String Token){
 	  wechat_key = wechat_key + "-" + org.jcommon.com.util.BufferUtils.generateRandom(5);
-	  WechatSession session = new CopyWechatSession(wechat_key,callback,Token);
+	  WechatSession session = new WechatSessionCopy(wechat_key,callback,Token);
 	  session.startup();
   }
   
@@ -196,7 +196,7 @@ public class WechatSessionManager extends Monitor
       Event event = new Event(xml);
       touser = event.getToUserName();
       for(WechatSession session : sessions){
-    	  if(session instanceof CopyWechatSession || (touser!=null && touser.equals(session.getWechatID()))){
+    	  if(session instanceof WechatSessionCopy || (touser!=null && touser.equals(session.getWechatID()))){
     		  session.onEvent(event);
     		  done = true;
     	  }
@@ -205,7 +205,7 @@ public class WechatSessionManager extends Monitor
       InMessage msg = new InMessage(xml);
       touser = msg.getToUserName();
       for(WechatSession session : sessions){
-    	  if(session instanceof CopyWechatSession || (touser!=null && touser.equals(session.getWechatID()))){
+    	  if(session instanceof WechatSessionCopy || (touser!=null && touser.equals(session.getWechatID()))){
     		  session.onMessage(msg);
     		  done = true;
     	  }

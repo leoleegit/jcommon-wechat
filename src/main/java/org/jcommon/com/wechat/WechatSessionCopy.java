@@ -12,17 +12,19 @@
 // ========================================================================
 package org.jcommon.com.wechat;
 
+
+import org.jcommon.com.util.JsonUtils;
 import org.jcommon.com.util.http.HttpRequest;
 import org.jcommon.com.util.thread.ThreadManager;
 import org.jcommon.com.wechat.data.App;
 import org.jcommon.com.wechat.data.Event;
 import org.jcommon.com.wechat.data.InMessage;
 
-public class CopyWechatSession extends WechatSession {
+public class WechatSessionCopy extends WechatSession {
 	private String callback;
 	private String mywechat_id;
 
-	public CopyWechatSession(String wechat_key, String callback, String Token){
+	public WechatSessionCopy(String wechat_key, String callback, String Token){
 		super(wechat_key,new App(null,null,Token),null);
 		this.callback = callback;
 		mywechat_id = wechat_key!=null && wechat_key.indexOf("-")!=-1?wechat_key.substring(0, wechat_key.lastIndexOf("-")):wechat_key;
@@ -46,7 +48,10 @@ public class CopyWechatSession extends WechatSession {
 	private void callback(String xml){
 		logger.info(xml);
 		if(callback!=null){
-			HttpRequest request = new HttpRequest(callback,xml,"POST",this);
+			String[] keys   = { "signature","timestamp","nonce" };
+			String[] values = { signature,timestamp,nonce };
+			String    url   = JsonUtils.toRequestURL(callback, keys, values);
+			HttpRequest request = new HttpRequest(url,xml,"POST",this);
 			ThreadManager.instance().execute(request);
 		}
 	}
@@ -57,5 +62,24 @@ public class CopyWechatSession extends WechatSession {
 	
 	public void onFailure(HttpRequest reqeust, StringBuilder sResult){
 		logger.info(sResult);
+	}
+	
+	public void onTimeout(HttpRequest request){
+	    logger.error(callback);
+	}
+
+	public void onException(HttpRequest request, Exception e){
+	    logger.error(callback, e);
+	}
+	
+	String signature; String timestamp; String nonce;
+	public boolean appVerify(String signature, String timestamp, String nonce){
+		if(super.appVerify(signature, timestamp, nonce)){
+			this.signature = signature;
+			this.timestamp = timestamp;
+			this.nonce     = nonce;
+			return true;
+		}
+		return false;
 	}
 }

@@ -30,8 +30,8 @@ public class WechatSessionTest extends Monitor
 ////    System.setProperty(WechatSession.WECHATMEDIAPATH, path);
 ////    System.setProperty(WechatSession.WECHATMEDIAURL, "media");
 //    
-//    newWechatSession("wxe3493e70ee036e60","bc54d3dee215742ce37c700e2d2bc2a2","spotlight-wechat",
-//    		"gh_e6e86fdce3b9");
+    newWechatSession("wx9b84c7e1c33a29c7","9cb43ce5e72ea14fefe77e1ae7760fbd","spotlight-wechat",
+    		"gh_ed5dd6bc3c51");
   }
 
   public void initOperation()
@@ -108,7 +108,7 @@ public class WechatSessionTest extends Monitor
 //    	session.sendImage(this, image, from);
     	Articles article = new Articles("Title", "Hello World!","description","http://hbase.apache.org/","author");
     	article.setMedia(media.getMedia());
-    	article.setType(MediaType.image.toString());
+    	article.setType(MediaType.thumb.toString());
     	session.sendBroadcast(this, article);
     	
     }

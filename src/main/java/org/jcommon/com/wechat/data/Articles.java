@@ -16,23 +16,21 @@ public class Articles extends Media
 {
   private String title;
   private String description;
-  private String url;
   private String picurl;
   
   //上传图文消息素材
-  private String thumb_media_id;
   private String author;
   //private String title;
   private String content_source_url;
   private String content;
   private String digest;
-  private int show_cover_pic; // 1 or 0
+  private int show_cover_pic = 1; // 1 or 0
 
   public Articles(String title, String description, String url, String picurl)
   {
     this.title = title;
     this.description = description;
-    this.url = url;
+    setUrl(url);
     this.picurl = picurl;
   }
   
@@ -71,14 +69,6 @@ public class Articles extends Media
     this.description = description;
   }
 
-  public String getUrl() {
-    return this.url;
-  }
-
-  public void setUrl(String url) {
-    this.url = url;
-  }
-
   public String getPicurl() {
     return this.picurl;
   }
@@ -86,14 +76,6 @@ public class Articles extends Media
   public void setPicurl(String picurl) {
     this.picurl = picurl;
   }
-
-	public String getThumb_media_id() {
-		return thumb_media_id;
-	}
-	
-	public void setThumb_media_id(String thumb_media_id) {
-		this.thumb_media_id = thumb_media_id;
-	}
 	
 	public String getAuthor() {
 		return author;
