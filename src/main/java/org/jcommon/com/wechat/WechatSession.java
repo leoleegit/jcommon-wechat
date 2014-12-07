@@ -60,8 +60,12 @@ public class WechatSession extends ResponseHandler
   private String wechatID;
   private App app;
   private WechatSessionListener listener;
-  private final String RequestCallback = "RequestCallback";
-  private final String RequestAction   = "RequestAction";
+  
+  private MediaManager mediaManager;
+  private MsgManager msgManager;
+  
+  public final String RequestCallback = "RequestCallback";
+  public final String RequestAction   = "RequestAction";
   public final static String  WECHATMEDIAPATH = "wechat-media-path";
   public final static String  WECHATMEDIAURL  = "wechat-media-url";
   
@@ -219,16 +223,7 @@ public class WechatSession extends ResponseHandler
     return msg_re;
   }
   
-  public HttpRequest sendNews(RequestCallback callback, List<Articles> articles, String touser) throws Exception {
-	    if(articles==null || articles.size() > News.max_size){
-	    	throw new Exception("articles is null or exceed the articles max size limit.\nmax size:"+News.max_size);
-	    }
-	    OutMessage msg = new OutMessage(MsgType.news, touser);
-	    msg.setNews(new News(articles));
-	    HttpRequest msg_re = getMsgRequest(callback, msg);
-	    ThreadManager.instance().execute(msg_re);
-	    return msg_re;
-  }
+  
   
   public HttpRequest sendNews(RequestCallback callback, List<Articles> articles) throws Exception {
 	    if(articles==null || articles.size() > News.max_size){
@@ -245,67 +240,7 @@ public class WechatSession extends ResponseHandler
 	    return msg_re;
   }
 
-  public HttpRequest sendImage(RequestCallback callback, Image image, String touser) {
-    OutMessage msg = new OutMessage(MsgType.image, touser);
-    msg.setImage(image);
-    HttpRequest msg_re = getMsgRequest(callback, msg);
-    if (image.getMedia() != null) {
-      FileRequest request = (FileRequest)RequestFactory.createMediaUploadRequest(this, this.app.getAccess_token(), image.getMedia(), image.getType());
-
-      request.setHandler(msg);
-      request.setAttribute(RequestCallback, msg_re);
-      request.setAttribute(RequestAction, "sendImage");
-      addHandlerObject(request, Media.class);
-      ThreadManager.instance().execute(request);
-    }else{
-    	callback.onSuccessful(msg_re, new StringBuilder(new Error(ErrorType.error_3).toJson()));
-    }
-    return msg_re;
-  }
-
-  public HttpRequest sendMusic(RequestCallback callback, Music music, String touser) {
-    OutMessage msg = new OutMessage(MsgType.music, touser);
-    msg.setMusic(music);
-    HttpRequest msg_re = getMsgRequest(callback, msg);
-    ThreadManager.instance().execute(msg_re);
-    return msg_re;
-  }
-
-  public HttpRequest sendVideo(RequestCallback callback, Video video, String touser) {
-	  OutMessage msg = new OutMessage(MsgType.video, touser);
-	  msg.setVideo(video);
-	  HttpRequest msg_re = getMsgRequest(callback, msg);
-	  if (video.getMedia() != null) {
-	      FileRequest request = (FileRequest)RequestFactory.createMediaUploadRequest(this, this.app.getAccess_token(), video.getMedia(), video.getType());
-
-	      request.setHandler(msg);
-	      request.setAttribute(RequestCallback, msg_re);
-	      request.setAttribute(RequestAction, "sendVideo");
-	      addHandlerObject(request, Media.class);
-	      ThreadManager.instance().execute(request);
-	  }else{
-	      callback.onSuccessful(msg_re, new StringBuilder(new Error(ErrorType.error_3).toJson()));
-	  }
-	  return msg_re;
-  }
-
-  public HttpRequest sendVoice(RequestCallback callback, Voice voice, String touser) {
-      OutMessage msg = new OutMessage(MsgType.voice, touser);
-      msg.setVoice(voice);
-      HttpRequest msg_re = getMsgRequest(callback, msg);
-      if (voice.getMedia() != null) {
-	      FileRequest request = (FileRequest)RequestFactory.createMediaUploadRequest(this, this.app.getAccess_token(), voice.getMedia(), voice.getType());
-
-	      request.setHandler(msg);
-	      request.setAttribute(RequestCallback, msg_re);
-	      request.setAttribute(RequestAction, "sendVoice");
-	      addHandlerObject(request, Media.class);
-	      ThreadManager.instance().execute(request);
-	  }else{
-	      callback.onSuccessful(msg_re, new StringBuilder(new Error(ErrorType.error_3).toJson()));
-	  }
-	  return msg_re;
-  }
+  
   
   public HttpRequest sendBroadcast(RequestCallback callback, Articles article){
 	  OutMessage msg = new OutMessage(MsgType.mpnews,null);
@@ -536,5 +471,21 @@ public class WechatSession extends ResponseHandler
           }  
       }  
       return hs.toLowerCase();  
-  } 
+  }
+
+public MediaManager getMediaManager() {
+	return mediaManager;
+}
+
+public void setMediaManager(MediaManager mediaManager) {
+	this.mediaManager = mediaManager;
+}
+
+public MsgManager getMsgManager() {
+	return msgManager;
+}
+
+public void setMsgManager(MsgManager msgManager) {
+	this.msgManager = msgManager;
+} 
 }
