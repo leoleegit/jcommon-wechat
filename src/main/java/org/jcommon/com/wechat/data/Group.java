@@ -31,15 +31,31 @@ public class Group extends JsonObject{
 	      }
 	}
 	
-	private void resetGroups(List<Object> list){
-	    if (list == null) return;
-	    if (groups == null) groups = new ArrayList<Group>();
+	public static List<Group> getGroups(String json){
+		JSONObject jsonO = JsonUtils.getJSONObject(json);
+	    if (jsonO != null)
+	      try {
+	        if (jsonO.has("groups")) {
+	          List<Object> list = Json2Object.json2Objects(Group.class, jsonO.getString("groups"));
+	          return resetGroups(list);
+	        }
+	      }
+	      catch (JSONException e) {
+	        Json2Object.logger.error("", e);
+	      }
+	    return null;
+	}
+	
+	private static List<Group> resetGroups(List<Object> list){
+	    if (list == null) return null;
+	    List<Group> groups = new ArrayList<Group>();
 	    for (Iterator<?> i$ = list.iterator(); i$.hasNext(); ) {
 	      Object o = i$.next();
 	      groups.add((Group)o);
 	    }
 	    list.clear();
 	    list = null;
+	    return groups;
     }
 
 	public static List<Group> getGroups() {

@@ -67,7 +67,6 @@ public class MediaManager extends ResponseHandler{
 		if ((handle instanceof InMessage)) {
 			InMessage h = (InMessage)handle;
 			Media m = null;
-			User u = null;
 			if ((request instanceof FileRequest)) {
 		        m = new Media();
 		        FileRequest re = (FileRequest)request;
@@ -100,10 +99,10 @@ public class MediaManager extends ResponseHandler{
 	    		OutMessage out_ = new OutMessage();
 	    		out_.setArticles(out.getArticles());
 	    		out.setArticles(null);
-	    		request = RequestFactory.createBroadcastRequest(this, this.app.getAccess_token(), out_.toJson());
+	    		request = RequestFactory.createBroadcastRequest(this, session.getApp().getAccess_token(), out_.toJson());
 	    		request.setHandler(out);
-	   	        request.setAttribute(RequestCallback, msg_re);
-	   	        request.setAttribute(RequestAction, "UploadArticles");
+	   	        request.setAttribute(WechatSession.RequestCallback, msg_re);
+	   	        request.setAttribute(WechatSession.RequestAction, "UploadArticles");
 	   	        addHandlerObject(request, Media.class);
 	   	        logger.info("out:" + out_.toJson());
 	   	        ThreadManager.instance().execute(request);
@@ -122,10 +121,10 @@ public class MediaManager extends ResponseHandler{
 	    		    msg_re.setContent(out.toJson());
 	    		    ThreadManager.instance().execute(msg_re);
 	       	    }else{
-	       	    	request = RequestFactory.createGetGroupsReqeust(this,this.app.getAccess_token());
+	       	    	request = RequestFactory.createGetGroupsReqeust(this,session.getApp().getAccess_token());
 	       	        request.setHandler(out);
-	       	        request.setAttribute(RequestCallback, msg_re);
-	       	        request.setAttribute(RequestAction, "GetGroups");
+	       	        request.setAttribute(WechatSession.RequestCallback, msg_re);
+	       	        request.setAttribute(WechatSession.RequestAction, "GetGroups");
 	       	        addHandlerObject(request, Group.class);
 	       	        ThreadManager.instance().execute(request);
 	       	    }

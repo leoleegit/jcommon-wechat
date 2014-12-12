@@ -35,18 +35,14 @@ import org.jcommon.com.wechat.data.Error;
 import org.jcommon.com.wechat.data.Event;
 import org.jcommon.com.wechat.data.Group;
 import org.jcommon.com.wechat.data.GroupFilter;
-import org.jcommon.com.wechat.data.Image;
 import org.jcommon.com.wechat.data.InMessage;
 import org.jcommon.com.wechat.data.Media;
 import org.jcommon.com.wechat.data.Menus;
 import org.jcommon.com.wechat.data.Mpnews;
-import org.jcommon.com.wechat.data.Music;
 import org.jcommon.com.wechat.data.News;
 import org.jcommon.com.wechat.data.OutMessage;
 import org.jcommon.com.wechat.data.Text;
 import org.jcommon.com.wechat.data.User;
-import org.jcommon.com.wechat.data.Video;
-import org.jcommon.com.wechat.data.Voice;
 import org.jcommon.com.wechat.utils.ErrorType;
 import org.jcommon.com.wechat.utils.MsgType;
 import org.jcommon.com.wechat.utils.Realize_Comparator;
@@ -64,8 +60,8 @@ public class WechatSession extends ResponseHandler
   private MediaManager mediaManager;
   private MsgManager msgManager;
   
-  public final String RequestCallback = "RequestCallback";
-  public final String RequestAction   = "RequestAction";
+  public final static String  RequestCallback = "RequestCallback";
+  public final static String  RequestAction   = "RequestAction";
   public final static String  WECHATMEDIAPATH = "wechat-media-path";
   public final static String  WECHATMEDIAURL  = "wechat-media-url";
   
@@ -473,19 +469,19 @@ public class WechatSession extends ResponseHandler
       return hs.toLowerCase();  
   }
 
-public MediaManager getMediaManager() {
+  public MediaManager getMediaManager() {
 	return mediaManager;
-}
+  }
 
-public void setMediaManager(MediaManager mediaManager) {
+  public void setMediaManager(MediaManager mediaManager) {
 	this.mediaManager = mediaManager;
-}
+  }
 
-public MsgManager getMsgManager() {
+  public MsgManager getMsgManager() {
 	return msgManager;
-}
+  }
 
-public void setMsgManager(MsgManager msgManager) {
+  public void setMsgManager(MsgManager msgManager) {
 	this.msgManager = msgManager;
-} 
+  } 
 }

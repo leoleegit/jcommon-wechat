@@ -196,7 +196,7 @@ public class WechatSessionManager extends Monitor
       Event event = new Event(xml);
       touser = event.getToUserName();
       for(WechatSession session : sessions){
-    	  if(session instanceof WechatSessionCopy || (touser!=null && touser.equals(session.getWechatID()))){
+    	  if(session instanceof WechatSessionMontior || (touser!=null && touser.equals(session.getWechatID()))){
     		  session.onEvent(event);
     		  done = true;
     	  }
@@ -205,7 +205,7 @@ public class WechatSessionManager extends Monitor
       InMessage msg = new InMessage(xml);
       touser = msg.getToUserName();
       for(WechatSession session : sessions){
-    	  if(session instanceof WechatSessionCopy || (touser!=null && touser.equals(session.getWechatID()))){
+    	  if(session instanceof WechatSessionMontior || (touser!=null && touser.equals(session.getWechatID()))){
     		  session.onMessage(msg);
     		  done = true;
     	  }

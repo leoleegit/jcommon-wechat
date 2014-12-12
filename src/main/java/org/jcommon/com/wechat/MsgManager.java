@@ -6,11 +6,9 @@ import org.apache.log4j.Logger;
 import org.jcommon.com.util.http.FileRequest;
 import org.jcommon.com.util.http.HttpRequest;
 import org.jcommon.com.util.thread.ThreadManager;
-import org.jcommon.com.wechat.data.App;
 import org.jcommon.com.wechat.data.Articles;
 import org.jcommon.com.wechat.data.Error;
 import org.jcommon.com.wechat.data.Image;
-import org.jcommon.com.wechat.data.Media;
 import org.jcommon.com.wechat.data.Music;
 import org.jcommon.com.wechat.data.News;
 import org.jcommon.com.wechat.data.OutMessage;
@@ -57,7 +55,7 @@ public class MsgManager extends ResponseHandler{
 
             request.setHandler(msg);
             request.setAttribute(WechatSession.RequestCallback, msg_re);
-            request.setAttribute(wechatSession.RequestAction, "sendImage");
+            request.setAttribute(WechatSession.RequestAction, "sendImage");
         }else{
         	callback.onSuccessful(msg_re, new StringBuilder(new Error(ErrorType.error_3).toJson()));
         }
@@ -80,8 +78,8 @@ public class MsgManager extends ResponseHandler{
     		FileRequest request = session.getMediaManager().uploadMedia(callback, video.getMedia(), video.getType());
 
     	    request.setHandler(msg);
-    	    request.setAttribute(RequestCallback, msg_re);
-    	    request.setAttribute(RequestAction, "sendVideo");
+    	    request.setAttribute(WechatSession.RequestCallback, msg_re);
+    	    request.setAttribute(WechatSession.RequestAction, "sendVideo");
     	}else{
     	    callback.onSuccessful(msg_re, new StringBuilder(new Error(ErrorType.error_3).toJson()));
     	}
@@ -96,8 +94,8 @@ public class MsgManager extends ResponseHandler{
         	FileRequest request = session.getMediaManager().uploadMedia(callback, voice.getMedia(), voice.getType());
 
     	    request.setHandler(msg);
-    	    request.setAttribute(RequestCallback, msg_re);
-    	    request.setAttribute(RequestAction, "sendVoice");
+    	    request.setAttribute(WechatSession.RequestCallback, msg_re);
+    	    request.setAttribute(WechatSession.RequestAction, "sendVoice");
     	}else{
     	    callback.onSuccessful(msg_re, new StringBuilder(new Error(ErrorType.error_3).toJson()));
     	}
@@ -105,7 +103,7 @@ public class MsgManager extends ResponseHandler{
     }
     
     private HttpRequest getMsgRequest(RequestCallback callback, OutMessage msg){
-    	if (this.app == null) {
+    	if (this.session.getApp() == null) {
     		this.logger.warn("app can't be null!");
     		return null;
     	}

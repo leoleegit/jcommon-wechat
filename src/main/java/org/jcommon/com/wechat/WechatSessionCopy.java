@@ -20,7 +20,7 @@ import org.jcommon.com.wechat.data.App;
 import org.jcommon.com.wechat.data.Event;
 import org.jcommon.com.wechat.data.InMessage;
 
-public class WechatSessionCopy extends WechatSession {
+public class WechatSessionCopy extends WechatSessionMontior {
 	private String callback;
 	private String mywechat_id;
 
