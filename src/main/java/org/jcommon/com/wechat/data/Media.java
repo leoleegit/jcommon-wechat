@@ -15,15 +15,11 @@ package org.jcommon.com.wechat.data;
 import java.io.File;
 import java.security.NoSuchAlgorithmException;
 
-import org.jcommon.com.util.http.HttpListener;
-import org.jcommon.com.util.http.HttpRequest;
-import org.jcommon.com.wechat.RequestFactory;
 import org.jcommon.com.wechat.WechatSession;
 import org.jcommon.com.wechat.WechatSessionManager;
 import org.jcommon.com.wechat.utils.MD5;
 
-public class Media extends JsonObject
-{
+public class Media extends JsonObject{
   private String media_id;
   private String thumb_media_id;
   private String type;
@@ -45,16 +41,7 @@ public class Media extends JsonObject
     super(data);
   }
 
-  public Media()
-  {
-  }
-
-  public HttpRequest upload(String access_token, HttpListener listener) {
-    return RequestFactory.createMediaUploadRequest(listener, access_token, this.media, this.type);
-  }
-
-  public HttpRequest download(String access_token, HttpListener listener, File file) {
-    return RequestFactory.createMediaDownloaddRequest(listener, access_token, this.media_id, file);
+  public Media(){
   }
 
   public String getMedia_id() {

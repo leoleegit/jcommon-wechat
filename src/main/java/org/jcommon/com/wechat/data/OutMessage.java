@@ -16,8 +16,7 @@ import java.util.List;
 
 import org.jcommon.com.wechat.utils.MsgType;
 
-public class OutMessage extends JsonObject
-{
+public class OutMessage extends JsonObject{
   private Filter filter;	
   private String touser;
   private String msgtype;
@@ -30,8 +29,7 @@ public class OutMessage extends JsonObject
   private Mpnews mpnews;
   private List<Articles> articles;
 
-  public OutMessage(String data)
-  {
+  public OutMessage(String data){
     super(data);
   }
 
@@ -129,5 +127,19 @@ public class OutMessage extends JsonObject
 
   public List<Articles> getArticles() {
 	return articles;
+  }
+  
+  public Media getMedia() {
+	  Media media = null;
+	  MsgType type = MsgType.getType(msgtype);
+	  if(type == MsgType.image)
+		  media = image;
+	  else if(type == MsgType.voice)
+		  media = voice;
+	  else if(type == MsgType.video)
+		  media = video;
+	  else if(type == MsgType.mpnews)
+		  media = mpnews;
+	  return media;
   }
 }

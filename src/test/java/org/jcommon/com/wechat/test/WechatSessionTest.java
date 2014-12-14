@@ -109,7 +109,7 @@ public class WechatSessionTest extends Monitor
     	Articles article = new Articles("Title", "Hello World!","description","http://hbase.apache.org/","author");
     	article.setMedia(media.getMedia());
     	article.setType(MediaType.thumb.toString());
-    	session.sendBroadcast(this, article);
+    	//session.sendBroadcast(this, article);
     	
     }
     this.logger.info(message.getFrom()!=null?message.getFrom().getNickname():"from user is null !");

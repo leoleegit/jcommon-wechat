@@ -31,7 +31,7 @@ public class BroadcastTest extends Callback implements RequestCallback{
 	     Articles article = new Articles("Title", "Hello World!","description","http://hbase.apache.org/","author");
 	     article.setMedia(new File("C:/Users/Administrator/Desktop/cipango-distribution-2.0.0/media/12.jpg"));
 	     article.setType(MediaType.thumb.toString());
-	     session.sendBroadcast(new BroadcastTest(), article);
+	    // session.sendBroadcast(new BroadcastTest(), article);
 	      
 	}
 

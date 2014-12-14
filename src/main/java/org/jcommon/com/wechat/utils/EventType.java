@@ -21,7 +21,7 @@ public enum EventType
   CLICK,
   MASSSENDJOBFINISH;
 
-  public EventType getType(String name) {
+  public static EventType getType(String name) {
     if (subscribe.toString().equalsIgnoreCase(name))
       return subscribe;
     if (unsubscribe.toString().equalsIgnoreCase(name))

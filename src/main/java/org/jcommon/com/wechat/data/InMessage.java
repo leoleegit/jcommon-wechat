@@ -12,17 +12,9 @@
 // ========================================================================
 package org.jcommon.com.wechat.data;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
-
-import org.jcommon.com.util.thread.TimerTaskManger;
 
 public class InMessage extends XmlObject
 {
-  private static Map<String,User> users = new HashMap<String,User>();
-  private static final long expires = 1000 * 60 * 30;
   private Media media;
   private User from;
   private String ToUserName;
@@ -158,24 +150,11 @@ public class InMessage extends XmlObject
     this.media = media;
   }
 
-	public User getFrom() {
-		if(from==null && users.containsKey(getFromUserName()))
-			from =  users.get(FromUserName);
-		return from;
-	}
+  public User getFrom() {
+	return from;
+  }
 	
-	public void setFrom(User from) {
-		this.from = from;
-		final String openid = from!=null?from.getOpenid():null;
-		if(openid==null)return;
-		
-		users.put(openid, from);
-		Timer t = TimerTaskManger.instance().schedule(openid, new TimerTask(){
-			public void run(){
-				users.remove(openid);
-				TimerTaskManger.instance().removeTimer(openid);
-			}
-		}, expires);
-		TimerTaskManger.instance().putTimer(openid, t);
-	}
+  public void setFrom(User from) {
+	this.from = from;
+  }
 }

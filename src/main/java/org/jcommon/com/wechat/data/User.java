@@ -31,27 +31,27 @@ public class User extends JsonObject{
 	private String headimgurl;
 	private long subscribe_time;
 	
-	private static List<String> openids;
-	private static long total;
-	private static long count;
-	private String data;
+	private long create_time;
 	
-	public String getData() {
-		return data;
-	}
-
-	public void setData(String data) {
-		this.data = data;
-	}
+	private  List<OpenID> openids;
+	private  long total;
+	private  long count;
+	private  String next_openid;
 	
 	public User(String json){
-		super(json);
+		super(json);	
 		
-		if(data!=null){
+		if(json!=null){
 			JSONObject jsonObject = null;
 	        try {
-	        	User.openids = new ArrayList<String>();
-	            jsonObject = new JSONObject(data);
+	        	jsonObject = new JSONObject(json);
+	        	total = jsonObject.has("total")?jsonObject.getLong("total"):0;
+	        	count = jsonObject.has("count")?jsonObject.getLong("count"):0;
+	        	next_openid = jsonObject.has("next_openid")?jsonObject.getString("next_openid"):null;
+	        	json = jsonObject.has("data")?jsonObject.getString("data"):null;
+	        	
+	        	openids = new ArrayList<OpenID>();
+	            jsonObject = new JSONObject(json);
 	            if(jsonObject!=null){
 	            	String openids = jsonObject.has("openid")?jsonObject.getString("openid"):null;
 	            	if(openids.startsWith("["))
@@ -65,10 +65,10 @@ public class User extends JsonObject{
 	            				id = id.substring(1);
 	            			if(id.endsWith("\""))
 	            				id = id.substring(0, id.length()-1);
-	            			User.openids.add(id);
+	            			this.openids.add(new OpenID(id));
 	            		}
 	            	}else{
-	            		logger.info("openids is null:"+data);
+	            		logger.info("openids is null:"+json);
 	            	}
 	            }
 	        } catch (JSONException e) {
@@ -157,7 +157,43 @@ public class User extends JsonObject{
 		this.subscribe_time = subscribe_time;
 	}
 
-	public static List<String> getOpenids() {
+	public long getCreate_time() {
+		return create_time;
+	}
+
+	public void setCreate_time(long create_time) {
+		this.create_time = create_time;
+	}
+
+	public List<OpenID> getOpenids() {
 		return openids;
+	}
+
+	public void setOpenids(List<OpenID> openids) {
+		this.openids = openids;
+	}
+
+	public long getTotal() {
+		return total;
+	}
+
+	public void setTotal(long total) {
+		this.total = total;
+	}
+
+	public long getCount() {
+		return count;
+	}
+
+	public void setCount(long count) {
+		this.count = count;
+	}
+
+	public String getNext_openid() {
+		return next_openid;
+	}
+
+	public void setNext_openid(String next_openid) {
+		this.next_openid = next_openid;
 	}
 }

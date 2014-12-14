@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.log4j.Logger;
 
 public class TempFileCache
@@ -64,7 +65,8 @@ public class TempFileCache
       logger.info("cache path:"+temp.getAbsolutePath());
       if (!temp.exists())
         return;
-      BufferedReader dr = new BufferedReader(new InputStreamReader(new FileInputStream(temp)));
+      @SuppressWarnings("resource")
+	  BufferedReader dr = new BufferedReader(new InputStreamReader(new FileInputStream(temp)));
 
       for (String line = dr.readLine(); line != null; line = dr.readLine())
         if (line.indexOf("\t:\t") != -1) {

@@ -31,18 +31,23 @@ import org.jcommon.com.util.thread.TimerTaskManger;
 import org.jcommon.com.wechat.cache.SessionCache;
 import org.jcommon.com.wechat.data.App;
 import org.jcommon.com.wechat.data.Articles;
+import org.jcommon.com.wechat.data.BroadcastMessage;
 import org.jcommon.com.wechat.data.Error;
 import org.jcommon.com.wechat.data.Event;
 import org.jcommon.com.wechat.data.Group;
 import org.jcommon.com.wechat.data.GroupFilter;
+import org.jcommon.com.wechat.data.Image;
 import org.jcommon.com.wechat.data.InMessage;
 import org.jcommon.com.wechat.data.Media;
 import org.jcommon.com.wechat.data.Menus;
 import org.jcommon.com.wechat.data.Mpnews;
+import org.jcommon.com.wechat.data.Music;
 import org.jcommon.com.wechat.data.News;
 import org.jcommon.com.wechat.data.OutMessage;
 import org.jcommon.com.wechat.data.Text;
 import org.jcommon.com.wechat.data.User;
+import org.jcommon.com.wechat.data.Video;
+import org.jcommon.com.wechat.data.Voice;
 import org.jcommon.com.wechat.utils.ErrorType;
 import org.jcommon.com.wechat.utils.MsgType;
 import org.jcommon.com.wechat.utils.Realize_Comparator;
@@ -56,14 +61,14 @@ public class WechatSession extends ResponseHandler
   private String wechatID;
   private App app;
   private WechatSessionListener listener;
-  
-  private MediaManager mediaManager;
-  private MsgManager msgManager;
-  
   public final static String  RequestCallback = "RequestCallback";
   public final static String  RequestAction   = "RequestAction";
   public final static String  WECHATMEDIAPATH = "wechat-media-path";
   public final static String  WECHATMEDIAURL  = "wechat-media-url";
+  
+  private UserManager  userManager;
+  private MsgManager   msgManager;
+  private MediaManager mediaManager;
   
   private Timer app_keepalive;
 
@@ -102,7 +107,7 @@ public class WechatSession extends ResponseHandler
     } catch (Exception e) {}
     this.app_keepalive = TimerTaskManger.instance().schedule("app-keepalive", new TimerTask(){
     	public void run(){
-    		 ThreadManager.instance().execute(RequestFactory.createAccessTokenReqeust(new HttpListener(){
+    		 execute(RequestFactory.createAccessTokenReqeust(new HttpListener(){
 
     			 public void onSuccessful(HttpRequest reqeust, StringBuilder sResult)
     			 {
@@ -174,38 +179,33 @@ public class WechatSession extends ResponseHandler
     this.listener = listener;
   }
 
-  public void onEvent(Event event)
-  {
-    this.logger.info(event.getXml());
+  public void onEvent(Event event){
+    this.logger.info("IN:"+event.getXml());
     if (this.listener != null)
       this.listener.onEvent(event);
+    userManager.onEvent(event);
   }
 
   public void onMessage(InMessage message)
   {
-    this.logger.info(message.getXml());
+    this.logger.info("IN:"+message.getXml());
     MsgType type = message.getMsgType();
     if ((type == MsgType.image) || (type == MsgType.video) || (type == MsgType.voice))
     {
       if ((message.getMediaId() != null) && (message.getMedia() == null)) {
-        String path = System.getProperty(WECHATMEDIAPATH, System.getProperty("java.io.tmpdir"));
-        File file = new File(path);
-        if(!file.exists()){
-        	logger.info(file.getAbsolutePath() + ":" + file.mkdirs());
-        }
-        FileRequest request = (FileRequest)RequestFactory.createMediaDownloaddRequest(this, this.app.getAccess_token(), message.getMediaId(), file);
-        request.setHandler(message);
-        addHandlerObject(request, org.jcommon.com.wechat.data.Media.class);
-        ThreadManager.instance().execute(request);
-        return;
+    	  HttpRequest request = mediaManager.downloadMedia(message);
+      	  if(request!=null){
+          	  request.setAttribute(WechatSession.RequestAction, "onMessage");
+          	  return;
+      	  }
       }
     }
     if(message.getFrom()==null && message.getFromUserName()!=null){
-    	HttpRequest request = RequestFactory.createUserInfoRequest(this, app.getAccess_token(), message.getFromUserName(), null);
-    	request.setHandler(message);
-    	addHandlerObject(request,User.class);
-    	ThreadManager.instance().execute(request);
-    	return;
+    	HttpRequest request = userManager.getUser(message);
+    	if(request!=null){
+        	request.setAttribute(WechatSession.RequestAction, "onMessage");
+        	return;
+    	}
     }
     if (this.listener != null)
       this.listener.onMessage(message);
@@ -214,37 +214,79 @@ public class WechatSession extends ResponseHandler
   public HttpRequest sendText(RequestCallback callback, Text text, String touser) {
     OutMessage msg = new OutMessage(MsgType.text, touser);
     msg.setText(text);
-    HttpRequest msg_re = getMsgRequest(callback, msg);
-    ThreadManager.instance().execute(msg_re);
-    return msg_re;
-  }
-  
-  
-  
-  public HttpRequest sendNews(RequestCallback callback, List<Articles> articles) throws Exception {
-	    if(articles==null || articles.size() > News.max_size){
-	    	throw new Exception("articles is null or exceed the articles max size limit.\nmax size:"+News.max_size);
-	    }
-	    OutMessage msg = new OutMessage(MsgType.news, null);
-	    msg.setNews(new News(articles));
-	    HttpRequest msg_re = getMsgRequest(callback, msg);
-	    
-	    HttpRequest request = RequestFactory.createGetUsersReqeust(this, getApp().getAccess_token(), null);
-	    request.setHandler(msg_re);
-	    addHandlerObject(request, User.class);
-	    ThreadManager.instance().execute(request);
-	    return msg_re;
+    return msgManager.sendText(callback, msg);
   }
 
+  public HttpRequest sendImage(RequestCallback callback, Image image, String touser) {
+    OutMessage msg = new OutMessage(MsgType.image, touser);
+    msg.setImage(image);
+    HttpRequest msg_re = getMsgRequest(callback, msg);
+    if (image.getMedia() != null) {
+      FileRequest request = (FileRequest)RequestFactory.createMediaUploadRequest(this, this.app.getAccess_token(), image.getMedia(), image.getType());
+
+      request.setHandler(msg);
+      request.setAttribute(RequestCallback, msg_re);
+      request.setAttribute(RequestAction, "sendImage");
+      addHandlerObject(request, Media.class);
+      execute(request);
+    }else{
+    	callback.onSuccessful(msg_re, new StringBuilder(new Error(ErrorType.error_3).toJson()));
+    }
+    return msg_re;
+  }
+
+  public HttpRequest sendMusic(RequestCallback callback, Music music, String touser) {
+    OutMessage msg = new OutMessage(MsgType.music, touser);
+    msg.setMusic(music);
+    HttpRequest msg_re = getMsgRequest(callback, msg);
+    execute(msg_re);
+    return msg_re;
+  }
+
+  public HttpRequest sendVideo(RequestCallback callback, Video video, String touser) {
+	  OutMessage msg = new OutMessage(MsgType.video, touser);
+	  msg.setVideo(video);
+	  HttpRequest msg_re = getMsgRequest(callback, msg);
+	  if (video.getMedia() != null) {
+	      FileRequest request = (FileRequest)RequestFactory.createMediaUploadRequest(this, this.app.getAccess_token(), video.getMedia(), video.getType());
+
+	      request.setHandler(msg);
+	      request.setAttribute(RequestCallback, msg_re);
+	      request.setAttribute(RequestAction, "sendVideo");
+	      addHandlerObject(request, Media.class);
+	      execute(request);
+	  }else{
+	      callback.onSuccessful(msg_re, new StringBuilder(new Error(ErrorType.error_3).toJson()));
+	  }
+	  return msg_re;
+  }
+
+  public HttpRequest sendVoice(RequestCallback callback, Voice voice, String touser) {
+      OutMessage msg = new OutMessage(MsgType.voice, touser);
+      msg.setVoice(voice);
+      HttpRequest msg_re = getMsgRequest(callback, msg);
+      if (voice.getMedia() != null) {
+	      FileRequest request = (FileRequest)RequestFactory.createMediaUploadRequest(this, this.app.getAccess_token(), voice.getMedia(), voice.getType());
+
+	      request.setHandler(msg);
+	      request.setAttribute(RequestCallback, msg_re);
+	      request.setAttribute(RequestAction, "sendVoice");
+	      addHandlerObject(request, Media.class);
+	      execute(request);
+	  }else{
+	      callback.onSuccessful(msg_re, new StringBuilder(new Error(ErrorType.error_3).toJson()));
+	  }
+	  return msg_re;
+  }
   
-  
-  public HttpRequest sendBroadcast(RequestCallback callback, Articles article){
+  public HttpRequest broadcastNews(RequestCallback callback, List<Articles> articles)throws Exception {
+	  if(articles==null || articles.size() > News.max_size){
+		  throw new Exception("articles is null or exceed the articles max size limit.\nmax size:"+News.max_size);
+	  }
 	  OutMessage msg = new OutMessage(MsgType.mpnews,null);
-	  List<Articles> articles = new ArrayList<Articles>();
-	  articles.add(article);
 	  msg.setArticles(articles);
 	  HttpRequest msg_re = RequestFactory.createBroadcastRequest(callback, this.app.getAccess_token(), msg.toJson());
-	  
+	  Articles article = articles.get(0);
 	  if (article.getMedia() != null) {
 	      FileRequest request = (FileRequest)RequestFactory.createMediaUploadRequest(this, this.app.getAccess_token(), article.getMedia(), article.getType());
 
@@ -252,7 +294,74 @@ public class WechatSession extends ResponseHandler
 	      request.setAttribute(RequestCallback, msg_re);
 	      request.setAttribute(RequestAction, "sendBroadcast");
 	      addHandlerObject(request, Media.class);
-	      ThreadManager.instance().execute(request);
+	      execute(request);
+	  }else{
+	      callback.onSuccessful(msg_re, new StringBuilder(new Error(ErrorType.error_3).toJson()));
+	  }
+	  return msg_re;
+  }
+  
+  
+  public HttpRequest broadcastText(RequestCallback callback, Text text){
+	  BroadcastMessage msg = new BroadcastMessage(MsgType.text, new GroupFilter(true,null));
+	  msg.setText(text);
+	  HttpRequest msg_re = RequestFactory.createBroadcastRequest(callback, this.app.getAccess_token(), msg.toJson());
+	  logger.info("out:"+msg.toJson());
+	  execute(msg_re);
+	  return msg_re;
+  }
+  
+  public HttpRequest broadcastImage(RequestCallback callback, Image image) {
+	  BroadcastMessage msg = new BroadcastMessage(MsgType.image, new GroupFilter(true,null));
+	  msg.setImage(image);
+	  HttpRequest msg_re = RequestFactory.createBroadcastRequest(callback, this.app.getAccess_token(), msg.toJson());
+	  
+	  if (image.getMedia() != null) {
+		FileRequest request = (FileRequest)RequestFactory.createMediaUploadRequest(this, this.app.getAccess_token(), image.getMedia(), image.getType());
+	
+		request.setHandler(msg);
+		request.setAttribute(RequestCallback, msg_re);
+		request.setAttribute(RequestAction, "sendImage");
+		addHandlerObject(request, Media.class);
+		execute(request);
+	  }else{
+		callback.onSuccessful(msg_re, new StringBuilder(new Error(ErrorType.error_3).toJson()));
+	  }
+	  return msg_re;
+  }
+  
+  public HttpRequest broadcastVoice(RequestCallback callback, Voice voice) {
+	  BroadcastMessage msg = new BroadcastMessage(MsgType.voice, new GroupFilter(true,null));
+      msg.setVoice(voice);
+      HttpRequest msg_re = RequestFactory.createBroadcastRequest(callback, this.app.getAccess_token(), msg.toJson());
+	  
+      if (voice.getMedia() != null) {
+	      FileRequest request = (FileRequest)RequestFactory.createMediaUploadRequest(this, this.app.getAccess_token(), voice.getMedia(), voice.getType());
+
+	      request.setHandler(msg);
+	      request.setAttribute(RequestCallback, msg_re);
+	      request.setAttribute(RequestAction, "sendVoice");
+	      addHandlerObject(request, Media.class);
+	      execute(request);
+	  }else{
+	      callback.onSuccessful(msg_re, new StringBuilder(new Error(ErrorType.error_3).toJson()));
+	  }
+	  return msg_re;
+  }
+  
+  public HttpRequest broadcastVideo(RequestCallback callback, Video video) {
+	  BroadcastMessage msg = new BroadcastMessage(MsgType.video, new GroupFilter(true,null));
+	  msg.setVideo(video);
+	  HttpRequest msg_re = RequestFactory.createBroadcastRequest(callback, this.app.getAccess_token(), msg.toJson());
+	  
+	  if (video.getMedia() != null) {
+	      FileRequest request = (FileRequest)RequestFactory.createMediaUploadRequest(this, this.app.getAccess_token(), video.getMedia(), video.getType());
+
+	      request.setHandler(msg);
+	      request.setAttribute(RequestCallback, msg_re);
+	      request.setAttribute(RequestAction, "sendVideo");
+	      addHandlerObject(request, Media.class);
+	      execute(request);
 	  }else{
 	      callback.onSuccessful(msg_re, new StringBuilder(new Error(ErrorType.error_3).toJson()));
 	  }
@@ -275,7 +384,7 @@ public class WechatSession extends ResponseHandler
       return null;
     }
     HttpRequest request = RequestFactory.createNewMenusReqeust(callback, this.app.getAccess_token(), menus.toJson());
-    ThreadManager.instance().execute(request);
+    execute(request);
     return request;
   }
 
@@ -285,7 +394,7 @@ public class WechatSession extends ResponseHandler
       return null;
     }
     HttpRequest request = RequestFactory.createGetMenusReqeust(callback, this.app.getAccess_token());
-    ThreadManager.instance().execute(request);
+    execute(request);
     return request;
   }
 
@@ -295,7 +404,7 @@ public class WechatSession extends ResponseHandler
       return null;
     }
     HttpRequest request = RequestFactory.createDeleteMenusReqeust(callback, this.app.getAccess_token());
-    ThreadManager.instance().execute(request);
+    execute(request);
     return request;
   }
 
@@ -317,7 +426,7 @@ public class WechatSession extends ResponseHandler
     } else if ((handle instanceof OutMessage)){
     	HttpRequest msg_re = (HttpRequest) request.getAttibute(RequestCallback);
     	if(msg_re.getListener()!=null)
-    		msg_re.getListener().onSuccessful(msg_re, new StringBuilder(new Error(ErrorType.error_3).toJson()));
+    		msg_re.getListener().onSuccessful(msg_re, new StringBuilder(error.toJson()));
     }
   }
 
@@ -355,69 +464,76 @@ public class WechatSession extends ResponseHandler
     		out.getImage().setMedia_id(m.getMedia_id());
     		logger.info("out:" + out.toJson());
     		msg_re.setContent(out.toJson());
-    		ThreadManager.instance().execute(msg_re);
+    		execute(msg_re);
     	}else if("sendVoice".equals(request_action) && (o instanceof Media)){
     		Media m = (Media)o;
     		out.getVoice().setMedia_id(m.getMedia_id());
     		logger.info("out:" + out.toJson());
     		msg_re.setContent(out.toJson());
-    		ThreadManager.instance().execute(msg_re);
+    		execute(msg_re);
     	}else if("sendVideo".equals(request_action) && (o instanceof Media)){
     		Media m = (Media)o;
     		out.getVideo().setMedia_id(m.getMedia_id());
     		logger.info("out:" + out.toJson());
     		msg_re.setContent(out.toJson());
-    		ThreadManager.instance().execute(msg_re);
+    		execute(msg_re);
     	}else if("sendBroadcast".equals(request_action) && (o instanceof Media)){
     		Media m = (Media)o;
-    		for(Articles art : out.getArticles())
-    			art.setThumb_media_id(m.getMedia_id());
+    		for(Articles art : out.getArticles()){
+    			if(m.getMedia_id()!=null)
+    				art.setThumb_media_id(m.getMedia_id());
+    			else if(m.getThumb_media_id()!=null)
+    				art.setThumb_media_id(m.getThumb_media_id());
+    			art.setType(null);
+    		}
     		
     		OutMessage out_ = new OutMessage();
     		out_.setArticles(out.getArticles());
     		out.setArticles(null);
-    		request = RequestFactory.createBroadcastRequest(this, this.app.getAccess_token(), out_.toJson());
+    		request = RequestFactory.createNewsUploadRequest(this, this.app.getAccess_token(), out_.toJson());
     		request.setHandler(out);
    	        request.setAttribute(RequestCallback, msg_re);
    	        request.setAttribute(RequestAction, "UploadArticles");
    	        addHandlerObject(request, Media.class);
    	        logger.info("out:" + out_.toJson());
-   	        ThreadManager.instance().execute(request);
+   	        execute(request);
     	}else if("UploadArticles".equals(request_action) && (o instanceof Media)){
+    		BroadcastMessage out_ = (BroadcastMessage)out;
     		Media m = (Media)o;
        	    Mpnews mp      = new Mpnews();
        	    mp.setMedia_id(m.getMedia_id());
-       	    out.setMpnews(mp);
+       	    out_.setMpnews(mp);
        	    
-       	    List<Group> group_list = Group.getGroups();
-       	    if(group_list!=null){
-       		    GroupFilter gf = new GroupFilter(true,group_list);
-       		    out.setFilter(gf);
-       		    msg_re.setContent(out.toJson());
-       		    logger.info("out:" + out.toJson());
-    		    msg_re.setContent(out.toJson());
-    		    ThreadManager.instance().execute(msg_re);
-       	    }else{
-       	    	request = RequestFactory.createGetGroupsReqeust(this,this.app.getAccess_token());
-       	        request.setHandler(out);
-       	        request.setAttribute(RequestCallback, msg_re);
-       	        request.setAttribute(RequestAction, "GetGroups");
-       	        addHandlerObject(request, Group.class);
-       	        ThreadManager.instance().execute(request);
-       	    }
+//       	    List<Group> group_list = Group.getGroups();
+//       	    if(group_list!=null){
+       		    GroupFilter gf = new GroupFilter(true,null);
+       		    out_.setFilter(gf);
+       		    msg_re.setContent(out_.toJson());
+       		    logger.info("out:" + out_.toJson());
+    		    msg_re.setContent(out_.toJson());
+    		    execute(msg_re);
+//       	    }else{
+//       	    	request = RequestFactory.createGetGroupsReqeust(this,this.app.getAccess_token());
+//       	        request.setHandler(out);
+//       	        request.setAttribute(RequestCallback, msg_re);
+//       	        request.setAttribute(RequestAction, "GetGroups");
+//       	        addHandlerObject(request, Group.class);
+//       	        execute(request);
+//       	    }
     	}else if("GetGroups".equals(request_action) && (o instanceof Group)){
-    		 List<Group> group_list = Group.getGroups();
-        	 if(group_list!=null){
-        		 GroupFilter gf = new GroupFilter(true,group_list);
-        		 out.setFilter(gf);
-        		 msg_re.setContent(out.toJson());
-        		 logger.info("out:" + out.toJson());
-	     		 msg_re.setContent(out.toJson());
-	     		 ThreadManager.instance().execute(msg_re);
-        	 }else{
-        		 if(msg_re.getListener()!=null)
-        	    	msg_re.getListener().onSuccessful(msg_re, new StringBuilder(new Error("GetGroups fail",-1).toJson()));
-        	 }
+//    		 BroadcastMessage out_ = (BroadcastMessage)out;
+//    		 List<Group> group_list = Group.getGroups();
+//        	 if(group_list!=null){
+//        		 GroupFilter gf = new GroupFilter(true,group_list);
+//        		 out_.setFilter(gf);
+//        		 msg_re.setContent(out_.toJson());
+//        		 logger.info("out:" + out_.toJson());
+//	     		 msg_re.setContent(out_.toJson());
+//	     		 execute(msg_re);
+//        	 }else{
+//        		 if(msg_re.getListener()!=null)
+//        	    	msg_re.getListener().onSuccessful(msg_re, new StringBuilder(new Error("GetGroups fail",-1).toJson()));
+//        	 }
     	}
     }
   }
@@ -469,19 +585,33 @@ public class WechatSession extends ResponseHandler
       return hs.toLowerCase();  
   }
 
-  public MediaManager getMediaManager() {
-	return mediaManager;
+  public void execute(HttpRequest request) {
+	// TODO Auto-generated method stub
+	  logger.info("out:"+request.getContent());
+	  ThreadManager.instance().execute(request);
   }
 
-  public void setMediaManager(MediaManager mediaManager) {
-	this.mediaManager = mediaManager;
-  }
+public UserManager getUserManager() {
+	return userManager;
+}
 
-  public MsgManager getMsgManager() {
+public void setUserManager(UserManager userManager) {
+	this.userManager = userManager;
+}
+
+public MsgManager getMsgManager() {
 	return msgManager;
-  }
+}
 
-  public void setMsgManager(MsgManager msgManager) {
+public void setMsgManager(MsgManager msgManager) {
 	this.msgManager = msgManager;
-  } 
+}
+
+public MediaManager getMediaManager() {
+	return mediaManager;
+}
+
+public void setMediaManager(MediaManager mediaManager) {
+	this.mediaManager = mediaManager;
+} 
 }

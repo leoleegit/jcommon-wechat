@@ -38,6 +38,14 @@ public class RequestFactory
     url = JsonUtils.toRequestURL(url, keys, values);
     return new FileRequest(url, "POST", listener, file);
   }
+  
+  public static HttpRequest createVideoUploadRequest(HttpListener listener, String access_token, File file, String type){
+	    String url = "https://file.api.weixin.qq.com/cgi-bin/media/uploadvideo";
+	    String[] keys = { "access_token", "type" };
+	    String[] values = { access_token, type };
+	    url = JsonUtils.toRequestURL(url, keys, values);
+	    return new FileRequest(url, "POST", listener, file);
+  }
 
   public static HttpRequest createMediaDownloaddRequest(HttpListener listener, String access_token, String media_id, File file) {
     String url = api_url+ "/media/get";
@@ -55,8 +63,16 @@ public class RequestFactory
     return new HttpRequest(url, content, "POST", listener, true);
   }
   
-  public static HttpRequest createBroadcastRequest(HttpListener listener, String access_token, String content){
+  public static HttpRequest createNewsUploadRequest(HttpListener listener, String access_token, String content){
 	    String url = api_url+ "/media/uploadnews";
+	    String[] keys = { "access_token" };
+	    String[] values = { access_token };
+	    url = JsonUtils.toRequestURL(url, keys, values);
+	    return new HttpRequest(url, content, "POST", listener, true);
+  }
+  
+  public static HttpRequest createBroadcastRequest(HttpListener listener, String access_token, String content){
+	    String url = api_url+ "/message/mass/send";
 	    String[] keys = { "access_token" };
 	    String[] values = { access_token };
 	    url = JsonUtils.toRequestURL(url, keys, values);
