@@ -11,6 +11,7 @@ import org.jcommon.com.wechat.data.Error;
 import org.jcommon.com.wechat.data.InMessage;
 import org.jcommon.com.wechat.data.Media;
 import org.jcommon.com.wechat.data.OutMessage;
+import org.jcommon.com.wechat.utils.ErrorType;
 
 public class MediaManager extends ResponseHandler{
 	private Logger logger = Logger.getLogger(this.getClass());
@@ -23,7 +24,7 @@ public class MediaManager extends ResponseHandler{
     	this.app = session.getApp();
     }
     
-    public FileRequest uploadMedia(RequestCallback callback, OutMessage message){
+    public FileRequest uploadMedia(OutMessage message){
     	Media media = message.getMedia();
     	if(media==null){
     		return null;
@@ -67,6 +68,9 @@ public class MediaManager extends ResponseHandler{
 		        h.setMedia(m);
 		        session.onMessage(h); 
 		    }
+		}else if("sendMediaMsg".equals(request_action)){
+			HttpRequest msg_re = (HttpRequest) request.getAttibute(WechatSession.RequestCallback);
+			msg_re.getListener().onSuccessful(msg_re, new StringBuilder(error.toJson()));
 		}
 	}
 
@@ -77,7 +81,7 @@ public class MediaManager extends ResponseHandler{
 		String request_action = (String) request.getAttibute(WechatSession.RequestAction);
 		if("onMessage".equals(request_action)){
 			Object handle = request.getHandler();
-			InMessage h = (InMessage)handle;
+			InMessage msg = (InMessage)handle;
 			Media m = null;
 			if ((request instanceof FileRequest)) {
 		        m = new Media();
@@ -86,10 +90,17 @@ public class MediaManager extends ResponseHandler{
 		        m.setContent_type(re.getContent_type());
 		        m.setMedia(re.getFile());
 		        
-		        h.setMedia(m);
-		        session.onMessage(h);
-		        
+		        msg.setMedia(m);
+		        session.onMessage(msg);   
 		    }
+		}else if("sendMediaMsg".equals(request_action)){
+			Object handle  = request.getHandler();
+			OutMessage msg = (OutMessage)handle;
+			HttpRequest msg_re = (HttpRequest) request.getAttibute(WechatSession.RequestCallback);
+			Media m = (Media)o;
+			msg.getMedia().setMedia_id(m.getMedia_id());
+			msg_re.setContent(msg.toJson());
+			session.execute(msg_re);
 		}
 		
 		

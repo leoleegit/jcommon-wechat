@@ -26,8 +26,7 @@ public class Articles extends Media
   private String digest;
   private int show_cover_pic = 1; // 1 or 0
 
-  public Articles(String title, String description, String url, String picurl)
-  {
+  public Articles(String title, String description, String url, String picurl){
     this.title = title;
     this.description = description;
     setUrl(url);

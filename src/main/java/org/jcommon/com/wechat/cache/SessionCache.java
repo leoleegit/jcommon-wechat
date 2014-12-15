@@ -40,6 +40,12 @@ public class SessionCache extends MapStore
     if (super.hasKey(key))
       super.removeOne(key);
   }
+  
+  public boolean updateWechatSession(WechatSession session){
+	  if (session == null) return false;
+	  String key = session.getWechatID();
+	  return super.updateOne(key, session);
+  }
 
   public WechatSession getWechatSession(String key)
   {

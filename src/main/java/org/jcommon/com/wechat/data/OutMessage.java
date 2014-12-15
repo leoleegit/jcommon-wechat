@@ -16,8 +16,7 @@ import java.util.List;
 
 import org.jcommon.com.wechat.utils.MsgType;
 
-public class OutMessage extends JsonObject{
-  private Filter filter;	
+public class OutMessage extends JsonObject{	
   private String touser;
   private String msgtype;
   private Text text;
@@ -111,14 +110,6 @@ public class OutMessage extends JsonObject{
 
   public Mpnews getMpnews() {
 	return mpnews;
-  }
-
-  public void setFilter(Filter filter) {
-	this.filter = filter;
-  }
-
-  public Filter getFilter() {
-	return filter;
   }
 
   public void setArticles(List<Articles> articles) {

@@ -63,7 +63,7 @@ public abstract class ResponseHandler extends MapStore
         onError(reqeust, error);
         return;
       }
-      if (JsonObject.class.isAssignableFrom(type)){
+      if (type!=null && JsonObject.class.isAssignableFrom(type)){
         try {
           Object args = newInstance(type, result);
           onOk(reqeust, args);

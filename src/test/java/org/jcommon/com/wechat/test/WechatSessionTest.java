@@ -30,8 +30,8 @@ public class WechatSessionTest extends Monitor
 ////    System.setProperty(WechatSession.WECHATMEDIAPATH, path);
 ////    System.setProperty(WechatSession.WECHATMEDIAURL, "media");
 //    
-    newWechatSession("wx9b84c7e1c33a29c7","9cb43ce5e72ea14fefe77e1ae7760fbd","spotlight-wechat",
-    		"gh_ed5dd6bc3c51");
+//    newWechatSession("wx9b84c7e1c33a29c7","9cb43ce5e72ea14fefe77e1ae7760fbd","spotlight-wechat",
+//    		"gh_ed5dd6bc3c51");
   }
 
   public void initOperation()

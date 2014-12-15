@@ -119,7 +119,7 @@ public class JsonObject
     StringBuilder sb = new StringBuilder();
     sb.append("[");
     for (Iterator<?> i$ = list.iterator(); i$.hasNext(); ) { Object o = i$.next();
-      sb.append(toJson((JsonObject)o)).append(",");
+      sb.append(((JsonObject)o).toJson()).append(",");
     }
 
     if (sb.lastIndexOf(",") == sb.length() - 1)

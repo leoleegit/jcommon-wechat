@@ -98,6 +98,10 @@ public class UserManager extends ResponseHandler implements SystemListener{
 		}
 	}
 	
+	public List<OpenID> getAllUsers(){
+		return openids;
+	}
+	
 	public void loadUsers(String next_openid){
 		HttpRequest request = RequestFactory.createGetUsersReqeust(this, app.getAccess_token(), next_openid);
 	    addHandlerObject(request, User.class);
@@ -124,6 +128,7 @@ public class UserManager extends ResponseHandler implements SystemListener{
 		load_groups = null;
 		HttpRequest request = RequestFactory.createGetGroupsReqeust(this,this.app.getAccess_token());
 		request.setAttribute(WechatSession.RequestAction, "loadGroups");
+		addHandlerObject(request,Group.class);
 		session.execute(request);
 	}
 	
@@ -185,10 +190,17 @@ public class UserManager extends ResponseHandler implements SystemListener{
 		logger.info(paramObject);
 		String request_action = (String) request.getAttibute(WechatSession.RequestAction);
 		if("loadGroups".equals(request_action)){
-			groups = Group.getGroups(paramObject.toString());
+			if(paramObject instanceof Group){
+				groups = ((Group)paramObject).getGroups();
+			}else{
+				logger.warn("class can't map Group:"+paramObject);
+			}
+			
 		}else if("loadUsers".equals(request_action)){
 			if(paramObject instanceof User){
 				User user = (User)paramObject;
+				if(user.getCount()==0)
+					return;
 				String next_openid = user.getNext_openid();
 				this.setCount(user.getCount());
 				this.setTotal(user.getTotal());

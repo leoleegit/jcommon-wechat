@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.jcommon.com.util.Json2Object;
+import org.jcommon.com.util.JsonUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -47,11 +48,13 @@ public class User extends JsonObject{
 	        	jsonObject = new JSONObject(json);
 	        	total = jsonObject.has("total")?jsonObject.getLong("total"):0;
 	        	count = jsonObject.has("count")?jsonObject.getLong("count"):0;
+	        	if(count==0)
+	        		return;
 	        	next_openid = jsonObject.has("next_openid")?jsonObject.getString("next_openid"):null;
 	        	json = jsonObject.has("data")?jsonObject.getString("data"):null;
 	        	
 	        	openids = new ArrayList<OpenID>();
-	            jsonObject = new JSONObject(json);
+	            jsonObject = JsonUtils.getJSONObject(json);
 	            if(jsonObject!=null){
 	            	String openids = jsonObject.has("openid")?jsonObject.getString("openid"):null;
 	            	if(openids.startsWith("["))

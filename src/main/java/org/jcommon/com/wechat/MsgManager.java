@@ -1,23 +1,11 @@
 package org.jcommon.com.wechat;
 
-import java.util.List;
-
 import org.apache.log4j.Logger;
-import org.jcommon.com.util.http.FileRequest;
 import org.jcommon.com.util.http.HttpRequest;
-import org.jcommon.com.util.thread.ThreadManager;
 import org.jcommon.com.wechat.data.App;
-import org.jcommon.com.wechat.data.Articles;
 import org.jcommon.com.wechat.data.Error;
-import org.jcommon.com.wechat.data.Image;
-import org.jcommon.com.wechat.data.Music;
-import org.jcommon.com.wechat.data.News;
+import org.jcommon.com.wechat.data.Media;
 import org.jcommon.com.wechat.data.OutMessage;
-import org.jcommon.com.wechat.data.Text;
-import org.jcommon.com.wechat.data.Video;
-import org.jcommon.com.wechat.data.Voice;
-import org.jcommon.com.wechat.utils.ErrorType;
-import org.jcommon.com.wechat.utils.MsgType;
 
 public class MsgManager extends ResponseHandler{
     private Logger logger = Logger.getLogger(this.getClass());
@@ -36,36 +24,47 @@ public class MsgManager extends ResponseHandler{
         return msg_re;
     }
     
-    public HttpRequest sendImage(RequestCallback callback, OutMessage msg) {
-    	HttpRequest msg_re = getMsgRequest(callback, msg);
-    	//session.execute(msg_re);
-        return msg_re;
-    }
-
-    public HttpRequest sendMusic(RequestCallback callback, OutMessage msg) {
-    	HttpRequest msg_re = getMsgRequest(callback, msg);
-    	//session.execute(msg_re);
-        return msg_re;
-    }
-
-    public HttpRequest sendVideo(RequestCallback callback, OutMessage msg) {
-    	HttpRequest msg_re = getMsgRequest(callback, msg);
-    	//session.execute(msg_re);
-        return msg_re;
-    }
-
-    public HttpRequest sendVoice(RequestCallback callback, OutMessage msg) {
-    	HttpRequest msg_re = getMsgRequest(callback, msg);
-    	//session.execute(msg_re);
+    public HttpRequest sendNews(RequestCallback callback, OutMessage msg) {
+        HttpRequest msg_re = getMsgRequest(callback, msg);
+        session.execute(msg_re);
         return msg_re;
     }
     
-    private HttpRequest getMsgRequest(RequestCallback callback, OutMessage msg){
-    	if (this.session.getApp() == null) {
+    public HttpRequest sendMediaMsg(RequestCallback callback, OutMessage msg){
+    	Media media = msg.getMedia();
+    	if(media==null){
+    		return null;
+    	}
+    	if(media.getMedia_id()!=null){
+    		HttpRequest msg_re = getMsgRequest(callback, msg);
+        	session.execute(msg_re);
+            return msg_re;
+    	}
+    	return null;
+    }
+    
+    
+    public HttpRequest broadcastText(RequestCallback callback, OutMessage msg){
+    	HttpRequest msg_re = getBroadcastRequest(callback, msg);
+        session.execute(msg_re);
+        return msg_re;
+    }
+    
+    public HttpRequest getMsgRequest(RequestCallback callback, OutMessage msg){
+    	if (app == null) {
     		this.logger.warn("app can't be null!");
     		return null;
     	}
-    	HttpRequest request = RequestFactory.createMsgReqeust(callback, session.getApp().getAccess_token(), msg.toJson());
+    	HttpRequest request = RequestFactory.createMsgReqeust(callback, app.getAccess_token(), msg.toJson());
+    	return request;
+    }
+    
+    public HttpRequest getBroadcastRequest(RequestCallback callback, OutMessage msg){
+    	if (app == null) {
+    		this.logger.warn("app can't be null!");
+    		return null;
+    	}
+    	HttpRequest request = RequestFactory.createBroadcastRequest(callback, app.getAccess_token(), msg.toJson());
     	return request;
     }
     

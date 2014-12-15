@@ -14,9 +14,11 @@ public class Group extends JsonObject{
 	private String id;
 	private String name;
 	private long count;
+	private List<Group> groups;
 	
 	public Group(String json){
 		super(json);
+		groups = getGroups(json);
 	}
 	
 	public static List<Group> getGroups(String json){
@@ -74,5 +76,13 @@ public class Group extends JsonObject{
 
 	public void setCount(long count) {
 		this.count = count;
+	}
+
+	public void setGroups(List<Group> groups) {
+		this.groups = groups;
+	}
+
+	public List<Group> getGroups() {
+		return groups;
 	}
 }

@@ -1,6 +1,8 @@
-package org.jcommon.com.wechat.data;
+package org.jcommon.com.wechat.data.filter;
 
 import java.util.List;
+
+import org.jcommon.com.wechat.data.Group;
 
 public class GroupFilter extends Filter{
 	private boolean is_to_all;

@@ -131,10 +131,6 @@ public class WechatSessionManager extends Monitor
     super.addProperties(key, value);
   }
 
-  public void updateStatus(WechatSession session) {
-    addSessioin(session);
-  }
-
   private void removeSessioin(WechatSession session) {
     if (session == null)
       return;
@@ -166,6 +162,8 @@ public class WechatSessionManager extends Monitor
 
   public boolean updateOne(Object key, Object value)
   {
+	if (value == null) return false;
+	  addSessioin((WechatSession)value);
     return false;
   }
 
