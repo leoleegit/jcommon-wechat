@@ -341,7 +341,7 @@ public class WechatSession extends ResponseHandler
   public HttpRequest broadcastImage(RequestCallback callback, Image image, Filter filter) {
 	  BroadcastMessage msg = new BroadcastMessage(MsgType.image, filter);
 	  msg.setImage(image);
-	  HttpRequest msg_re = msgManager.sendMediaMsg(callback, msg);
+	  HttpRequest msg_re = msgManager.broadcastMediaMsg(callback, msg);
       if(msg_re!=null)
       	return msg_re;
       
@@ -359,7 +359,7 @@ public class WechatSession extends ResponseHandler
   public HttpRequest broadcastVoice(RequestCallback callback, Voice voice, Filter filter) {
 	  BroadcastMessage msg = new BroadcastMessage(MsgType.voice, filter);
       msg.setVoice(voice);
-      HttpRequest msg_re = msgManager.sendMediaMsg(callback, msg);
+      HttpRequest msg_re = msgManager.broadcastMediaMsg(callback, msg);
       if(msg_re!=null)
       	return msg_re;
       
@@ -377,7 +377,7 @@ public class WechatSession extends ResponseHandler
   public HttpRequest broadcastVideo(RequestCallback callback, Video video, Filter filter) {
 	  BroadcastMessage msg = new BroadcastMessage(MsgType.video, filter);
 	  msg.setVideo(video);
-	  HttpRequest msg_re = msgManager.sendMediaMsg(callback, msg);
+	  HttpRequest msg_re = msgManager.broadcastMediaMsg(callback, msg);
       if(msg_re!=null)
       	return msg_re;
       
@@ -392,25 +392,48 @@ public class WechatSession extends ResponseHandler
       return msg_re;
   }
 
-  public HttpRequest broadcastNews(RequestCallback callback, List<Articles> articles)throws Exception {
+  public HttpRequest broadcastNews(RequestCallback callback, Mpnews mpnews, Filter filter)throws Exception {
+	  BroadcastMessage msg = new BroadcastMessage(MsgType.mpnews, filter);
+	  msg.setMpnews(mpnews);
+	  HttpRequest msg_re = msgManager.broadcastMediaMsg(callback, msg);
+      if(msg_re!=null)
+      	return msg_re;
+      
+      msg_re = msgManager.getBroadcastRequest(callback, msg);
+      List<Articles> articles = mpnews.getArticles();
 	  if(articles==null || articles.size() > News.max_size){
 		  throw new Exception("articles is null or exceed the articles max size limit.\nmax size:"+News.max_size);
 	  }
-	  OutMessage msg = new OutMessage(MsgType.mpnews,null);
-	  msg.setArticles(articles);
-	  HttpRequest msg_re = RequestFactory.createBroadcastRequest(callback, this.app.getAccess_token(), msg.toJson());
-	  Articles article = articles.get(0);
-	  if (article.getMedia() != null) {
-	      FileRequest request = (FileRequest)RequestFactory.createMediaUploadRequest(this, this.app.getAccess_token(), article.getMedia(), article.getType());
-
-	      request.setHandler(msg);
-	      request.setAttribute(RequestCallback, msg_re);
-	      request.setAttribute(RequestAction, "sendBroadcast");
-	      addHandlerObject(request, Media.class);
-	      execute(request);
-	  }else{
-	      callback.onSuccessful(msg_re, new StringBuilder(new Error(ErrorType.error_3).toJson()));
+	  
+	  boolean articles_ready = true;
+	  for(Articles art : articles){
+		  if(art.getMedia_id()==null){
+			  articles_ready = false;
+			  break;
+		  }	  
 	  }
+	  
+	  if(articles_ready){
+		  HttpRequest request = mediaManager.uploadMedia(msg);
+          request.setAttribute(RequestCallback, msg_re);
+          request.setAttribute(RequestAction, "sendMediaMsg");
+	  }
+	  
+//	  OutMessage msg = new OutMessage(MsgType.mpnews,null);
+//	  msg.setArticles(articles);
+//	  HttpRequest msg_re = RequestFactory.createBroadcastRequest(callback, this.app.getAccess_token(), msg.toJson());
+//	  Articles article = articles.get(0);
+//	  if (article.getMedia() != null) {
+//	      FileRequest request = (FileRequest)RequestFactory.createMediaUploadRequest(this, this.app.getAccess_token(), article.getMedia(), article.getType());
+//
+//	      request.setHandler(msg);
+//	      request.setAttribute(RequestCallback, msg_re);
+//	      request.setAttribute(RequestAction, "sendBroadcast");
+//	      addHandlerObject(request, Media.class);
+//	      execute(request);
+//	  }else{
+//	      callback.onSuccessful(msg_re, new StringBuilder(new Error(ErrorType.error_3).toJson()));
+//	  }
 	  return msg_re;
   }
   

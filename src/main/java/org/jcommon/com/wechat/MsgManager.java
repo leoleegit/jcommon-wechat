@@ -1,6 +1,9 @@
 package org.jcommon.com.wechat;
 
+import java.io.File;
+
 import org.apache.log4j.Logger;
+import org.jcommon.com.util.http.FileRequest;
 import org.jcommon.com.util.http.HttpRequest;
 import org.jcommon.com.wechat.data.App;
 import org.jcommon.com.wechat.data.Error;
@@ -43,11 +46,37 @@ public class MsgManager extends ResponseHandler{
     	return null;
     }
     
+    public HttpRequest broadcastMediaMsg(RequestCallback callback, OutMessage msg){
+    	Media media = msg.getMedia();
+    	if(media==null){
+    		return null;
+    	}
+    	if(media.getMedia_id()!=null){
+    		HttpRequest msg_re = getBroadcastRequest(callback, msg);
+        	session.execute(msg_re);
+            return msg_re;
+    	}
+    	return null;
+    }
+    
     
     public HttpRequest broadcastText(RequestCallback callback, OutMessage msg){
     	HttpRequest msg_re = getBroadcastRequest(callback, msg);
         session.execute(msg_re);
         return msg_re;
+    }
+    
+    public FileRequest uploadNews(OutMessage message){
+    	Media media = message.getMedia();
+    	if(media==null){
+    		return null;
+    	}
+    	
+    	FileRequest request = (FileRequest)RequestFactory.createNewsUploadRequest(this, app.getAccess_token(), message.toJson());
+    	request.setHandler(message);
+        addHandlerObject(request, Media.class);
+        session.execute(request);
+        return request;
     }
     
     public HttpRequest getMsgRequest(RequestCallback callback, OutMessage msg){
