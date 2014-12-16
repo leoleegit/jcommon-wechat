@@ -18,6 +18,7 @@ import java.security.NoSuchAlgorithmException;
 import org.jcommon.com.wechat.WechatSession;
 import org.jcommon.com.wechat.WechatSessionManager;
 import org.jcommon.com.wechat.utils.MD5;
+import org.jcommon.com.wechat.utils.MsgType;
 
 public class Media extends JsonObject{
   private String media_id;
@@ -41,6 +42,11 @@ public class Media extends JsonObject{
     super(data);
   }
 
+  public Media(File media,String type){
+	  this.media = media;
+	  this.type  = type;
+  }
+  
   public Media(){
   }
 
@@ -112,10 +118,27 @@ public class Media extends JsonObject{
 
   public void setThumb_media_id(String thumb_media_id) {
 	this.thumb_media_id = thumb_media_id;
-	setMedia_id(thumb_media_id);
+	//setMedia_id(thumb_media_id);
   }
 
   public String getThumb_media_id() {
 	return thumb_media_id;
+  }
+  
+  public static Media getMedia(Media media){
+	  MsgType type = MsgType.getType(media.getType());
+	  File file    = media.getMedia();
+	  if(type == MsgType.image)
+		  media = new Image();
+	  else if(type == MsgType.voice)
+		  media = new Voice();
+	  else if(type == MsgType.video)
+		  media = new Video();
+	  else if(type == MsgType.mpnews)
+		  media = new Mpnews();
+	  else if(type == MsgType.thumb)
+		  media = new Thumb();
+	  media.setMedia(file);
+	  return media;
   }
 }

@@ -1,21 +1,24 @@
 package org.jcommon.com.wechat;
 
 import java.io.File;
+import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.jcommon.com.util.http.FileRequest;
 import org.jcommon.com.util.http.HttpRequest;
-import org.jcommon.com.util.thread.ThreadManager;
 import org.jcommon.com.wechat.data.App;
 import org.jcommon.com.wechat.data.Error;
 import org.jcommon.com.wechat.data.InMessage;
 import org.jcommon.com.wechat.data.Media;
 import org.jcommon.com.wechat.data.OutMessage;
-import org.jcommon.com.wechat.utils.ErrorType;
+import org.jcommon.com.wechat.utils.MsgType;
 
 public class MediaManager extends ResponseHandler{
 	private Logger logger = Logger.getLogger(this.getClass());
     
+	public final static String  MEDIA = "MEDIA";
+	public final static String  MULTIMEDIA   = "MULTIMEDIA";
+	  
     private WechatSession session;
     private App app;
     
@@ -30,6 +33,9 @@ public class MediaManager extends ResponseHandler{
     		return null;
     	}
     	
+    	if(media.getMedia_id()!=null || media.getThumb_media_id()!=null)
+    		return null;
+    	
     	File file   = media.getMedia();
     	String type = media.getType();
     	
@@ -38,6 +44,24 @@ public class MediaManager extends ResponseHandler{
         addHandlerObject(request, Media.class);
         session.execute(request);
         return request;
+    }
+    
+    public FileRequest uploadMultiMedia(List<?> medias){
+    	for(Object o : medias){
+    		Media media = (Media) o;
+    		OutMessage out = new OutMessage(MsgType.getType(media.getType()),null);
+    		Media copy = Media.getMedia(media);
+    		copy.setMedia_id(media.getMedia_id());
+    		copy.setThumb_media_id(media.getThumb_media_id());
+    		out.setMedia(copy);
+    		FileRequest request = uploadMedia(out);
+    		if(request!=null){
+    			request.setAttribute(MEDIA, media);
+        		request.setAttribute(MULTIMEDIA, medias);
+        		return request;
+    		}
+    	}
+        return null;
     }
     
     public HttpRequest downloadMedia(InMessage message){
@@ -70,7 +94,8 @@ public class MediaManager extends ResponseHandler{
 		    }
 		}else if("sendMediaMsg".equals(request_action)){
 			HttpRequest msg_re = (HttpRequest) request.getAttibute(WechatSession.RequestCallback);
-			msg_re.getListener().onSuccessful(msg_re, new StringBuilder(error.toJson()));
+			if(msg_re.getListener()!=null)
+				msg_re.getListener().onSuccessful(msg_re, new StringBuilder(error.toJson()));
 		}
 	}
 
@@ -98,70 +123,33 @@ public class MediaManager extends ResponseHandler{
 			OutMessage msg = (OutMessage)handle;
 			HttpRequest msg_re = (HttpRequest) request.getAttibute(WechatSession.RequestCallback);
 			Media m = (Media)o;
-			msg.getMedia().setMedia_id(m.getMedia_id());
+			if(m.getMedia_id()!=null)
+				msg.getMedia().setMedia_id(m.getMedia_id());
+			else if(m.getThumb_media_id()!=null)
+				msg.getMedia().setThumb_media_id(m.getThumb_media_id());
 			msg_re.setContent(msg.toJson());
 			session.execute(msg_re);
+		}else if("uploadMultiMedia".equals(request_action)){
+			Media media = (Media) request.getAttibute(MEDIA);
+			List<?> medias = (List<?>) request.getAttibute(MULTIMEDIA);
+			Media m = (Media)o;
+			if(m.getMedia_id()!=null)
+				media.setMedia_id(m.getMedia_id());
+			else if(m.getThumb_media_id()!=null)
+				media.setThumb_media_id(m.getThumb_media_id());
+			Object handle  = request.getHandler();
+			OutMessage msg = (OutMessage)handle;
+			HttpRequest msg_re = (HttpRequest) request.getAttibute(WechatSession.RequestCallback);
+			
+			HttpRequest request_ = uploadMultiMedia(medias);
+			if(request_!=null){
+				request_.setHandler(msg);
+		        request_.setAttribute(WechatSession.RequestCallback, msg_re);
+		        request_.setAttribute(WechatSession.RequestAction, "uploadMultiMedia");
+	        }else{
+	        	session.onOk(request, medias);
+	        }
 		}
-		
-		
-		
-//		
-//		Object handle = request.getHandler();
-//		
-//		if ((handle instanceof InMessage)) {
-//			
-//	    } else if ((handle instanceof OutMessage)){
-//	    	OutMessage out = (OutMessage)handle;
-//	    	HttpRequest msg_re = (HttpRequest) request.getAttibute(WechatSession.RequestCallback);
-//	    	String request_action = (String) request.getAttibute(WechatSession.RequestAction);
-//	    	
-//	    	if(("sendVoice".equals(request_action) ||
-//	    			"sendImage".equals(request_action)||
-//	    			"sendVideo".equals(request_action)) && (o instanceof Media)){
-//	    		Media m = (Media)o;
-//	    		out.getImage().setMedia_id(m.getMedia_id());
-//	    		logger.info("out:" + out.toJson());
-//	    		msg_re.setContent(out.toJson());
-//	    		ThreadManager.instance().execute(msg_re);
-//	    	}else if("sendBroadcast".equals(request_action) && (o instanceof Media)){
-//	    		Media m = (Media)o;
-//	    		for(Articles art : out.getArticles())
-//	    			art.setThumb_media_id(m.getMedia_id());
-//	    		
-//	    		OutMessage out_ = new OutMessage();
-//	    		out_.setArticles(out.getArticles());
-//	    		out.setArticles(null);
-//	    		request = RequestFactory.createBroadcastRequest(this, session.getApp().getAccess_token(), out_.toJson());
-//	    		request.setHandler(out);
-//	   	        request.setAttribute(WechatSession.RequestCallback, msg_re);
-//	   	        request.setAttribute(WechatSession.RequestAction, "UploadArticles");
-//	   	        addHandlerObject(request, Media.class);
-//	   	        logger.info("out:" + out_.toJson());
-//	   	        ThreadManager.instance().execute(request);
-//	    	}else if("UploadArticles".equals(request_action) && (o instanceof Media)){
-//	    		Media m = (Media)o;
-//	       	    Mpnews mp      = new Mpnews();
-//	       	    mp.setMedia_id(m.getMedia_id());
-//	       	    out.setMpnews(mp);
-//	       	    
-////	       	    List<Group> group_list = Group.getGroups();
-////	       	    if(group_list!=null){
-////	       		    GroupFilter gf = new GroupFilter(true,group_list);
-////	       		    out.setFilter(gf);
-////	       		    msg_re.setContent(out.toJson());
-////	       		    logger.info("out:" + out.toJson());
-////	    		    msg_re.setContent(out.toJson());
-////	    		    ThreadManager.instance().execute(msg_re);
-////	       	    }else{
-////	       	    	request = RequestFactory.createGetGroupsReqeust(this,session.getApp().getAccess_token());
-////	       	        request.setHandler(out);
-////	       	        request.setAttribute(WechatSession.RequestCallback, msg_re);
-////	       	        request.setAttribute(WechatSession.RequestAction, "GetGroups");
-////	       	        addHandlerObject(request, Group.class);
-////	       	        ThreadManager.instance().execute(request);
-////	       	    }
-//	    	}
-//	    }
 	}
 
 	public WechatSession getSession() {

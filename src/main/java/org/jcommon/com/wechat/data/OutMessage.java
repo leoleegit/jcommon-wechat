@@ -26,6 +26,7 @@ public class OutMessage extends JsonObject{
   private Music music;
   private News news;
   private Mpnews mpnews;
+  private Thumb thumb;
   private List<Articles> articles;
 
   public OutMessage(String data){
@@ -34,7 +35,7 @@ public class OutMessage extends JsonObject{
 
   public OutMessage(MsgType type, String touser) {
     this.touser = touser;
-    this.msgtype = type.toString();
+    this.msgtype = type!=null?type.toString():null;
   }
   
   public OutMessage() {
@@ -119,6 +120,28 @@ public class OutMessage extends JsonObject{
   public List<Articles> getArticles() {
 	return articles;
   }
+
+  public void setThumb(Thumb thumb) {
+  	this.thumb = thumb;
+  }
+
+  public Thumb getThumb() {
+  	return thumb;
+  }
+  
+  public void setMedia(Media media){
+	  MsgType type = MsgType.getType(media.getType());
+	  if(type == MsgType.image)
+		  image = (Image) media;
+	  else if(type == MsgType.voice)
+		  voice = (Voice) media;
+	  else if(type == MsgType.video)
+		  video = (Video) media;
+	  else if(type == MsgType.mpnews)
+		  mpnews = (Mpnews) media;
+	  else if(type == MsgType.thumb)
+		  thumb = (Thumb) media;
+  }
   
   public Media getMedia() {
 	  Media media = null;
@@ -131,6 +154,8 @@ public class OutMessage extends JsonObject{
 		  media = video;
 	  else if(type == MsgType.mpnews)
 		  media = mpnews;
+	  else if(type == MsgType.thumb)
+		  media = thumb;
 	  return media;
   }
 }

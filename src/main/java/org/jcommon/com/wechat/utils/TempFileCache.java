@@ -65,8 +65,7 @@ public class TempFileCache
       logger.info("cache path:"+temp.getAbsolutePath());
       if (!temp.exists())
         return;
-      @SuppressWarnings("resource")
-	  BufferedReader dr = new BufferedReader(new InputStreamReader(new FileInputStream(temp)));
+      BufferedReader dr = new BufferedReader(new InputStreamReader(new FileInputStream(temp)));
 
       for (String line = dr.readLine(); line != null; line = dr.readLine())
         if (line.indexOf("\t:\t") != -1) {

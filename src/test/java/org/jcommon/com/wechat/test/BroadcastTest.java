@@ -1,6 +1,7 @@
 package org.jcommon.com.wechat.test;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -10,6 +11,7 @@ import org.jcommon.com.wechat.RequestCallback;
 import org.jcommon.com.wechat.WechatSession;
 import org.jcommon.com.wechat.data.App;
 import org.jcommon.com.wechat.data.Articles;
+import org.jcommon.com.wechat.data.Mpnews;
 import org.jcommon.com.wechat.data.OpenID;
 import org.jcommon.com.wechat.data.Text;
 import org.jcommon.com.wechat.data.filter.UserFilter;
@@ -24,9 +26,9 @@ public class BroadcastTest extends TestBase implements RequestCallback{
 
 	/**
 	 * @param args
-	 * @throws InterruptedException 
+	 * @throws Exception 
 	 */
-	public static void main(String[] args) throws InterruptedException {
+	public static void main(String[] args) throws Exception {
 		// TODO Auto-generated method stub
 //		 App app = new App("wx9b84c7e1c33a29c7", "9cb43ce5e72ea14fefe77e1ae7760fbd", "spotlight-wechat");
 //	     WechatSession session = new WechatSession("gh_ed5dd6bc3c51", app, null);
@@ -38,13 +40,16 @@ public class BroadcastTest extends TestBase implements RequestCallback{
 	     Thread.sleep(10000);
 	     
 	     List<OpenID> openids = session.getUserManager().getAllUsers();
-	     session.broadcastText(new BroadcastTest(), new Text("hello broadcast text!"), new UserFilter(openids));
+	     //session.broadcastText(new BroadcastTest(), new Text("hello broadcast text!"), new UserFilter(openids));
 	     
-//	     Articles article = new Articles("Title", "Hello World!","description","http://hbase.apache.org/","author");
-//	     article.setMedia(new File("C:/Users/Administrator/Desktop/cipango-distribution-2.0.0/media/12.jpg"));
-//	     article.setType(MediaType.thumb.toString());
-	    // session.sendBroadcast(new BroadcastTest(), article);
-	      
+	     Articles article = new Articles("Title", "Hello World!","description","http://hbase.apache.org/","author");
+	     article.setMedia(new File("C:/Users/Administrator/Desktop/cipango-distribution-2.0.0/media/12.jpg"));
+	     article.setType(MediaType.thumb.toString());
+	     List<Articles> articles = new ArrayList<Articles>();
+	     articles.add(article);
+	     Mpnews mpnews = new Mpnews();
+	     mpnews.setArticles(articles);
+	     session.broadcastNews(new BroadcastTest(), mpnews, new UserFilter(openids));
 	}
 
 	@Override

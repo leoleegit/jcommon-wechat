@@ -1,9 +1,7 @@
 package org.jcommon.com.wechat;
 
-import java.io.File;
 
 import org.apache.log4j.Logger;
-import org.jcommon.com.util.http.FileRequest;
 import org.jcommon.com.util.http.HttpRequest;
 import org.jcommon.com.wechat.data.App;
 import org.jcommon.com.wechat.data.Error;
@@ -66,14 +64,8 @@ public class MsgManager extends ResponseHandler{
         return msg_re;
     }
     
-    public FileRequest uploadNews(OutMessage message){
-    	Media media = message.getMedia();
-    	if(media==null){
-    		return null;
-    	}
-    	
-    	FileRequest request = (FileRequest)RequestFactory.createNewsUploadRequest(this, app.getAccess_token(), message.toJson());
-    	request.setHandler(message);
+    public HttpRequest uploadNews(OutMessage message){
+    	HttpRequest request = RequestFactory.createNewsUploadRequest(this, app.getAccess_token(), message.toJson());
         addHandlerObject(request, Media.class);
         session.execute(request);
         return request;
@@ -98,15 +90,33 @@ public class MsgManager extends ResponseHandler{
     }
     
 	@Override
-	public void onError(HttpRequest paramHttpRequest, Error paramError) {
+	public void onError(HttpRequest request, Error error) {
 		// TODO Auto-generated method stub
-		
+		logger.warn(error.toJson());
+	    
+		String request_action = (String) request.getAttibute(WechatSession.RequestAction);
+		if("uploadNews".equals(request_action)){
+			HttpRequest msg_re = (HttpRequest) request.getAttibute(WechatSession.RequestCallback);
+			if(msg_re.getListener()!=null)
+				msg_re.getListener().onSuccessful(msg_re, new StringBuilder(error.toJson()));
+		}
 	}
 
 	@Override
-	public void onOk(HttpRequest paramHttpRequest, Object paramObject) {
+	public void onOk(HttpRequest request, Object o) {
 		// TODO Auto-generated method stub
-		
+		logger.info(o);
+		String request_action = (String) request.getAttibute(WechatSession.RequestAction);
+		if("uploadNews".equals(request_action)){
+			Object handle  = request.getHandler();
+			OutMessage msg = (OutMessage)handle;
+			msg.setArticles(null);
+			HttpRequest msg_re = (HttpRequest) request.getAttibute(WechatSession.RequestCallback);
+			Media m = (Media)o;
+			msg.getMedia().setMedia_id(m.getMedia_id());
+			msg_re.setContent(msg.toJson());
+			session.execute(msg_re);
+		}
 	}
 
 	public WechatSession getSession() {
