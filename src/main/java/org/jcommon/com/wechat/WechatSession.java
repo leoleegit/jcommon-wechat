@@ -66,6 +66,7 @@ public class WechatSession extends ResponseHandler
   private MediaManager mediaManager;
   
   private Timer app_keepalive;
+  private boolean startup = false;
 
   public WechatSession(String wechatID, App app, WechatSessionListener listener){
     this.wechatID = wechatID;
@@ -103,8 +104,9 @@ public class WechatSession extends ResponseHandler
 			// TODO Auto-generated method stub
 			if(arg1 == WechatSession.this){
 				App app = WechatSession.this.getApp();
-				if("app is ok:onRunning".equals(app.getStatus())){
+				if("app is ok:onRunning".equals(app.getStatus()) && !startup){
 					userManager.startup();
+					startup = true;
 				}
 			}
 			return false;
@@ -123,6 +125,7 @@ public class WechatSession extends ResponseHandler
       this.app_keepalive = null; } catch (Exception e) {
     }
     userManager.shutdown();
+    startup = false;
     logger.info(wechatID);
   }
 

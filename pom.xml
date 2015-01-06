@@ -4,17 +4,17 @@
 
   <groupId>jcommon</groupId>
   <artifactId>jcommon-wechat</artifactId>
-  <version>1.0-v20141124</version>
+  <version>1.0-v20150106</version>
   
   <name>jcommon-wechat Maven Sipapp</name>
-  <packaging>war</packaging>
+  <packaging>jar</packaging>
   
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
   <build>
-  <finalName>jcommon-wechat</finalName>
+ <finalName>${artifactId}-${version}</finalName>
     <!--  <finalName>jcommon-wechat</finalName>-->
     <!--  <finalName>${artifactId}-${version}</finalName>-->
     <plugins>  

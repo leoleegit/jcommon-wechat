@@ -41,12 +41,18 @@ public class BroadcastTest extends TestBase implements RequestCallback{
 	     
 	     List<OpenID> openids = session.getUserManager().getAllUsers();
 	     //session.broadcastText(new BroadcastTest(), new Text("hello broadcast text!"), new UserFilter(openids));
-	     
-	     Articles article = new Articles("Title", "Hello World!","description","http://hbase.apache.org/","author");
+	     List<Articles> articles = new ArrayList<Articles>();
+	     Articles article = new Articles("Title", "Hello World!","description","http://hbase.apache.org/","protel");
 	     article.setMedia(new File("C:/Users/Administrator/Desktop/cipango-distribution-2.0.0/media/12.jpg"));
 	     article.setType(MediaType.thumb.toString());
-	     List<Articles> articles = new ArrayList<Articles>();
 	     articles.add(article);
+	     
+	     article = new Articles("Title2", "Hello World2!","description2","http://hbase.apache.org/","protel");
+	     article.setMedia(new File("C:/Users/Administrator/Desktop/cipango-distribution-2.0.0/media/12.jpg"));
+	     article.setType(MediaType.thumb.toString());
+	     articles.add(article);
+	    
+	     
 	     Mpnews mpnews = new Mpnews();
 	     mpnews.setArticles(articles);
 	     session.broadcastNews(new BroadcastTest(), mpnews, new UserFilter(openids));
