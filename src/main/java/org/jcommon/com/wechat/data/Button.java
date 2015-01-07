@@ -15,7 +15,6 @@ package org.jcommon.com.wechat.data;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import org.jcommon.com.util.Json2Object;
 import org.jcommon.com.util.JsonUtils;
 import org.jcommon.com.wechat.utils.ButtonType;
 import org.json.JSONException;
@@ -36,12 +35,12 @@ public class Button extends JsonObject
     if (jsonO != null)
       try {
         if (jsonO.has("sub_button")) {
-          List<Object> list = Json2Object.json2Objects(Articles.class, jsonO.getString("sub_button"));
+          List<Object> list = json2Objects(Articles.class, jsonO.getString("sub_button"));
           resetButton(list);
         }
       }
       catch (JSONException e) {
-        Json2Object.logger.error("", e);
+        logger.error("", e);
       }
   }
 

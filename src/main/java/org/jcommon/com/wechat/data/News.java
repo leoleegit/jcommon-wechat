@@ -15,7 +15,6 @@ package org.jcommon.com.wechat.data;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import org.jcommon.com.util.Json2Object;
 import org.jcommon.com.util.JsonUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,12 +32,12 @@ public class News extends JsonObject
     if (jsonO != null)
       try {
         if (jsonO.has("articles")) {
-          List<Object> list = Json2Object.json2Objects(Articles.class, jsonO.getString("articles"));
+          List<Object> list = json2Objects(Articles.class, jsonO.getString("articles"));
           resetArticles(list);
         }
       }
       catch (JSONException e) {
-        Json2Object.logger.error("", e);
+        logger.error("", e);
       }
   }
   

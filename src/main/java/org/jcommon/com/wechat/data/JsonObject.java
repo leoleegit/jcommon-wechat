@@ -17,6 +17,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -24,6 +25,7 @@ import org.apache.log4j.Logger;
 import org.jcommon.com.util.CoderUtils;
 import org.jcommon.com.util.JsonUtils;
 import org.jcommon.com.util.config.ConfigLoader;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -40,6 +42,36 @@ public class JsonObject
   public JsonObject() {
   }
 
+  public static List<Object> json2Objects(Class<?> class_, String data) {
+	    JSONArray arr = JsonUtils.getJSONArray(data);
+	    if ((arr == null) && 
+	      (data != null)) {
+	      arr = new JSONArray();
+	      JSONObject o = JsonUtils.getJSONObject(data);
+	      if (o != null) {
+	        arr.put(o);
+	      }
+	    }
+	    return json2Objects(class_, arr);
+	  }
+	  
+	  public static List<Object> json2Objects(Class<?> class_, JSONArray arr) {
+	    if ((class_ == null) || (arr == null)) return null;
+	    List<Object> list = new ArrayList<Object>();
+
+	    for (int index = 0; index < arr.length(); index++) {
+	      try {
+	        JSONObject jsonO = arr.getJSONObject(index);
+	        Object o = newInstance(class_, jsonO.toString());
+	        list.add(o);
+	      }
+	      catch (JSONException e) {
+	        logger.error("", e);
+	      }
+	    }
+	    return list;
+	  }
+	  
   private void json2Object() {
     if (this.json == null) return;
     json2Object(this, this.json);

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import org.jcommon.com.util.Json2Object;
 import org.jcommon.com.util.JsonUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -26,12 +25,12 @@ public class Group extends JsonObject{
 	    if (jsonO != null)
 	      try {
 	        if (jsonO.has("groups")) {
-	          List<Object> list = Json2Object.json2Objects(Group.class, jsonO.getString("groups"));
+	          List<Object> list = json2Objects(Group.class, jsonO.getString("groups"));
 	          return resetGroups(list);
 	        }
 	      }
 	      catch (JSONException e) {
-	        Json2Object.logger.error("", e);
+	        logger.error("", e);
 	      }
 	    return null;
 	}

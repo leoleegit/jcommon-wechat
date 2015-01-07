@@ -15,7 +15,6 @@ package org.jcommon.com.wechat.data;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jcommon.com.util.Json2Object;
 import org.jcommon.com.util.JsonUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -75,7 +74,7 @@ public class User extends JsonObject{
 	            	}
 	            }
 	        } catch (JSONException e) {
-	        	 Json2Object.logger.error("", e);
+	        	 logger.error("", e);
 	        }
 		}
 	}

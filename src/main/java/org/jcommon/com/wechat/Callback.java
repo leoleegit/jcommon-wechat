@@ -30,7 +30,7 @@ public class Callback extends HttpServlet
 {
   private static final long serialVersionUID = 1L;
   private static Logger logger = Logger.getLogger(Callback.class);
-  public static URL init_file_is = Callback.class.getResource("/wechat-log4j.xml");
+  public static URL init_file_is = null;//Callback.class.getResource("/wechat-log4j.xml");
 
   public void init(ServletConfig config)
     throws ServletException
@@ -90,6 +90,8 @@ public class Callback extends HttpServlet
           logger.info(new StringBuilder().append(key).append("\t:").append(value).toString());
         }
       }
+      
+      response.getWriter().println("");
       String signature = request.getParameter("signature");
       String timestamp = request.getParameter("timestamp");
       String nonce = request.getParameter("nonce");
