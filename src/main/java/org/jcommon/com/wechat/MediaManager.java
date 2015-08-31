@@ -70,7 +70,7 @@ public class MediaManager extends ResponseHandler{
          if(!file.exists()){
          	logger.info(file.getAbsolutePath() + ":" + file.mkdirs());
          }
-         FileRequest request = (FileRequest)RequestFactory.createMediaDownloaddRequest(this, app.getAccess_token(), message.getMediaId(), file);
+         FileRequest request = (FileRequest)RequestFactory.createMediaDownloadRequest(this, app.getAccess_token(), message.getMediaId(), file);
          request.setHandler(message);
          addHandlerObject(request, Media.class);
          session.execute(request);

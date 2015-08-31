@@ -8,7 +8,7 @@ import org.jcommon.com.wechat.data.Error;
 import org.jcommon.com.wechat.data.Media;
 import org.jcommon.com.wechat.data.OutMessage;
 
-public class MsgManager extends ResponseHandler{
+class MsgManager extends ResponseHandler{
     private Logger logger = Logger.getLogger(this.getClass());
     
     private WechatSession session;

@@ -36,7 +36,7 @@ public class RequestFactory
     String[] keys = { "access_token", "type" };
     String[] values = { access_token, type };
     url = JsonUtils.toRequestURL(url, keys, values);
-    return new FileRequest(url, "POST", listener, file);
+    return new FileRequest(url, HttpRequest.POST, listener, file);
   }
   
   public static HttpRequest createVideoUploadRequest(HttpListener listener, String access_token, File file, String type){
@@ -44,15 +44,15 @@ public class RequestFactory
 	    String[] keys = { "access_token", "type" };
 	    String[] values = { access_token, type };
 	    url = JsonUtils.toRequestURL(url, keys, values);
-	    return new FileRequest(url, "POST", listener, file);
+	    return new FileRequest(url, HttpRequest.POST, listener, file);
   }
 
-  public static HttpRequest createMediaDownloaddRequest(HttpListener listener, String access_token, String media_id, File file) {
+  public static HttpRequest createMediaDownloadRequest(HttpListener listener, String access_token, String media_id, File file) {
     String url = api_url+ "/media/get";
     String[] keys = { "access_token", "media_id" };
     String[] values = { access_token, media_id };
     url = JsonUtils.toRequestURL(url, keys, values);
-    return new FileRequest(url, "GET", listener, file);
+    return new FileRequest(url, HttpRequest.GET, listener, file);
   }
 
   public static HttpRequest createMsgReqeust(HttpListener listener, String access_token, String content) {
@@ -60,7 +60,7 @@ public class RequestFactory
     String[] keys = { "access_token" };
     String[] values = { access_token };
     url = JsonUtils.toRequestURL(url, keys, values);
-    return new HttpRequest(url, content, "POST", listener, true);
+    return new HttpRequest(url, content, HttpRequest.POST, listener, true);
   }
   
   public static HttpRequest createNewsUploadRequest(HttpListener listener, String access_token, String content){
@@ -68,7 +68,7 @@ public class RequestFactory
 	    String[] keys = { "access_token" };
 	    String[] values = { access_token };
 	    url = JsonUtils.toRequestURL(url, keys, values);
-	    return new HttpRequest(url, content, "POST", listener, true);
+	    return new HttpRequest(url, content, HttpRequest.POST, listener, true);
   }
   
   public static HttpRequest createBroadcastRequest(HttpListener listener, String access_token, String content){
@@ -76,7 +76,7 @@ public class RequestFactory
 	    String[] keys = { "access_token" };
 	    String[] values = { access_token };
 	    url = JsonUtils.toRequestURL(url, keys, values);
-	    return new HttpRequest(url, content, "POST", listener, true);
+	    return new HttpRequest(url, content, HttpRequest.POST, listener, true);
   }
 
   public static HttpRequest createNewMenusReqeust(HttpListener listener, String access_token, String content) {
@@ -84,7 +84,7 @@ public class RequestFactory
     String[] keys = { "access_token" };
     String[] values = { access_token };
     url = JsonUtils.toRequestURL(url, keys, values);
-    return new HttpRequest(url, content, "POST", listener, true);
+    return new HttpRequest(url, content, HttpRequest.POST, listener, true);
   }
 
   public static HttpRequest createGetMenusReqeust(HttpListener listener, String access_token) {
@@ -124,7 +124,7 @@ public class RequestFactory
 	String[] keys = { "access_token" };
 	String[] values = { access_token };
 	url = JsonUtils.toRequestURL(url, keys, values);
-	return new HttpRequest(url, content, "POST", listener, true);
+	return new HttpRequest(url, content, HttpRequest.POST, listener, true);
   }
 
   public static HttpRequest createAccessTokenReqeust(HttpListener listener, App app) {
@@ -133,5 +133,45 @@ public class RequestFactory
     String[] values = { "client_credential", app.getAppid(), app.getSecret() };
     url = JsonUtils.toRequestURL(url, keys, values);
     return new HttpRequest(url, listener, true);
+  }
+  
+  public static HttpRequest createAddAgentReqeust(HttpListener listener, String access_token, String content) {
+	String url = "https://api.weixin.qq.com/customservice/kfaccount/add";
+	String[] keys = { "access_token" };
+	String[] values = { access_token };
+	url = JsonUtils.toRequestURL(url, keys, values);
+	return new HttpRequest(url, content, HttpRequest.POST, listener, true);
+  }
+  
+  public static HttpRequest createUpdateAgentReqeust(HttpListener listener, String access_token, String content) {
+	String url = "https://api.weixin.qq.com/customservice/kfaccount/update";
+	String[] keys = { "access_token" };
+	String[] values = { access_token };
+	url = JsonUtils.toRequestURL(url, keys, values);
+	return new HttpRequest(url, content, HttpRequest.POST, listener, true);
+  }
+  
+  public static HttpRequest createDelAgentReqeust(HttpListener listener, String access_token, String content) {
+	String url = "https://api.weixin.qq.com/customservice/kfaccount/del";
+	String[] keys = { "access_token" };
+	String[] values = { access_token };
+	url = JsonUtils.toRequestURL(url, keys, values);
+	return new HttpRequest(url, content, HttpRequest.POST, listener, true);
+  }
+  
+  public static HttpRequest createGetAgentListReqeust(HttpListener listener, String access_token) {
+	String url = "https://api.weixin.qq.com/cgi-bin/customservice/getkflist";
+	String[] keys = { "access_token" };
+	String[] values = { access_token };
+    url = JsonUtils.toRequestURL(url, keys, values);
+    return new HttpRequest(url, listener, true);
+  }
+  
+  public static HttpRequest createUploadheadimgRequest(HttpListener listener, String access_token, String kf_account, File file) {
+    String url = "http://api.weixin.qq.com/customservice/kfaccount/uploadheadimg";
+    String[] keys = { "access_token", "kf_account" };
+    String[] values = { access_token, kf_account };
+    url = JsonUtils.toRequestURL(url, keys, values);
+    return new FileRequest(url, HttpRequest.GET, listener, file);
   }
 }

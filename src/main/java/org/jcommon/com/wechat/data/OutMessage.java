@@ -28,6 +28,7 @@ public class OutMessage extends JsonObject{
   private Mpnews mpnews;
   private Thumb thumb;
   private List<Articles> articles;
+  private CustomService customservice;
 
   public OutMessage(String data){
     super(data);
@@ -157,5 +158,13 @@ public class OutMessage extends JsonObject{
 	  else if(type == MsgType.thumb)
 		  media = thumb;
 	  return media;
+  }
+
+  public void setCustomservice(CustomService customservice) {
+	  this.customservice = customservice;
+  }
+	
+  public CustomService getCustomservice() {
+	  return customservice;
   }
 }
