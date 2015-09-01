@@ -9,6 +9,7 @@
   <modules>
     <module>wechat-core</module>
 	<module>wechat-aes</module>
+	<module>wechat-router</module>
   </modules>
   
   <name>jcommon wechat</name>
