@@ -6,7 +6,6 @@ import org.jcommon.com.util.http.HttpListener;
 import org.jcommon.com.util.http.HttpRequest;
 import org.jcommon.com.util.thread.ThreadManager;
 import org.jcommon.com.wechat.RouterHandler;
-import org.jcommon.com.wechat.data.App;
 import org.jcommon.com.wechat.data.Router;
 
 public class HttpHandler implements RouterHandler, HttpListener{
@@ -47,19 +46,6 @@ public class HttpHandler implements RouterHandler, HttpListener{
 			String xml       = router.getXml();
 			String[] keys   = { "signature","timestamp","nonce" };
 			String[] values = { signature,timestamp,nonce };
-			String    url   = JsonUtils.toRequestURL(callback, keys, values);
-			HttpRequest request = new HttpRequest(url,xml,"POST",this);
-			ThreadManager.instance().execute(request);
-		}
-	}
-
-	@Override
-	public void onAccessTokenUpdate(App app) {
-		// TODO Auto-generated method stub
-		if(callback!=null && app!=null){
-			String xml       = app.toJson();
-			String[] keys   = { };
-			String[] values = { };
 			String    url   = JsonUtils.toRequestURL(callback, keys, values);
 			HttpRequest request = new HttpRequest(url,xml,"POST",this);
 			ThreadManager.instance().execute(request);

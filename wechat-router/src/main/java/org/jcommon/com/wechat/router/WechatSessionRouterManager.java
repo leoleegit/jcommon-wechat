@@ -11,11 +11,20 @@ import org.jcommon.com.wechat.WechatSessionRouter;
 import org.jcommon.com.wechat.data.App;
 
 public class WechatSessionRouterManager extends Monitor{
+	
 	private Logger logger = Logger.getLogger(getClass());
+	private static WechatSessionRouterManager instance;
+	
+	public static WechatSessionRouterManager instance(){
+		if(instance==null)
+			new WechatSessionRouterManager();
+		return instance;
+	}
 	
 	public WechatSessionRouterManager() {
 		super("WechatSessionRouterManager");
 		// TODO Auto-generated constructor stub
+		instance = this;
 	}
 
     @Override 

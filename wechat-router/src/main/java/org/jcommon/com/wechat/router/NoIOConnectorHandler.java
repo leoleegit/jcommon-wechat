@@ -20,7 +20,6 @@ import org.apache.mina.filter.logging.LoggingFilter;
 import org.apache.mina.filter.ssl.SslFilter;
 import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
 import org.jcommon.com.wechat.RouterHandler;
-import org.jcommon.com.wechat.data.App;
 import org.jcommon.com.wechat.data.Router;
 
 public class NoIOConnectorHandler extends IoHandlerAdapter implements RouterHandler{
@@ -69,10 +68,14 @@ public class NoIOConnectorHandler extends IoHandlerAdapter implements RouterHand
         // Empty handler
     	logger.info("RemoteAddress: "
 				+ session.getRemoteAddress());
+  
     	synchronized(sessions){
     		if(!sessions.contains(session))
     			sessions.add(session);
     	}
+    	
+    	if(accesstoken!=null)
+    		session.write(accesstoken.toJson());
     }
 
     public void sessionOpened(IoSession session) throws Exception {
@@ -171,24 +174,16 @@ public class NoIOConnectorHandler extends IoHandlerAdapter implements RouterHand
 		return sslEnable;
 	}
 
+	private Router accesstoken;
 	@Override
 	public void onRouter(Router router) {
 		// TODO Auto-generated method stub
 		try {
-			if(router!=null)
+			if(router!=null){
+				if(Router.EVENT.equals(router.getRouter_type()))
+					accesstoken = router;
 				broadcast(router.toJson());
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			logger.error("", e);
-		}
-	}
-
-	@Override
-	public void onAccessTokenUpdate(App app) {
-		// TODO Auto-generated method stub
-		try {
-			if(app!=null)
-				broadcast(app.toJson());
+			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			logger.error("", e);

@@ -25,9 +25,9 @@
         </configuration>
       </plugin>
       <plugin>
-      			<groupId>org.apache.felix</groupId>
-     			<artifactId>maven-bundle-plugin</artifactId>
-     			<extensions>true</extensions>
+			<groupId>org.apache.felix</groupId>
+			<artifactId>maven-bundle-plugin</artifactId>
+			<extensions>true</extensions>
       </plugin>
     </plugins>
    <testOutputDirectory>target/classes</testOutputDirectory> 
