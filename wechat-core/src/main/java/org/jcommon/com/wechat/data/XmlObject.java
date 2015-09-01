@@ -91,7 +91,7 @@ public abstract class XmlObject
   public String toXml()
   {
     Document doc = DocumentHelper.createDocument();
-    Element root = doc.addElement("xml");
+    Element root = doc.addElement(this.getClass().getSimpleName());
     try {
       Field[] fs = getClass().getDeclaredFields();
       Class<?> type = null;

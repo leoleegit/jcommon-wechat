@@ -1,10 +1,14 @@
 package org.jcommon.com.wechat.data;
 
 public class Router extends JsonObject{
+	public final static String MESSAGE= "message";
+	public final static String EVENT  = "event";
+	
 	private String signature; 
 	private String timestamp; 
 	private String nonce;
 	private String xml;
+	private String router_type = MESSAGE;
 	
 	public Router(String signature, String timestamp, String nonce, String xml){
 		setSignature(signature);
@@ -47,5 +51,14 @@ public class Router extends JsonObject{
 
 	public void setXml(String xml) {
 		this.xml = xml;
+	}
+
+	public String getRouter_type() {
+		return router_type;
+	}
+
+	public Router setRouter_type(String router_type) {
+		this.router_type = router_type;
+		return this;
 	}
 }

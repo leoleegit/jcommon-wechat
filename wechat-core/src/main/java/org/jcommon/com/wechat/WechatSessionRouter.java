@@ -1,12 +1,16 @@
 package org.jcommon.com.wechat;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.jcommon.com.util.collections.MapStoreListener;
 import org.jcommon.com.wechat.cache.SessionCache;
 import org.jcommon.com.wechat.data.App;
+import org.jcommon.com.wechat.data.Event;
 import org.jcommon.com.wechat.data.Router;
+import org.jcommon.com.wechat.utils.EventType;
+import org.jcommon.com.wechat.utils.WechatUtils;
 
 public class WechatSessionRouter extends WechatSession implements MapStoreListener{
 	private List<RouterHandler> handlers = new ArrayList<RouterHandler>();
@@ -62,15 +66,36 @@ public class WechatSessionRouter extends WechatSession implements MapStoreListen
 	
 	private void addSessioin(WechatSession value) {
 		// TODO Auto-generated method stub
-		synchronized (handlers) {
-			for(RouterHandler handler : handlers){
-				handler.onAccessTokenUpdate(value.getApp());
-			}
-		}
+		Router router = createRouter(value.getApp());
+	    if(router==null){
+	    	logger.warn("router is null");
+	    	return;
+	    }
+	    onRouter(router);
+	}
+	
+	private Router createRouter(App app){
+		if(app==null)
+			return null;
+		String access_token = app.getAccess_token();
+	    long expires_in     = app.getExpires();
+	    Event event = new Event(null);
+	    event.setAccess_token(access_token);
+	    event.setExpires_in(expires_in);
+	    event.setMsgType(EventType.access_token.toString());
+	    
+	    
+	    String timestamp = new Timestamp(System.currentTimeMillis()).toString(); 
+	    String nonce     = org.jcommon.com.util.BufferUtils.generateRandom(6);
+	    String token     = app.getToken();
+	    String signature = WechatUtils.createSignature(token, timestamp, nonce); 
+	    
+	    return new Router(signature, timestamp, nonce, event.toXml()).setRouter_type(Router.EVENT);
 	}
 	
 	public boolean addOne(Object key, Object value){
 	    if (value == null) return false;
+	    addSessioin((WechatSession)value);
 	    return false;
 	}
 

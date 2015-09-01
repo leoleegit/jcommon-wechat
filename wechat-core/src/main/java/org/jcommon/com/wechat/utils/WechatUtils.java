@@ -12,9 +12,14 @@
 // ========================================================================
 package org.jcommon.com.wechat.utils;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 public class WechatUtils {
 	public static String getDate(){
@@ -23,4 +28,51 @@ public class WechatUtils {
 		String dt = ft.format(date);
 		return dt;
 	}
-}
+	
+	public static String createSignature(String token, String timestamp, String nonce){
+		if(token!=null && timestamp!=null && nonce!=null){
+			  List<String> arl = new ArrayList<String>(); 
+			  arl.add(token);
+			  arl.add(timestamp);
+			  arl.add(nonce);
+			  
+			  Collections.sort(arl,new Realize_Comparator());
+			  
+			  StringBuilder sb = new StringBuilder();
+			  for(String s : arl){
+				  sb.append(s);
+			  }
+			  
+			  return encryptToSHA(sb.toString());
+		}
+		return null;
+	}
+	
+	  
+    public static String encryptToSHA(String info) {  
+      byte[] digesta = null;  
+      try {  
+          MessageDigest alga = MessageDigest.getInstance("SHA-1");  
+          alga.update(info.getBytes());  
+          digesta = alga.digest();  
+      } catch (NoSuchAlgorithmException e) {  
+          e.printStackTrace();  
+      }  
+      String rs = byte2hex(digesta);  
+      return rs;  
+    }  
+
+    public static String byte2hex(byte[] b) {  
+      String hs = "";  
+	  String stmp = "";  
+	  for (int n = 0; n < b.length; n++) {  
+	      stmp = (java.lang.Integer.toHexString(b[n] & 0XFF));  
+	      if (stmp.length() == 1) {  
+	          hs = hs + "0" + stmp;  
+	          } else {  
+	              hs = hs + stmp;  
+	          }  
+	      }  
+	      return hs.toLowerCase();  
+	  }
+   }

@@ -12,10 +12,7 @@
 // ========================================================================
 package org.jcommon.com.wechat;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -46,8 +43,9 @@ import org.jcommon.com.wechat.data.Video;
 import org.jcommon.com.wechat.data.Voice;
 import org.jcommon.com.wechat.data.filter.Filter;
 import org.jcommon.com.wechat.utils.ErrorType;
+import org.jcommon.com.wechat.utils.EventType;
 import org.jcommon.com.wechat.utils.MsgType;
-import org.jcommon.com.wechat.utils.Realize_Comparator;
+import org.jcommon.com.wechat.utils.WechatUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -142,6 +140,7 @@ public class WechatSession extends ResponseHandler
     } catch (Exception e) {}
     this.app_keepalive = TimerTaskManger.instance().schedule("app-keepalive", new TimerTask(){
     	public void run(){
+    		
     		 execute(RequestFactory.createAccessTokenReqeust(new HttpListener(){
 
     			 public void onSuccessful(HttpRequest reqeust, StringBuilder sResult){
@@ -214,6 +213,21 @@ public class WechatSession extends ResponseHandler
 
   public void onEvent(Event event){
     this.logger.info("IN:"+event.getXml());
+    if(EventType.access_token.equals(event.getMsgType())){
+    	String access_token = event.getAccess_token();
+	    long expires_in = event.getExpires_in();
+	    if(access_token!=null){
+        	WechatSession.this.app.setAccess_token(access_token);
+        	WechatSession.this.app.setStatus("app is ok:onRunning");
+        }else{
+        	WechatSession.this.app.setStatus("app is error:"+event.getXml());
+        }
+        if (expires_in!= WechatSession.this.app.getExpires() && expires_in!=0) {
+          WechatSession.this.app.setExpires(expires_in);
+          WechatSession.this.app.setDelay(app.getExpires()* 1000L-100);
+        }
+    	return;
+    }
     if (this.listener != null)
       this.listener.onEvent(event);
     userManager.onEvent(event);
@@ -579,48 +593,9 @@ public class WechatSession extends ResponseHandler
   public boolean appVerify(String signature, String timestamp, String nonce){
 	  String token = getApp()!=null?getApp().getToken():null;
 	  if(token!=null && signature!=null && timestamp!=null && nonce!=null){
-		  List<String> arl = new ArrayList<String>(); 
-		  arl.add(token);
-		  arl.add(timestamp);
-		  arl.add(nonce);
-		  
-		  Collections.sort(arl,new Realize_Comparator());
-		  
-		  StringBuilder sb = new StringBuilder();
-		  for(String s : arl){
-			  sb.append(s);
-		  }
-		  
-		  return signature.equalsIgnoreCase(encryptToSHA(sb.toString()));
+		  return signature.equalsIgnoreCase(WechatUtils.createSignature(token, timestamp, nonce));
 	  }
 	  return false;
-  }
-  
-  public String encryptToSHA(String info) {  
-      byte[] digesta = null;  
-      try {  
-          MessageDigest alga = MessageDigest.getInstance("SHA-1");  
-          alga.update(info.getBytes());  
-          digesta = alga.digest();  
-      } catch (NoSuchAlgorithmException e) {  
-          e.printStackTrace();  
-      }  
-      String rs = byte2hex(digesta);  
-      return rs;  
-  }  
-
-  public String byte2hex(byte[] b) {  
-      String hs = "";  
-      String stmp = "";  
-      for (int n = 0; n < b.length; n++) {  
-          stmp = (java.lang.Integer.toHexString(b[n] & 0XFF));  
-          if (stmp.length() == 1) {  
-              hs = hs + "0" + stmp;  
-          } else {  
-              hs = hs + stmp;  
-          }  
-      }  
-      return hs.toLowerCase();  
   }
 
   public void execute(HttpRequest request) {
