@@ -27,7 +27,7 @@ public class WechatSessionRouter extends WechatSession implements MapStoreListen
 	public void startup(){
 		SessionCache.instance().addWechatSession(this);
 		SessionCache.instance().addMapStoreListener(this);
-		appKeepAlive(this.app);
+		appKeepAlive(getApp());
 	}
 	
 	public void shutdown(){
@@ -83,7 +83,7 @@ public class WechatSessionRouter extends WechatSession implements MapStoreListen
 	    event.setAccess_token(access_token);
 	    event.setExpires_in(expires_in);
 	    event.setMsgType(EventType.access_token.toString());
-	    
+	    event.setToUserName(getWechatID());
 	    
 	    String timestamp = new Timestamp(System.currentTimeMillis()).toString(); 
 	    String nonce     = org.jcommon.com.util.BufferUtils.generateRandom(6);

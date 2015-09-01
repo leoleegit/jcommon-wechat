@@ -53,7 +53,7 @@ public class WechatSession extends ResponseHandler
   implements WechatSessionListener{
   protected Logger logger = Logger.getLogger(getClass());
   private String wechatID;
-  protected App app;
+  private App app;
   private WechatSessionListener listener;
   public final static String  RequestCallback = "RequestCallback";
   public final static String  RequestAction   = "RequestAction";
