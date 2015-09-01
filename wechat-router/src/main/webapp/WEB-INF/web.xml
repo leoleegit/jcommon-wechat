@@ -24,6 +24,17 @@
 	    <servlet-name>MediaServlet</servlet-name>
 	    <url-pattern>/media/*</url-pattern>
 	</servlet-mapping> 
+	<servlet>
+	    <description>AccessToken</description>
+	    <display-name>AccessToken</display-name>
+	    <servlet-name>AccessToken</servlet-name>
+	    <servlet-class>org.jcommon.com.wechat.AccessToken</servlet-class>
+	    <load-on-startup>0</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+	    <servlet-name>AccessToken</servlet-name>
+	    <url-pattern>/token/*</url-pattern>
+	</servlet-mapping> 
 	<listener>
 	  <listener-class>org.jcommon.com.util.system.SystemManager</listener-class>
     </listener>
