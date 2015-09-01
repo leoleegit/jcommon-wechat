@@ -96,7 +96,7 @@ public class Callback extends HttpServlet
       String timestamp = request.getParameter("timestamp");
       String nonce = request.getParameter("nonce");
       if (WechatSessionManager.instance().appVerify(signature, timestamp, nonce)) 
-    	  WechatSessionManager.instance().onCallback(post_data);
+    	  WechatSessionManager.instance().onCallback(signature, timestamp, nonce, post_data);
       else
     	  logger.warn("Illegal Data!");
     } catch (IOException e) {

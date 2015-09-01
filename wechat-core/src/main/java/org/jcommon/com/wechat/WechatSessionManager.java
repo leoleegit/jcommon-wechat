@@ -30,6 +30,7 @@ import org.jcommon.com.wechat.cache.ContentTypeCache;
 import org.jcommon.com.wechat.cache.SessionCache;
 import org.jcommon.com.wechat.data.Event;
 import org.jcommon.com.wechat.data.InMessage;
+import org.jcommon.com.wechat.data.Router;
 
 public class WechatSessionManager extends Monitor
   implements MapStoreListener
@@ -56,17 +57,6 @@ public class WechatSessionManager extends Monitor
   public void initOperation() {
 		// TODO Auto-generated method stub
 		addOperation(new MBeanOperationInfo(
-	          "newCopySession",
-	          "newCopySession ",
-	          new MBeanParameterInfo[]{new MBeanParameterInfo(
-	          		"wechat_key","java.lang.String","wechat_key"),
-	          		new MBeanParameterInfo(
-	    	          		"callback","java.lang.String","callback"),
-	          		new MBeanParameterInfo(
-	    	          		"Token","java.lang.String","Token")},   // no parameters
-	          "void",
-	          MBeanOperationInfo.ACTION));
-		addOperation(new MBeanOperationInfo(
 	          "removeSession",
 	          "removeSession",
 	          new MBeanParameterInfo[]{new MBeanParameterInfo(
@@ -80,12 +70,6 @@ public class WechatSessionManager extends Monitor
 		          		"wechat_key","java.lang.String","wechat_key")},   // no parameters
 		          "void",
 		          MBeanOperationInfo.ACTION));
-  }
-  
-  public void newCopySession(String wechat_key, String callback, String Token){
-	  wechat_key = wechat_key + "-" + org.jcommon.com.util.BufferUtils.generateRandom(5);
-	  WechatSession session = new WechatSessionCopy(wechat_key,callback,Token);
-	  session.startup();
   }
   
   public void removeSession(String wechat_key){
@@ -174,7 +158,7 @@ public class WechatSessionManager extends Monitor
     return key;
   }
 
-  public void onCallback(String xml) {
+  public void onCallback(String signature, String timestamp, String nonce, String xml) {
     this.logger.info(xml);
     Document document = null;
     Element root = null;
@@ -187,14 +171,17 @@ public class WechatSessionManager extends Monitor
       this.logger.error(xml, e);
     }
     if (root == null) return;
-
     
     List<WechatSession> sessions = SessionCache.instance().getAllWechatSession();
     if (root.element("Event") != null) {
       Event event = new Event(xml);
       touser = event.getToUserName();
       for(WechatSession session : sessions){
-    	  if(session instanceof WechatSessionMontior || (touser!=null && touser.equals(session.getWechatID()))){
+    	  if(session instanceof WechatSessionRouter){
+    		  ((WechatSessionRouter)session).onRouter(new Router(signature, timestamp, nonce, xml));
+    		  done = true;
+    	  }
+    	  else if(touser!=null && touser.equals(session.getWechatID())){
     		  session.onEvent(event);
     		  done = true;
     	  }
@@ -203,7 +190,11 @@ public class WechatSessionManager extends Monitor
       InMessage msg = new InMessage(xml);
       touser = msg.getToUserName();
       for(WechatSession session : sessions){
-    	  if(session instanceof WechatSessionMontior || (touser!=null && touser.equals(session.getWechatID()))){
+    	  if(session instanceof WechatSessionRouter){
+    		  ((WechatSessionRouter)session).onRouter(new Router(signature, timestamp, nonce, xml));
+    		  done = true;
+    	  }
+    	  else if(touser!=null && touser.equals(session.getWechatID())){
     		  session.onMessage(msg);
     		  done = true;
     	  }

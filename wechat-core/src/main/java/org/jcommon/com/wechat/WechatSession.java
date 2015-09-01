@@ -55,7 +55,7 @@ public class WechatSession extends ResponseHandler
   implements WechatSessionListener{
   protected Logger logger = Logger.getLogger(getClass());
   private String wechatID;
-  private App app;
+  protected App app;
   private WechatSessionListener listener;
   public final static String  RequestCallback = "RequestCallback";
   public final static String  RequestAction   = "RequestAction";
@@ -74,8 +74,8 @@ public class WechatSession extends ResponseHandler
     this.app = app;
     this.listener = listener;
     
-    userManager = new UserManager(this);
-    msgManager  = new MsgManager(this);
+    userManager  = new UserManager(this);
+    msgManager   = new MsgManager(this);
     mediaManager = new MediaManager(this);
   }
 
@@ -130,7 +130,7 @@ public class WechatSession extends ResponseHandler
     logger.info(wechatID);
   }
 
-  private void appKeepAlive(final App app) {
+  protected void appKeepAlive(final App app) {
     if (app == null || app.getAppid()==null | app.getSecret()==null) {
       this.logger.warn("app can't be null");
       return;
