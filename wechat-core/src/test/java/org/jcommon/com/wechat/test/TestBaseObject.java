@@ -33,13 +33,6 @@ public class TestBaseObject extends TestBase {
 		 long timestamp = new Timestamp(System.currentTimeMillis()).getTime(); 
 		 System.out.println(timestamp);
 		 
-		    String access_token = "FDFAFADAFFADFADFADSFADAF";
-		    long expires_in = 7200;
-		    Event event = new Event(null);
-		    event.setAccess_token(access_token);
-		    event.setExpires_in(expires_in);
-		    event.setMsgType(EventType.access_token.toString());
-		    System.out.println(event.toXml());
 	}
 
 }

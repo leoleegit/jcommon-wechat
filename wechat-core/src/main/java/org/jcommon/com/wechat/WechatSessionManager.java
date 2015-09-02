@@ -30,7 +30,7 @@ import org.jcommon.com.wechat.cache.ContentTypeCache;
 import org.jcommon.com.wechat.cache.SessionCache;
 import org.jcommon.com.wechat.data.Event;
 import org.jcommon.com.wechat.data.InMessage;
-import org.jcommon.com.wechat.data.Router;
+import org.jcommon.com.wechat.data.Token;
 
 public class WechatSessionManager extends Monitor
   implements MapStoreListener
@@ -157,6 +157,22 @@ public class WechatSessionManager extends Monitor
     removeSessioin(getWechatSession((String)key));
     return key;
   }
+  
+  public void onToken(String signature, String timestamp, String nonce, String xml){
+	  this.logger.info(xml);
+	  Token token = new Token(xml);
+	  String touser = token.getWechatID();
+	  boolean done = false;
+	  List<WechatSession> sessions = SessionCache.instance().getAllWechatSession();
+	  for(WechatSession session : sessions){
+		  if((touser!=null && touser.equals(session.getWechatID()))||"*".equals(session.getWechatID())){
+	    	  session.onToken(token);
+    		  done = true;
+    	  }
+      }
+	  if(!done)
+	    	logger.warn("can't find session of "+touser);
+  }
 
   public void onCallback(String signature, String timestamp, String nonce, String xml) {
     this.logger.info(xml);
@@ -177,11 +193,7 @@ public class WechatSessionManager extends Monitor
       Event event = new Event(xml);
       touser = event.getToUserName();
       for(WechatSession session : sessions){
-    	  if(session instanceof WechatSessionRouter){
-    		  ((WechatSessionRouter)session).onRouter(new Router(signature, timestamp, nonce, xml));
-    		  done = true;
-    	  }
-    	  else if(touser!=null && touser.equals(session.getWechatID())){
+    	  if((touser!=null && touser.equals(session.getWechatID()))||"*".equals(session.getWechatID())){
     		  session.onEvent(event);
     		  done = true;
     	  }
@@ -190,12 +202,8 @@ public class WechatSessionManager extends Monitor
       InMessage msg = new InMessage(xml);
       touser = msg.getToUserName();
       for(WechatSession session : sessions){
-    	  if(session instanceof WechatSessionRouter){
-    		  ((WechatSessionRouter)session).onRouter(new Router(signature, timestamp, nonce, xml));
-    		  done = true;
-    	  }
-    	  else if(touser!=null && touser.equals(session.getWechatID())){
-    		  session.onMessage(msg);
+    	  if((touser!=null && touser.equals(session.getWechatID()))||"*".equals(session.getWechatID())){
+      		  session.onMessage(msg);
     		  done = true;
     	  }
       }

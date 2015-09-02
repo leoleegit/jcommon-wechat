@@ -17,7 +17,6 @@ public enum EventType
   subscribe, 
   unsubscribe, 
   scan, 
-  access_token,
   LOCATION, 
   CLICK,
   MASSSENDJOBFINISH;
@@ -35,8 +34,6 @@ public enum EventType
       return CLICK;
     if (MASSSENDJOBFINISH.toString().equalsIgnoreCase(name))
         return MASSSENDJOBFINISH;
-    if (access_token.toString().equalsIgnoreCase(name))
-        return access_token;
     return null;
   }
 }

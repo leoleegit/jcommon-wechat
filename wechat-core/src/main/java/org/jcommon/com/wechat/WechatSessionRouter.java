@@ -20,19 +20,19 @@ public class WechatSessionRouter extends WechatSession implements MapStoreListen
 		// TODO Auto-generated constructor stub
 	}
 
-	public boolean appVerify(String signature, String timestamp, String nonce){
-		return true;
-	}
+//	public boolean appVerify(String signature, String timestamp, String nonce){
+//		return true;
+//	}
 
 	public void startup(){
 		SessionCache.instance().addWechatSession(this);
-		SessionCache.instance().addMapStoreListener(this);
+	
 		appKeepAlive(getApp());
 	}
 	
 	public void shutdown(){
 		super.shutdown();
-		SessionCache.instance().removeMapStoreListener(this);
+		
 	}
 	
 	public void addRouterHandler(RouterHandler handler){
@@ -51,12 +51,20 @@ public class WechatSessionRouter extends WechatSession implements MapStoreListen
 	
 	public void clearRouterHandler(){
 		synchronized (handlers) {
+			for(RouterHandler handler : handlers){
+				handler.stop();
+			}
 			handlers.clear();
 		}
 	}
 	
+	private Router accesstoken;
 	public void onRouter(Router router) {
 		// TODO Auto-generated method stub
+		if(router!=null){
+			if(Router.EVENT.equals(router.getRouter_type()))
+				setAccesstoken(router);
+		}
 		synchronized (handlers) {
 			for(RouterHandler handler : handlers){
 				handler.onRouter(router);
@@ -80,12 +88,12 @@ public class WechatSessionRouter extends WechatSession implements MapStoreListen
 		String access_token = app.getAccess_token();
 	    long expires_in     = app.getExpires();
 	    Event event = new Event(null);
-	    event.setAccess_token(access_token);
-	    event.setExpires_in(expires_in);
-	    event.setMsgType(EventType.access_token.toString());
+	   // event.setAccess_token(access_token);
+	    //event.setExpires_in(expires_in);
+	   // event.setMsgType(EventType.access_token.toString());
 	    event.setToUserName(getWechatID());
 	    
-	    String timestamp = new Timestamp(System.currentTimeMillis()).toString(); 
+	    String timestamp = String.valueOf(new Timestamp(System.currentTimeMillis()).getTime()); 
 	    String nonce     = org.jcommon.com.util.BufferUtils.generateRandom(6);
 	    String token     = app.getToken();
 	    String signature = WechatUtils.createSignature(token, timestamp, nonce); 
@@ -108,5 +116,13 @@ public class WechatSessionRouter extends WechatSession implements MapStoreListen
 	public Object removeOne(Object key){
 	    if (key == null) return key;
 	    return key;
+	}
+
+	public void setAccesstoken(Router accesstoken) {
+		this.accesstoken = accesstoken;
+	}
+
+	public Router getAccesstoken() {
+		return accesstoken;
 	}
 }

@@ -39,18 +39,18 @@ import org.jcommon.com.wechat.data.Music;
 import org.jcommon.com.wechat.data.News;
 import org.jcommon.com.wechat.data.OutMessage;
 import org.jcommon.com.wechat.data.Text;
+import org.jcommon.com.wechat.data.Token;
 import org.jcommon.com.wechat.data.Video;
 import org.jcommon.com.wechat.data.Voice;
 import org.jcommon.com.wechat.data.filter.Filter;
 import org.jcommon.com.wechat.utils.ErrorType;
-import org.jcommon.com.wechat.utils.EventType;
 import org.jcommon.com.wechat.utils.MsgType;
 import org.jcommon.com.wechat.utils.WechatUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 public class WechatSession extends ResponseHandler
-  implements WechatSessionListener{
+  implements WechatSessionListener,TokenHandler{
   protected Logger logger = Logger.getLogger(getClass());
   private String wechatID;
   private App app;
@@ -213,21 +213,6 @@ public class WechatSession extends ResponseHandler
 
   public void onEvent(Event event){
     this.logger.info("IN:"+event.getXml());
-    if(EventType.access_token.equals(event.getMsgType())){
-    	String access_token = event.getAccess_token();
-	    long expires_in = event.getExpires_in();
-	    if(access_token!=null){
-        	WechatSession.this.app.setAccess_token(access_token);
-        	WechatSession.this.app.setStatus("app is ok:onRunning");
-        }else{
-        	WechatSession.this.app.setStatus("app is error:"+event.getXml());
-        }
-        if (expires_in!= WechatSession.this.app.getExpires() && expires_in!=0) {
-          WechatSession.this.app.setExpires(expires_in);
-          WechatSession.this.app.setDelay(app.getExpires()* 1000L-100);
-        }
-    	return;
-    }
     if (this.listener != null)
       this.listener.onEvent(event);
     userManager.onEvent(event);
@@ -626,5 +611,23 @@ public class WechatSession extends ResponseHandler
 	
 	public void setMediaManager(MediaManager mediaManager) {
 		this.mediaManager = mediaManager;
+	}
+
+	@Override
+	public void onToken(Token token) {
+		// TODO Auto-generated method stub
+		if(token==null)return;
+		String access_token = token.getAccess_token();
+	    long expires_in = token.getExpires_in();
+	    if(access_token!=null){
+        	WechatSession.this.app.setAccess_token(access_token);
+        	WechatSession.this.app.setStatus("app is ok:onRunning");
+        }else{
+        	WechatSession.this.app.setStatus("app is error:"+token.getJson());
+        }
+        if (expires_in!= WechatSession.this.app.getExpires() && expires_in!=0) {
+          WechatSession.this.app.setExpires(expires_in);
+          WechatSession.this.app.setDelay(app.getExpires()* 1000L-100);
+        }
 	} 
 }

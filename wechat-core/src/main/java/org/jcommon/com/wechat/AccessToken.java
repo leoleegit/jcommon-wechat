@@ -14,9 +14,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.jcommon.com.wechat.data.App;
-import org.jcommon.com.wechat.data.Event;
-import org.jcommon.com.wechat.data.JsonObject;
-import org.jcommon.com.wechat.utils.EventType;
+import org.jcommon.com.wechat.data.Token;
 
 public class AccessToken extends HttpServlet{
 
@@ -57,16 +55,21 @@ public class AccessToken extends HttpServlet{
 	    		  if(app!=null){
 	    			  Token token = new Token(app.getAccess_token(),app.getExpires());
 	    			  token.setWechatID(wechatID);
-	    			  outstr = token.toJson();
+	    			  outstr = token.toJson();//{access_token:'AFADFADFAF',expires_in:7200,wechatID:'gf-fdfasdfafa'}
 	    		  }else{logger.warn("app is null");}
 	    	  }
 	          PrintWriter servletOutput = response.getWriter();
 	          response.setContentType("text/html");
 	          servletOutput.println(outstr);
+	          return;
 	      } else {
 	          logger.warn("request verify failure!");
+	          PrintWriter servletOutput = response.getWriter();
+	          response.setContentType("text/html");
+	          servletOutput.println("Illegal Request");
 	      }
 	    } catch (IOException e) { logger.error("", e); }
+	   
 	}
 	
 	@SuppressWarnings("rawtypes")
@@ -98,20 +101,7 @@ public class AccessToken extends HttpServlet{
 	        String timestamp = request.getParameter("timestamp");
 	        String nonce = request.getParameter("nonce");
 	        if (WechatSessionManager.instance().appVerify(signature, timestamp, nonce)){ 
-	        	Token token = new Token(post_data);
-	        	String access_token = token.getAccess_token();
-	        	long   expires_in   = token.getExpires_in();
-	        	if(access_token==null){
-	        		logger.warn("access_token is null");
-	        		return;
-	        	}
-	        	
-	        	Event event = new Event(null);
-	     	    event.setAccess_token(access_token);
-	     	    event.setExpires_in(expires_in);
-	     	    event.setToUserName(token.getWechatID());
-	     	    event.setMsgType(EventType.access_token.toString());
-	    	    WechatSessionManager.instance().onCallback(signature, timestamp, nonce, event.toXml());
+	    	    WechatSessionManager.instance().onToken(signature, timestamp, nonce, post_data);
 	    	}
 	        else
 	    	    logger.warn("Illegal Data!");
@@ -120,42 +110,4 @@ public class AccessToken extends HttpServlet{
 	    }
 	  }
 
-	  class Token extends JsonObject{
-		  private String access_token;
-		  private long expires_in;
-		  private String wechatID;
-		  
-		  public Token(String access_token,long expires_in){
-			  this.access_token = access_token;
-			  this.expires_in   = expires_in;
-		  }
-		  
-		  public Token(String json){
-			  super(json);
-		  }
-		  
-		  public String getAccess_token() {
-			  return access_token;
-		  }
-
-		  public void setAccess_token(String access_token) {
-			  this.access_token = access_token;
-		  }
-		 
-		  public long getExpires_in() {
-			  return expires_in;
-		  }
-		 
-		  public void setExpires_in(long expires_in) {
-			  this.expires_in = expires_in;
-		  }
-
-		  public String getWechatID() {
-			  return wechatID;
-		  }
-
-		  public void setWechatID(String wechatID) {
-			  this.wechatID = wechatID;
-		  }
-	  }
 }
