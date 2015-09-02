@@ -84,7 +84,8 @@ public class WechatSessionRouterManager extends Monitor{
 		
 		WechatSession session = WechatSessionManager.instance().getWechatSession(wechatID);
 		if(session!=null && session instanceof WechatSessionRouter){
-			NoIOConnectorHandler handler = new NoIOConnectorHandler(null,port);
+			NoIOAcceptorHandler handler = new NoIOAcceptorHandler(null,port);
+			handler.setRouter(((WechatSessionRouter)session));
 			handler.start();
 			((WechatSessionRouter)session).addRouterHandler(handler);
 		}else{

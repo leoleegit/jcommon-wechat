@@ -20,31 +20,33 @@ import org.apache.mina.filter.logging.LoggingFilter;
 import org.apache.mina.filter.ssl.SslFilter;
 import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
 import org.jcommon.com.wechat.RouterHandler;
+import org.jcommon.com.wechat.WechatSessionRouter;
 import org.jcommon.com.wechat.data.Router;
 
-public class NoIOConnectorHandler extends IoHandlerAdapter implements RouterHandler{
-	private Logger logger = Logger.getLogger(getClass());
+public class NoIOAcceptorHandler extends IoHandlerAdapter implements RouterHandler{
+	protected Logger logger = Logger.getLogger(getClass());
 	private NioSocketAcceptor socketAcceptor;
 	protected InetAddress localAddr;
 	protected int         localPort;
-	private   boolean     sslEnable;
+	protected   boolean     sslEnable;
 	
 	private final static String DEFAULT_ADDR = "127.0.0.1";
 	private final static int    DEFAULT_PORT = 5010;
+	private WechatSessionRouter router;
 	
 	private List<IoSession> sessions = new ArrayList<IoSession>();
 	
-	public NoIOConnectorHandler(){
+	public NoIOAcceptorHandler(){
 		this(DEFAULT_ADDR,DEFAULT_PORT);
 	}
 	
-	public NoIOConnectorHandler(String addr, int port){
+	public NoIOAcceptorHandler(String addr, int port){
 		if(addr == null){
 			try {
 				this.localAddr = InetAddress.getLocalHost();
 	        }
 	        catch (UnknownHostException e) {
-	        	addr = "Unknown";
+	        	addr = DEFAULT_ADDR;
 	        	try {
 					this.localAddr = InetAddress.getByName(addr);
 				} catch (UnknownHostException e1) {
@@ -74,8 +76,8 @@ public class NoIOConnectorHandler extends IoHandlerAdapter implements RouterHand
     			sessions.add(session);
     	}
     	
-    	if(accesstoken!=null)
-    		session.write(accesstoken.toJson());
+    	if(router!=null && router.getAccesstoken()!=null)
+    		session.write(router.getAccesstoken().toJson());
     }
 
     public void sessionOpened(IoSession session) throws Exception {
@@ -144,13 +146,13 @@ public class NoIOConnectorHandler extends IoHandlerAdapter implements RouterHand
 		// Bind
 		socketAcceptor.setHandler(this);
 		try {
-			socketAcceptor.bind(new InetSocketAddress(localAddr.getHostAddress(), localPort));
+			socketAcceptor.bind(new InetSocketAddress(localPort));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			logger.error("", e);
 		}
 
-		logger.info("listening on port "
+		logger.info("listening on "
 				+ socketAcceptor.getLocalAddress().getHostName()
 				+ " : "+socketAcceptor.getLocalAddress().getPort());
 	}
@@ -174,19 +176,25 @@ public class NoIOConnectorHandler extends IoHandlerAdapter implements RouterHand
 		return sslEnable;
 	}
 
-	private Router accesstoken;
+	
 	@Override
 	public void onRouter(Router router) {
 		// TODO Auto-generated method stub
 		try {
 			if(router!=null){
-				if(Router.EVENT.equals(router.getRouter_type()))
-					accesstoken = router;
 				broadcast(router.toJson());
 			}
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			logger.error("", e);
 		}
+	}
+
+	public void setRouter(WechatSessionRouter router) {
+		this.router = router;
+	}
+
+	public WechatSessionRouter getRouter() {
+		return router;
 	}
 }

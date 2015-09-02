@@ -32,9 +32,9 @@ public class HttpHandler implements RouterHandler, HttpListener{
 	    logger.error(callback, e);
 	}
 	
-	public boolean appVerify(String signature, String timestamp, String nonce){
-		return true;
-	}
+//	public boolean appVerify(String signature, String timestamp, String nonce){
+//		return true;
+//	}
 
 	@Override
 	public void onRouter(Router router) {
@@ -50,5 +50,11 @@ public class HttpHandler implements RouterHandler, HttpListener{
 			HttpRequest request = new HttpRequest(url,xml,"POST",this);
 			ThreadManager.instance().execute(request);
 		}
+	}
+
+	@Override
+	public void stop() {
+		// TODO Auto-generated method stub
+		
 	}
 }

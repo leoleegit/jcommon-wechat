@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
-	<system_object key="0" value="org.jcommon.com.util.jmx.JmxManager" />
 	<system_object key="1" value="org.jcommon.com.util.share.ShareManager" />
 	<system_object key="2" value="org.jcommon.com.wechat.WechatSessionManager" />
 	<system_object key="3" value="org.jcommon.com.wechat.router.WechatSessionRouterManager" />
