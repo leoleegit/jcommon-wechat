@@ -12,8 +12,7 @@
 // ========================================================================
 package org.jcommon.com.wechat.data;
 
-public class Event extends XmlObject
-{
+public class Event extends XmlObject{
   private String ToUserName;
   private String FromUserName;
   private long CreateTime;
@@ -25,13 +24,23 @@ public class Event extends XmlObject
   private float Longitude;
   private float Precision;
 
-  public Event(String xml)
-  {
-    super(xml);
+  private String signature;
+  private String timestamp;
+  private String nonce;
+  
+  public Event(String xml){
+	    super(xml);
+  }
+  
+  public Event(String xml,String signature, String timestamp, String nonce){
+	    super(xml);
+	    this.signature  = signature;
+	    this.timestamp  = timestamp;
+	    this.nonce      = nonce;
   }
 
-  public String getToUserName()
-  {
+
+  public String getToUserName(){
     return this.ToUserName;
   }
   public void setToUserName(String toUserName) {
@@ -91,4 +100,28 @@ public class Event extends XmlObject
   public void setPrecision(float precision) {
     this.Precision = precision;
   }
+
+	public String getNonce() {
+		return nonce;
+	}
+	
+	public void setNonce(String nonce) {
+		this.nonce = nonce;
+	}
+	
+	public String getTimestamp() {
+		return timestamp;
+	}
+	
+	public void setTimestamp(String timestamp) {
+		this.timestamp = timestamp;
+	}
+	
+	public String getSignature() {
+		return signature;
+	}
+	
+	public void setSignature(String signature) {
+		this.signature = signature;
+	}
 }

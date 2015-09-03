@@ -50,7 +50,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class WechatSession extends ResponseHandler
-  implements WechatSessionListener,TokenHandler{
+  implements WechatSessionListener{
   protected Logger logger = Logger.getLogger(getClass());
   private String wechatID;
   private App app;
@@ -547,10 +547,8 @@ public class WechatSession extends ResponseHandler
     return request;
   }
 
-  public void onError(HttpRequest request, Error error)
-  {
+  public void onError(HttpRequest request, Error error){
     logger.warn(error.toJson());
-    
   }
 
   public void onOk(HttpRequest request, Object o){
@@ -613,7 +611,6 @@ public class WechatSession extends ResponseHandler
 		this.mediaManager = mediaManager;
 	}
 
-	@Override
 	public void onToken(Token token) {
 		// TODO Auto-generated method stub
 		if(token==null)return;

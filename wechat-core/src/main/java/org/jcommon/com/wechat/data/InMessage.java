@@ -34,10 +34,20 @@ public class InMessage extends XmlObject
   private String Title;
   private String Description;
   private String Url;
+  
+  private String signature;
+  private String timestamp;
+  private String nonce;
 
-  public InMessage(String xml)
-  {
+  public InMessage(String xml){
     super(xml);
+  }
+  
+  public InMessage(String xml,String signature, String timestamp, String nonce){
+    super(xml);
+    this.signature  = signature;
+    this.timestamp  = timestamp;
+    this.nonce      = nonce;
   }
 
   public String getToUserName()
@@ -157,4 +167,28 @@ public class InMessage extends XmlObject
   public void setFrom(User from) {
 	this.from = from;
   }
+  
+	public String getNonce() {
+		return nonce;
+	}
+	
+	public void setNonce(String nonce) {
+		this.nonce = nonce;
+	}
+	
+	public String getTimestamp() {
+		return timestamp;
+	}
+	
+	public void setTimestamp(String timestamp) {
+		this.timestamp = timestamp;
+	}
+	
+	public String getSignature() {
+		return signature;
+	}
+	
+	public void setSignature(String signature) {
+		this.signature = signature;
+	}
 }

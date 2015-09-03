@@ -28,6 +28,7 @@ import org.jcommon.com.util.jmx.Monitor;
 import org.jcommon.com.util.thread.TimerTaskManger;
 import org.jcommon.com.wechat.cache.ContentTypeCache;
 import org.jcommon.com.wechat.cache.SessionCache;
+import org.jcommon.com.wechat.data.App;
 import org.jcommon.com.wechat.data.Event;
 import org.jcommon.com.wechat.data.InMessage;
 import org.jcommon.com.wechat.data.Token;
@@ -39,8 +40,7 @@ public class WechatSessionManager extends Monitor
   private static WechatSessionManager instance;
   private ContentTypeCache content_type_cache;
 
-  public static WechatSessionManager instance()
-  {
+  public static WechatSessionManager instance(){
     if (instance == null) {
       new WechatSessionManager();
     }
@@ -60,14 +60,27 @@ public class WechatSessionManager extends Monitor
 	          "removeSession",
 	          "removeSession",
 	          new MBeanParameterInfo[]{new MBeanParameterInfo(
-	          		"wechat_key","java.lang.String","wechat_key")},   // no parameters
+	          		"wechatID","java.lang.String","wechatID")},   // no parameters
 	          "void",
 	          MBeanOperationInfo.ACTION));
 		addOperation(new MBeanOperationInfo(
 		          "restartSession",
 		          "restartSession",
 		          new MBeanParameterInfo[]{new MBeanParameterInfo(
-		          		"wechat_key","java.lang.String","wechat_key")},   // no parameters
+		          		"wechatID","java.lang.String","wechatID")},   // no parameters
+		          "void",
+		          MBeanOperationInfo.ACTION));
+		addOperation(new MBeanOperationInfo(
+		          "addSession",
+		          "addSession",
+		          new MBeanParameterInfo[]{new MBeanParameterInfo(
+		          		"wechatID","java.lang.String","wechatID"),
+		          		new MBeanParameterInfo(
+				          		"appid","java.lang.String","appid"),
+			          new MBeanParameterInfo(
+				          		"secret","java.lang.String","secret"),
+			          new MBeanParameterInfo(
+				          		"Token","java.lang.String","Token")},   // no parameters
 		          "void",
 		          MBeanOperationInfo.ACTION));
   }
@@ -76,6 +89,18 @@ public class WechatSessionManager extends Monitor
 	  WechatSession session = getWechatSession(wechat_key);
 	  if(session!=null)
 		  session.shutdown();
+  }
+  
+  public void addSession(String wechatID, String appid, String secret, String Token){
+	  logger.info(String.format("wechatID:%s ; appid:%s ; secret:%s ; Toke:%s ;", wechatID,appid,secret,Token));
+	  WechatSession session = getWechatSession(wechatID);
+	  if(session!=null){
+		  App app = new App(appid,secret,Token);
+		  session = new WechatSession(wechatID,app,null);
+		  session.startup();
+	  }else{
+		  logger.info(String.format("session of %s have been exist!", wechatID));
+	  }
   }
   
   public void restartSession(String wechat_key){
@@ -160,7 +185,7 @@ public class WechatSessionManager extends Monitor
   
   public void onToken(String signature, String timestamp, String nonce, String xml){
 	  this.logger.info(xml);
-	  Token token = new Token(xml);
+	  Token token = new Token(xml,signature,timestamp,nonce);
 	  String touser = token.getWechatID();
 	  boolean done = false;
 	  List<WechatSession> sessions = SessionCache.instance().getAllWechatSession();
@@ -190,7 +215,7 @@ public class WechatSessionManager extends Monitor
     
     List<WechatSession> sessions = SessionCache.instance().getAllWechatSession();
     if (root.element("Event") != null) {
-      Event event = new Event(xml);
+      Event event = new Event(xml,signature,timestamp,nonce);
       touser = event.getToUserName();
       for(WechatSession session : sessions){
     	  if((touser!=null && touser.equals(session.getWechatID()))||"*".equals(session.getWechatID())){
@@ -199,7 +224,7 @@ public class WechatSessionManager extends Monitor
     	  }
       }
     } else {
-      InMessage msg = new InMessage(xml);
+      InMessage msg = new InMessage(xml,signature,timestamp,nonce);
       touser = msg.getToUserName();
       for(WechatSession session : sessions){
     	  if((touser!=null && touser.equals(session.getWechatID()))||"*".equals(session.getWechatID())){
