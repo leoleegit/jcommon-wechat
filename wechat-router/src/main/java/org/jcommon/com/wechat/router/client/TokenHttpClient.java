@@ -1,4 +1,4 @@
-package org.jcommon.com.wechat.router;
+package org.jcommon.com.wechat.router.client;
 
 import java.sql.Timestamp;
 import java.util.Timer;
@@ -9,8 +9,6 @@ import org.jcommon.com.util.JsonUtils;
 import org.jcommon.com.util.http.HttpListener;
 import org.jcommon.com.util.http.HttpRequest;
 import org.jcommon.com.util.thread.ThreadManager;
-import org.jcommon.com.wechat.TokenHandler;
-import org.jcommon.com.wechat.data.Token;
 import org.jcommon.com.wechat.utils.WechatUtils;
 
 public class TokenHttpClient implements HttpListener{
@@ -21,13 +19,7 @@ public class TokenHttpClient implements HttpListener{
 	private boolean stop    = false;
 	private final long retry= 30000;
 	
-	private TokenHandler handler;
 	private Timer timer;
-	
-	public TokenHttpClient(String wechatID,String token,String access_url,TokenHandler handler){
-		this(wechatID,token,access_url);
-		this.handler = handler;
-	}
 	
 	public TokenHttpClient(String wechatID,String token,String access_url){
 		this.access_url = access_url;
@@ -37,45 +29,24 @@ public class TokenHttpClient implements HttpListener{
 	
 	public void onSuccessful(HttpRequest reqeust, StringBuilder sResult){
 		logger.info(sResult);
-		if(handler!=null){
-			handler.onToken(new Token(sResult.toString()));
-		}
 	}
 	
 	public void onFailure(HttpRequest reqeust, StringBuilder sResult){
 		logger.info(sResult);
-		if(stop || timer!=null)
-			return;
-		timer = org.jcommon.com.util.thread.TimerTaskManger.instance().schedule("TokenHttpClient", new TimerTask(){
-
-			@Override
-			public void run() {
-				// TODO Auto-generated method stub
-				go();
-				timer = null;
-			}
-			
-		}, retry);
+		retry();
 	}
 	
 	public void onTimeout(HttpRequest request){
 	    logger.error(access_url);
-	    if(stop || timer!=null)
-			return;
-		timer = org.jcommon.com.util.thread.TimerTaskManger.instance().schedule("TokenHttpClient", new TimerTask(){
-
-			@Override
-			public void run() {
-				// TODO Auto-generated method stub
-				go();
-				timer = null;
-			}
-			
-		}, retry);
+	    retry();
 	}
 
 	public void onException(HttpRequest request, Exception e){
 	    logger.error(access_url, e);
+	    retry();
+	}
+	
+	public void retry(){
 	    if(stop || timer!=null)
 			return;
 		timer = org.jcommon.com.util.thread.TimerTaskManger.instance().schedule("TokenHttpClient", new TimerTask(){
@@ -107,13 +78,5 @@ public class TokenHttpClient implements HttpListener{
 			HttpRequest request = new HttpRequest(url,this);
 			ThreadManager.instance().execute(request);
 		}
-	}
-
-	public void setHandler(TokenHandler handler) {
-		this.handler = handler;
-	}
-
-	public TokenHandler getHandler() {
-		return handler;
 	}
 }

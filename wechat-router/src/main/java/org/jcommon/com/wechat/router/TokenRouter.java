@@ -1,16 +1,22 @@
 package org.jcommon.com.wechat.router;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.apache.log4j.Logger;
 import org.jcommon.com.util.collections.MapStoreListener;
-import org.jcommon.com.wechat.TokenHandler;
 import org.jcommon.com.wechat.WechatSession;
 import org.jcommon.com.wechat.cache.SessionCache;
 import org.jcommon.com.wechat.data.Token;
 
 public class TokenRouter implements MapStoreListener{
 	private Logger logger = Logger.getLogger(getClass());
-	private TokenHandler handler;
-	private Token token;
+	private Set<Token> tokens = new HashSet<Token>();
+	private WechatRouter router;
+	
+	public TokenRouter(WechatRouter router){
+		this.setRouter(router);
+	}
 	
 	public boolean addOne(Object key, Object value){
 	    if (value == null) return false;
@@ -29,32 +35,48 @@ public class TokenRouter implements MapStoreListener{
 	    return key;
 	}
 	
-	public void start(){
+	public void startup(){
 		SessionCache.instance().addMapStoreListener(this);
 	}
 	
-	public void stop(){
+	public void shutdown(){
 		SessionCache.instance().removeMapStoreListener(this);
 	}
 	
 	private void addSessioin(WechatSession value) {
 		// TODO Auto-generated method stub
 	    if(value!=null && value.getApp()!=null){
-	    	if(handler!=null){
-	    		token = new Token(value.getApp().getAccess_token(),value.getApp().getExpires());
-	    		token.setWechatID(value.getWechatID());
-	    		handler.onToken(token);
-	    	}
+	    	Token token = new Token(value.getApp().getAccess_token(),value.getApp().getExpires());
+    		token.setWechatID(value.getWechatID());
+    		token.setToken(value.getApp().getToken());
+    		addToken(token);
 	    }else{
 	    	logger.warn("router is null");
 	    }
 	}
 
-	public void setToken(Token token) {
-		this.token = token;
+	public void addToken(Token token) {
+		Token temp = getToken(token.getWechatID());
+		if(temp!=null)
+			tokens.remove(temp);
+		tokens.add(token);
+		if(router!=null)
+			router.onToken(token);
 	}
 
-	public Token getToken() {
-		return token;
+	public Token getToken(String wechatID) {
+		for(Token token : tokens){
+			if(wechatID!=null && wechatID.equals(token.getWechatID()))
+				return token;
+		}
+		return null;
+	}
+
+	public WechatRouter getRouter() {
+		return router;
+	}
+
+	public void setRouter(WechatRouter router) {
+		this.router = router;
 	}
 }

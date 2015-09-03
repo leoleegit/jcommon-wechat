@@ -1,7 +1,7 @@
 package org.jcommon.com.wechat.router.test;
 import java.io.IOException;
 
-import org.jcommon.com.wechat.router.NoIOClient;
+import org.jcommon.com.wechat.router.client.NoIOClient;
 
 
 public class NoIOClientTest {

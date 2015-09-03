@@ -2,7 +2,7 @@ package org.jcommon.com.wechat.router.test;
 
 import java.io.IOException;
 
-import org.jcommon.com.wechat.router.TokenHttpClient;
+import org.jcommon.com.wechat.router.client.TokenHttpClient;
 
 public class TokenHttpClientTest {
 
