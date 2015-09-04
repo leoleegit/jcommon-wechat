@@ -5,6 +5,9 @@ import javax.management.MBeanParameterInfo;
 
 import org.apache.log4j.Logger;
 import org.jcommon.com.util.jmx.Monitor;
+import org.jcommon.com.wechat.WechatSession;
+import org.jcommon.com.wechat.WechatSessionManager;
+import org.jcommon.com.wechat.data.App;
 import org.jcommon.com.wechat.data.Token;
 import org.jcommon.com.wechat.router.server.HttpHandler;
 import org.jcommon.com.wechat.router.server.NoIOAcceptorHandler;
@@ -71,8 +74,33 @@ public class WechatRouter extends Monitor{
 		    	          		"url","java.lang.String","url")},  
 		          "void",
 		          MBeanOperationInfo.ACTION));
+		addOperation(new MBeanOperationInfo(
+		          "addSession",
+		          "addSession",
+		          new MBeanParameterInfo[]{new MBeanParameterInfo(
+		          		"wechatID","java.lang.String","wechatID"),
+		          		new MBeanParameterInfo(
+				          		"appid","java.lang.String","appid"),
+			          new MBeanParameterInfo(
+				          		"secret","java.lang.String","secret"),
+			          new MBeanParameterInfo(
+				          		"Token","java.lang.String","Token")},   // no parameters
+		          "void",
+		          MBeanOperationInfo.ACTION));
     }
 
+	public void addSession(String wechatID, String appid, String secret, String Token){
+		  logger.info(String.format("wechatID:%s ; appid:%s ; secret:%s ; Toke:%s ;", wechatID,appid,secret,Token));
+		  WechatSession session = WechatSessionManager.instance().getWechatSession(wechatID);
+		  if(session==null){
+			  App app = new App(appid,secret,Token);
+			  session = new RouterWechatSession(wechatID,app,null);
+			  session.startup();
+		  }else{
+			  logger.info(String.format("session of %s have been exist!", wechatID));
+		  }
+	}
+	
 	public void addHttpCallbackRouter(String wechatID,String url){
 		addHttpRouter(RouterType.Callback,wechatID,url);
 	}
@@ -161,6 +189,13 @@ public class WechatRouter extends Monitor{
 	}
 	
 	public void onToken(Token token){
+		logger.info(token.toJson());
+		String wechatID = token.getWechatID();
+		if(token.getAccess_token()==null){
+			super.removeProperties(wechatID);
+			return;
+		}
+		super.addProperties(wechatID, token.toJson());
 		if(router_handlers!=null){
 			for(RouterHandler h : router_handlers)
 				h.onToken(token);

@@ -94,13 +94,11 @@ public class HttpHandler implements RouterHandler, HttpListener{
 		if(token!=null){
 			String Token     = token.getToken();
 			String wechatID  = token.getWechatID();
-			token.setToken(null);
-			token.setWechatID(null);
 			
 			String timestamp = String.valueOf(new Timestamp(System.currentTimeMillis()).getTime()); 
 		    String nonce     = org.jcommon.com.util.BufferUtils.generateRandom(6);
 		    String signature = WechatUtils.createSignature(Token, timestamp, nonce); 
-			String xml       = token.toJson();
+			String xml       = new Token(token.getAccess_token(),token.getExpires_in()).toJson();
 			
 			Set<HRouter> hs  = getHRouter(RouterType.Callback,wechatID);
 			for(HRouter h : hs){

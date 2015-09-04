@@ -133,6 +133,8 @@ public class NoIOAcceptorHandler extends IoHandlerAdapter implements RouterHandl
     	    	Token token = this.getRouter().getToken_router().getToken(wechatID);
     	    	if(token!=null)
     	    		this.onToken(token);
+    	    	else
+    	    		logger.info("can't find token");
     	    }  
     	    else
     	    	logger.warn("Illegal Data! : "+router.getJson());
@@ -209,6 +211,7 @@ public class NoIOAcceptorHandler extends IoHandlerAdapter implements RouterHandl
 	@Override
 	public void onRouter(Router router) {
 		// TODO Auto-generated method stub
+		router.setType(RouterType.Callback.toString());
 		if(router!=null && router.getWechatID()!=null){
 			for(IoSession session : getIoSession(router.getWechatID())){
 				this.send(session, router);
@@ -219,6 +222,7 @@ public class NoIOAcceptorHandler extends IoHandlerAdapter implements RouterHandl
 	@Override
 	public void onToken(Token token) {
 		// TODO Auto-generated method stub
+		logger.info(token.toJson());
 		if(token!=null && token.getWechatID()!=null){
 			for(IoSession session : getIoSession(token.getWechatID())){
 				Router router = new Router(null);
@@ -263,7 +267,7 @@ public class NoIOAcceptorHandler extends IoHandlerAdapter implements RouterHandl
 	public String toString(){
 		StringBuilder sb = new StringBuilder();
 		for(IoSession session : sessions){
-			sb.append(String.format("%s : %s", session.getAttribute(WECHATID),session.getRemoteAddress())).append("\n");
+			sb.append(String.format("%s : %s", session.getAttribute(WECHATID),session.getRemoteAddress())).append(";	");
 		}
 		return sb.toString();
 	}

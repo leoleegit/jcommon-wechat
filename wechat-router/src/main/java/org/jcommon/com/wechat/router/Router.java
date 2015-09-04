@@ -9,7 +9,7 @@ public class Router extends JsonObject{
 	private String nonce;
 	private String xml;
 	
-	private String type = RouterType.Callback.toString();
+	private String type;
 	
 	public Router(String signature, String timestamp, String nonce, String xml){
 		setSignature(signature);

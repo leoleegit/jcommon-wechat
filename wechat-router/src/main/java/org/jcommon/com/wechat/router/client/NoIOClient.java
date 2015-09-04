@@ -1,6 +1,7 @@
 package org.jcommon.com.wechat.router.client;
 
 import java.net.InetSocketAddress;
+import java.sql.Timestamp;
 
 import org.apache.mina.core.filterchain.DefaultIoFilterChainBuilder;
 import org.apache.mina.core.session.IoSession;
@@ -9,16 +10,36 @@ import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.filter.logging.LoggingFilter;
 import org.apache.mina.filter.ssl.SslFilter;
 import org.apache.mina.transport.socket.nio.NioSocketConnector;
+import org.jcommon.com.wechat.router.Router;
 import org.jcommon.com.wechat.router.server.CodecFactory;
 import org.jcommon.com.wechat.router.server.NoIOAcceptorHandler;
+import org.jcommon.com.wechat.utils.WechatUtils;
 
 public class NoIOClient extends NoIOAcceptorHandler {
 	private NioSocketConnector connector;
+	private String wechatID;
+	private String Token;
 	
-	public NoIOClient(String addr, int port){
+	public NoIOClient(String addr, int port, String wechatID, String Token){
 		super(null,addr,port);
+		this.wechatID = wechatID;
+		this.Token    = Token;
 	}
 
+	public void sessionCreated(final IoSession session) throws Exception {
+        // Empty handler
+    	logger.info("RemoteAddress: "
+				+ session.getRemoteAddress());
+    	
+    	String timestamp = String.valueOf(new Timestamp(System.currentTimeMillis()).getTime()); 
+	    String nonce     = org.jcommon.com.util.BufferUtils.generateRandom(6);
+	    String signature = WechatUtils.createSignature(this.Token, timestamp, nonce); 
+	    
+	    Router router = new Router(signature, timestamp, nonce, null);
+	    router.setWechatID(wechatID);
+	    this.send(session, router);
+    }
+	
 	public void start(){
 		connector = new NioSocketConnector();
 		connector.getSessionConfig().setReadBufferSize(4096);
@@ -63,6 +84,26 @@ public class NoIOClient extends NoIOAcceptorHandler {
 	 	throws Exception {
 	 	// Empty handler
 	 	logger.info("RemoteAddress: "
-				+ session.getRemoteAddress()+"\n"+message);
+				+ session.getRemoteAddress());
+	 	if(message instanceof Router){
+	 		logger.info(((Router)message).getJson());
+	 		logger.info(((Router)message).getType());
+	 	}
+	}
+
+	public String getWechatID() {
+		return wechatID;
+	}
+
+	public void setWechatID(String wechatID) {
+		this.wechatID = wechatID;
+	}
+
+	public String getToken() {
+		return Token;
+	}
+
+	public void setToken(String token) {
+		Token = token;
 	}	
 }
