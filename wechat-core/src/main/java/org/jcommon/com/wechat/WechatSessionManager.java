@@ -94,7 +94,7 @@ public class WechatSessionManager extends Monitor
   public void addSession(String wechatID, String appid, String secret, String Token){
 	  logger.info(String.format("wechatID:%s ; appid:%s ; secret:%s ; Toke:%s ;", wechatID,appid,secret,Token));
 	  WechatSession session = getWechatSession(wechatID);
-	  if(session!=null){
+	  if(session==null){
 		  App app = new App(appid,secret,Token);
 		  session = new WechatSession(wechatID,app,null);
 		  session.startup();
