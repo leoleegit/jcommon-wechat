@@ -16,15 +16,21 @@ public class TokenHttpClient implements HttpListener{
 	private String access_url;
 	private String wechatID;
 	private String token;
+	private String callback_url;
 	private boolean stop    = false;
 	private final long retry= 30000;
 	
 	private Timer timer;
 	
-	public TokenHttpClient(String wechatID,String token,String access_url){
+	public TokenHttpClient(String wechatID,String token,String access_url,String callback_url){
 		this.access_url = access_url;
 		this.wechatID   = wechatID;
 		this.token      = token;
+		this.callback_url = callback_url;
+	}
+	
+	public TokenHttpClient(String wechatID,String token,String access_url){
+		this(wechatID,token,access_url,null);
 	}
 	
 	public void onSuccessful(HttpRequest reqeust, StringBuilder sResult){
@@ -78,5 +84,30 @@ public class TokenHttpClient implements HttpListener{
 			HttpRequest request = new HttpRequest(url,this);
 			ThreadManager.instance().execute(request);
 		}
+	}
+	
+	public void callback(String content){
+		if(callback_url!=null){
+			String timestamp = String.valueOf(new Timestamp(System.currentTimeMillis()).getTime()); 
+		    String nonce     = org.jcommon.com.util.BufferUtils.generateRandom(6);
+		    String token     = this.token;
+		    String signature = WechatUtils.createSignature(token, timestamp, nonce); 
+			
+			String[] keys   = { "signature","timestamp","nonce","wechatID" };
+			String[] values = { signature,timestamp,nonce,this.wechatID };
+			String    url   = JsonUtils.toRequestURL(callback_url, keys, values);
+			HttpRequest request = new HttpRequest(url,content,HttpRequest.POST,this);
+			ThreadManager.instance().execute(request);
+		}else{
+			
+		}
+	}
+
+	public String getCallback_url() {
+		return callback_url;
+	}
+
+	public void setCallback_url(String callback_url) {
+		this.callback_url = callback_url;
 	}
 }
