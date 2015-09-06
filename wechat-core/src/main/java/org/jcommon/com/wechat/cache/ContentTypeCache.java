@@ -27,7 +27,8 @@ public class ContentTypeCache extends MapStore {
 		this.prefix    = prefix;
 		this.suffix    = suffix;
 		this.length    = length;
-		org.jcommon.com.util.system.SystemManager.instance().addListener(this);
+		if(org.jcommon.com.util.system.SystemManager.instance()!=null)
+			org.jcommon.com.util.system.SystemManager.instance().addListener(this);
 	}
 	
 	public void startup(){
