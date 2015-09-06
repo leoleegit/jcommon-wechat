@@ -45,7 +45,6 @@ public class NoIOAcceptorHandler extends IoHandlerAdapter implements RouterHandl
 	}
 	
 	public NoIOAcceptorHandler(WechatRouter router,String addr,int port){
-		port = System.getProperty("RouterPort")!=null?Integer.valueOf(System.getProperty("RouterPort")):port;
 		this.router = router;
 		if(addr == null){
 			try {
@@ -69,7 +68,7 @@ public class NoIOAcceptorHandler extends IoHandlerAdapter implements RouterHandl
 			}
         }
 		
-		this.localPort = port!=0?port:DEFAULT_PORT;
+		this.localPort = port>0?port:DEFAULT_PORT;
 	}
 
     public void sessionCreated(final IoSession session) throws Exception {
@@ -163,6 +162,8 @@ public class NoIOAcceptorHandler extends IoHandlerAdapter implements RouterHandl
 
 	@Override
 	public void startup(){
+		int port = System.getProperty("RouterPort")!=null?Integer.valueOf(System.getProperty("RouterPort")):localPort;
+		
 		socketAcceptor = new NioSocketAcceptor();
 		socketAcceptor.getSessionConfig().setReadBufferSize(4096);
 		socketAcceptor.getSessionConfig().setReceiveBufferSize(4096);
@@ -185,7 +186,7 @@ public class NoIOAcceptorHandler extends IoHandlerAdapter implements RouterHandl
 		// Bind
 		socketAcceptor.setHandler(this);
 		try {
-			socketAcceptor.bind(new InetSocketAddress(localPort));
+			socketAcceptor.bind(new InetSocketAddress(port));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			logger.error("", e);

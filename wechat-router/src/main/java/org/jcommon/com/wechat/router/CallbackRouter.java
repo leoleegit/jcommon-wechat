@@ -3,6 +3,7 @@ package org.jcommon.com.wechat.router;
 import org.apache.log4j.Logger;
 import org.jcommon.com.wechat.WechatSession;
 import org.jcommon.com.wechat.cache.SessionCache;
+import org.jcommon.com.wechat.data.App;
 import org.jcommon.com.wechat.data.Event;
 import org.jcommon.com.wechat.data.InMessage;
 
@@ -13,7 +14,7 @@ public class CallbackRouter extends WechatSession{
 	private WechatRouter router;
 	
 	public CallbackRouter(WechatRouter router){
-		super(WECHATID, null, null);
+		super(WECHATID, new App(null,null,null,null), null);
 		this.setRouter(router);
 	}
 	
