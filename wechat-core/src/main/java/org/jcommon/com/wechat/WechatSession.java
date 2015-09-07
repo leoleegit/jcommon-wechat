@@ -626,5 +626,6 @@ public class WechatSession extends ResponseHandler
           WechatSession.this.app.setExpires(expires_in);
           WechatSession.this.app.setDelay(app.getExpires()* 1000L-100);
         }
+        SessionCache.instance().updateWechatSession(this);
 	} 
 }

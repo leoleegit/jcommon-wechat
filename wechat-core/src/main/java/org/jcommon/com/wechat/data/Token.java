@@ -22,6 +22,10 @@ public class Token extends JsonObject{
 		  this.nonce      = nonce;
 	  }
 	  
+	  public Token(String xml){
+		  super(xml);
+	  }
+	  
 	  public String getAccess_token() {
 		  return access_token;
 	  }
