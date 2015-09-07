@@ -181,7 +181,7 @@ public class HttpHandler implements RouterHandler, HttpListener{
 	public String toString(){
 		StringBuilder sb = new StringBuilder();
 		for(HRouter h : routers){
-			sb.append(h.toString()).append("\n");
+			sb.append(h.toString()).append("\r\n");
 		}
 		return sb.toString();
 	}

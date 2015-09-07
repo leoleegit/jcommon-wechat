@@ -25,11 +25,19 @@ public class NoIOClient extends NoIOAcceptorHandler {
 	private NioSocketConnector connector;
 	private IoSession session;
 	private Set<CRouter> routers = new HashSet<CRouter>();
+	private String addr;
+	private int port;
 	
 	public NoIOClient(String addr, int port){
 		super(null,addr,port);
+		this.addr = addr;
+		this.port = port;
 	}
 
+	public int size(){
+		return routers.size();
+	}
+	
 	public void startup(){
 		connector = new NioSocketConnector();
 		connector.getSessionConfig().setReadBufferSize(4096);
@@ -61,6 +69,10 @@ public class NoIOClient extends NoIOAcceptorHandler {
 		logger.info("connect on "
 				+ localAddr.getHostAddress()
 				+ " : "+localPort);
+	}
+	
+	public String toKey(){
+		return String.format("%s:%s", addr,port);
 	}
 	
 	public void shutdown(){
@@ -171,6 +183,14 @@ public class NoIOClient extends NoIOAcceptorHandler {
 		}
 	
 		return null;
+	}
+	
+	public String toString(){
+		StringBuilder sb = new StringBuilder();
+		for(CRouter h : routers){
+			sb.append(h.toString()).append("\r\n");
+		}
+		return sb.toString();
 	}
 	
 	class CRouter{
