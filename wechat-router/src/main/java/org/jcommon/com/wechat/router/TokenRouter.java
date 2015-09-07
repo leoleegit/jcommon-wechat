@@ -26,7 +26,7 @@ public class TokenRouter implements MapStoreListener{
 	}
 
 	public boolean updateOne(Object key, Object value){
-		logger.info(String.format("%s : %s", key, value));
+		//logger.info(String.format("%s : %s", key, value));
 		if (value == null) return false;
 		addSessioin((WechatSession)value);
 	    return false;
@@ -44,10 +44,12 @@ public class TokenRouter implements MapStoreListener{
 	
 	public void startup(){
 		SessionCache.instance().addMapStoreListener(this);
+		logger.info("");
 	}
 	
 	public void shutdown(){
 		SessionCache.instance().removeMapStoreListener(this);
+		logger.info("");
 	}
 	
 	private void addSessioin(WechatSession value) {
@@ -56,7 +58,7 @@ public class TokenRouter implements MapStoreListener{
 	    	Token token = new Token(value.getApp().getAccess_token(),value.getApp().getExpires());
     		token.setWechatID(value.getWechatID());
     		token.setToken(value.getApp().getToken());
-    		logger.info(String.format("wechatID:%s;Token:%s", token.getWechatID(),token.getToken()));
+    		//logger.info(String.format("wechatID:%s;Token:%s", token.getWechatID(),token.getToken()));
     		logger.info(token.toJson());
     		addToken(token);
 	    }else{

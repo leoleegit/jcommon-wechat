@@ -6,6 +6,6 @@
 	<init_threads>500</init_threads>
 	<version>20121111</version>
 	<mbean_server>jcommon_wechat_server</mbean_server>
-	<htmladapter user="admin" password="admin" port="10047" />
+	<htmladapter user="admin" password="admin" port="10046" />
 	<!--  <ShareObject rmi="rmiadapter" name="ShareObject" role="client" CREDENTIALS="ptsws" addr="127.0.0.1" port="10043" />-->
 </root>

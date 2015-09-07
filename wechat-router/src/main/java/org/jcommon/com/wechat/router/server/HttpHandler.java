@@ -100,7 +100,7 @@ public class HttpHandler implements RouterHandler, HttpListener{
 		    String signature = WechatUtils.createSignature(Token, timestamp, nonce); 
 			String xml       = new Token(token.getAccess_token(),token.getExpires_in()).toJson();
 			
-			Set<HRouter> hs  = getHRouter(RouterType.Callback,wechatID);
+			Set<HRouter> hs  = getHRouter(RouterType.Token,wechatID);
 			for(HRouter h : hs){
 				callback(h.url,wechatID,signature,timestamp,nonce,xml);
 			}

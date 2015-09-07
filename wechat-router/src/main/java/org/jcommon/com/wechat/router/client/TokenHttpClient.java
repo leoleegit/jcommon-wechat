@@ -98,8 +98,6 @@ public class TokenHttpClient implements HttpListener{
 			String    url   = JsonUtils.toRequestURL(callback_url, keys, values);
 			HttpRequest request = new HttpRequest(url,content,HttpRequest.POST,this);
 			ThreadManager.instance().execute(request);
-		}else{
-			
 		}
 	}
 

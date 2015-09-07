@@ -10,11 +10,12 @@ import org.jcommon.com.wechat.data.InMessage;
 public class CallbackRouter extends WechatSession{
 	private Logger logger = Logger.getLogger(getClass());
 	private final static String WECHATID = "*";
+	private final static String APPID    = "wechat-app-id";
 	
 	private WechatRouter router;
 	
 	public CallbackRouter(WechatRouter router){
-		super(WECHATID, new App(null,null,null,null), null);
+		super(WECHATID, new App(APPID,null,null), null);
 		this.setRouter(router);
 	}
 	
