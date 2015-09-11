@@ -21,7 +21,8 @@ import org.jcommon.com.wechat.data.App;
 
 public class RequestFactory
 {
-  private static final String api_url = "https://api.weixin.qq.com/cgi-bin";
+	private static final String api_root = "https://api.weixin.qq.com";
+	private static final String api_url  = "https://api.weixin.qq.com/cgi-bin";
 
   public static HttpRequest createUserInfoRequest(HttpListener listener, String access_token, String open_id, String lang){
 	    String url = api_url+ "/user/info";
@@ -37,6 +38,46 @@ public class RequestFactory
     String[] values = { access_token, type };
     url = JsonUtils.toRequestURL(url, keys, values);
     return new FileRequest(url, HttpRequest.POST, listener, file);
+  }
+  
+  public static HttpRequest uploadHeadImgRequest(HttpListener listener, String access_token, File file, String kf_account){
+	String url = api_root+ "/customservice/kfaccount/uploadheadimg";
+	String[] keys = { "access_token", "kf_account" };
+	String[] values = { access_token, kf_account };
+	url = JsonUtils.toRequestURL(url, keys, values);
+	return new FileRequest(url, HttpRequest.POST, listener, file);
+  }
+  
+  public static HttpRequest addAgentRequest(HttpListener listener, String access_token, String content){
+	  String url = api_root+ "/customservice/kfaccount/add";
+	  String[] keys = { "access_token" };
+	  String[] values = { access_token };
+	  url = JsonUtils.toRequestURL(url, keys, values);
+	  return new HttpRequest(url, content, HttpRequest.POST, listener, true);
+  }
+  
+  public static HttpRequest updateAgentRequest(HttpListener listener, String access_token, String content){
+	  String url = api_root+ "/customservice/kfaccount/update";
+	  String[] keys = { "access_token" };
+	  String[] values = { access_token };
+	  url = JsonUtils.toRequestURL(url, keys, values);
+	  return new HttpRequest(url, content, HttpRequest.POST, listener, true);
+  }
+  
+  public static HttpRequest delAgentRequest(HttpListener listener, String access_token, String content){
+	  String url = api_root+ "/customservice/kfaccount/del";
+	  String[] keys = { "access_token" };
+	  String[] values = { access_token };
+	  url = JsonUtils.toRequestURL(url, keys, values);
+	  return new HttpRequest(url, content, HttpRequest.POST, listener, true);
+  }
+  
+  public static HttpRequest getAgentRequest(HttpListener listener, String access_token){
+	  String url = api_url+ "/customservice/getkflist";
+	  String[] keys = { "access_token" };
+	  String[] values = { access_token };
+	  url = JsonUtils.toRequestURL(url, keys, values);
+	  return new HttpRequest(url, listener, true);
   }
   
   public static HttpRequest createVideoUploadRequest(HttpListener listener, String access_token, File file, String type){
@@ -127,10 +168,18 @@ public class RequestFactory
 	return new HttpRequest(url, content, HttpRequest.POST, listener, true);
   }
 
-  public static HttpRequest createAccessTokenReqeust(HttpListener listener, App app) {
+  public static HttpRequest accessTokenReqeust(HttpListener listener, App app) {
     String url = api_url+ "/token";
     String[] keys = { "grant_type", "appid", "secret" };
     String[] values = { "client_credential", app.getAppid(), app.getSecret() };
+    url = JsonUtils.toRequestURL(url, keys, values);
+    return new HttpRequest(url, listener, true);
+  }
+  
+  public static HttpRequest callbackIpsReqeust(HttpListener listener, String access_token) {
+    String url = api_url+ "/getcallbackip";
+    String[] keys = { "access_token" };
+    String[] values = { access_token};
     url = JsonUtils.toRequestURL(url, keys, values);
     return new HttpRequest(url, listener, true);
   }

@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.jcommon.com.util.http.HttpRequest;
-import org.jcommon.com.wechat.Callback;
 import org.jcommon.com.wechat.RequestCallback;
 import org.jcommon.com.wechat.WechatSession;
 import org.jcommon.com.wechat.data.App;
@@ -15,6 +14,7 @@ import org.jcommon.com.wechat.data.Mpnews;
 import org.jcommon.com.wechat.data.OpenID;
 import org.jcommon.com.wechat.data.Text;
 import org.jcommon.com.wechat.data.filter.UserFilter;
+import org.jcommon.com.wechat.servlet.Callback;
 import org.jcommon.com.wechat.utils.MediaType;
 
 public class BroadcastTest extends TestBase implements RequestCallback{

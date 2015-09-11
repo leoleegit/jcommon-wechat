@@ -10,7 +10,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // ========================================================================
-package org.jcommon.com.wechat;
+package org.jcommon.com.wechat.servlet;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -31,6 +31,8 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.log4j.Logger;
+import org.jcommon.com.wechat.WechatSession;
+import org.jcommon.com.wechat.WechatSessionManager;
 import org.jcommon.com.wechat.cache.FileCache;
 import org.jcommon.com.wechat.utils.ErrorType;
 

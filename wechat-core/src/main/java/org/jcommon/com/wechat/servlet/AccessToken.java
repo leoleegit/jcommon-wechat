@@ -1,4 +1,4 @@
-package org.jcommon.com.wechat;
+package org.jcommon.com.wechat.servlet;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,6 +13,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
+import org.jcommon.com.wechat.WechatSession;
+import org.jcommon.com.wechat.WechatSessionManager;
 import org.jcommon.com.wechat.data.App;
 import org.jcommon.com.wechat.data.Token;
 

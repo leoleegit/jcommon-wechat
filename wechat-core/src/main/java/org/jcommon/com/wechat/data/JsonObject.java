@@ -123,6 +123,8 @@ public class JsonObject
                   logger.warn(e);
                   continue;
                 }
+              }else if (Collection.class.isAssignableFrom(type)){
+            	  
               }
               try
               {

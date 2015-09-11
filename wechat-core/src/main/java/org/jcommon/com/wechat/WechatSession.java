@@ -13,12 +13,12 @@
 package org.jcommon.com.wechat;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
 import org.apache.log4j.Logger;
-import org.jcommon.com.util.JsonUtils;
 import org.jcommon.com.util.collections.MapStoreListener;
 import org.jcommon.com.util.http.HttpListener;
 import org.jcommon.com.util.http.HttpRequest;
@@ -46,8 +46,6 @@ import org.jcommon.com.wechat.data.filter.Filter;
 import org.jcommon.com.wechat.utils.ErrorType;
 import org.jcommon.com.wechat.utils.MsgType;
 import org.jcommon.com.wechat.utils.WechatUtils;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class WechatSession extends ResponseHandler
   implements WechatSessionListener{
@@ -141,33 +139,12 @@ public class WechatSession extends ResponseHandler
     this.app_keepalive = TimerTaskManger.instance().schedule("app-keepalive", new TimerTask(){
     	public void run(){
     		
-    		 execute(RequestFactory.createAccessTokenReqeust(new HttpListener(){
+    		 execute(RequestFactory.accessTokenReqeust(new HttpListener(){
 
     			 public void onSuccessful(HttpRequest reqeust, StringBuilder sResult){
-    				logger.info(sResult.toString());
-    			    JSONObject json = JsonUtils.getJSONObject(sResult.toString());
-    			    if (json != null){
-    			      try {
-    			        String access_token = json.has("access_token") ? json.getString("access_token") : null;
-    			        long expires_in = json.has("expires_in") ? json.getLong("expires_in") : 0L;
-    			        if(access_token!=null){
-    			        	WechatSession.this.app.setAccess_token(access_token);
-    			        	WechatSession.this.app.setStatus("app is ok:onRunning");
-    			        }else{
-    			        	WechatSession.this.app.setStatus("app is error:"+sResult.toString());
-    			        }
-    			        if (expires_in!= WechatSession.this.app.getExpires() && expires_in!=0) {
-    			          WechatSession.this.app.setExpires(expires_in);
-    			          WechatSession.this.app.setDelay(app.getExpires()* 1000L-100);
-    			          WechatSession.this.appKeepAlive(WechatSession.this.app);
-    			        }
-    			      } catch (JSONException e) {
-    			        logger.error("", e);
-    			      }
-    			    }
-    			    else
-    			    	 WechatSession.this.app.setStatus("app is error:onError");
-    			    SessionCache.instance().updateWechatSession(WechatSession.this);
+    				 logger.info(sResult.toString());
+    				 WechatSession.this.onToken(new Token(sResult.toString()));
+    				 WechatSession.this.appKeepAlive(WechatSession.this.app);
     			  }
 
     			  public void onFailure(HttpRequest reqeust, StringBuilder sResult)
@@ -586,6 +563,12 @@ public class WechatSession extends ResponseHandler
 	  logger.info("out:"+(request.getContent()==null?HttpRequest.GET:request.getContent()));
 	  ThreadManager.instance().execute(request);
   }
+  
+  public HttpRequest resetHttpRequest(HttpRequest request) {
+		// TODO Auto-generated method stub
+	  logger.info("out:"+(request.getContent()==null?HttpRequest.GET:request.getContent()));
+	  return request;
+  }
 
 	public UserManager getUserManager() {
 		return userManager;
@@ -628,4 +611,10 @@ public class WechatSession extends ResponseHandler
         }
         SessionCache.instance().updateWechatSession(this);
 	} 
+	
+	public String logStr(String format, Object... args){
+		List<Object> list=new ArrayList<Object>(Arrays.asList(args));
+		list.add(0,wechatID==null?"":wechatID);
+		return String.format("(%s)-->" + format, list.toArray());
+	}
 }

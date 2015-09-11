@@ -18,7 +18,7 @@ public class AccessTokenTest extends TestBase implements HttpListener{
 		String secret="37492ad273076440c0f123716865e1da";
 		String Token="spotlight-wechat";
 		App app = new App(appid,secret,Token);
-		RequestFactory.createAccessTokenReqeust(new AccessTokenTest(),app).run();
+		RequestFactory.accessTokenReqeust(new AccessTokenTest(),app).run();
 		
 	}
 
