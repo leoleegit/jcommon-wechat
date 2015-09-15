@@ -58,9 +58,9 @@ public class WechatSession extends ResponseHandler
   public final static String  WECHATMEDIAPATH = "wechat-media-path";
   public final static String  WECHATMEDIAURL  = "wechat-media-url";
   
-  private UserManager  userManager;
+  private UserManager_bak  userManager;
   private MsgManager   msgManager;
-  private MediaManager mediaManager;
+  private MediaManager_bak mediaManager;
   
   private Timer app_keepalive;
   private boolean startup = false;
@@ -70,9 +70,9 @@ public class WechatSession extends ResponseHandler
     this.app = app;
     this.listener = listener;
     
-    userManager  = new UserManager(this);
+    userManager  = new UserManager_bak(this);
     msgManager   = new MsgManager(this);
-    mediaManager = new MediaManager(this);
+    mediaManager = new MediaManager_bak(this);
   }
 
   public void startup() {
@@ -570,11 +570,11 @@ public class WechatSession extends ResponseHandler
 	  return request;
   }
 
-	public UserManager getUserManager() {
+	public UserManager_bak getUserManager() {
 		return userManager;
 	}
 	
-	public void setUserManager(UserManager userManager) {
+	public void setUserManager(UserManager_bak userManager) {
 		this.userManager = userManager;
 	}
 	
@@ -586,11 +586,11 @@ public class WechatSession extends ResponseHandler
 		this.msgManager = msgManager;
 	}
 	
-	public MediaManager getMediaManager() {
+	public MediaManager_bak getMediaManager() {
 		return mediaManager;
 	}
 	
-	public void setMediaManager(MediaManager mediaManager) {
+	public void setMediaManager(MediaManager_bak mediaManager) {
 		this.mediaManager = mediaManager;
 	}
 

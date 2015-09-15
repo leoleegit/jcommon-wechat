@@ -1,6 +1,10 @@
 package org.jcommon.com.wechat.data;
 
 public class Token extends JsonObject{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	  private String access_token;
 	  private long expires_in;
 	  private String wechatID;

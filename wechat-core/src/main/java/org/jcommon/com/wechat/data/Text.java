@@ -14,6 +14,10 @@ package org.jcommon.com.wechat.data;
 
 public class Text extends JsonObject
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
   private String content;
 
   public Text(String content)

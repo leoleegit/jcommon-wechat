@@ -21,6 +21,10 @@ import org.jcommon.com.wechat.utils.MD5;
 import org.jcommon.com.wechat.utils.MsgType;
 
 public class Media extends JsonObject{
+	/**
+	 * 
+	 */
+  private static final long serialVersionUID = 1L;
   private String media_id;
   private String thumb_media_id;
   private String type;
@@ -28,10 +32,10 @@ public class Media extends JsonObject{
   private File media;
   private String url;
   private String content_type;
-  public final long max_image = 131072L;
-  public final long max_voice = 262144L;
-  public final long max_video = 1048576L;
-  public final long max_thumb = 65536L;
+  public final long max_image = 1*1024*1024; //1M
+  public final long max_voice = 2*1024*1024; //2M
+  public final long max_video = 10*1024*1024;//10M
+  public final long max_thumb = 1*64*1024;//64K
 
   public final String type_image = "jpg";
   public final String type_voice = "AMR/MP3";

@@ -14,8 +14,11 @@ package org.jcommon.com.wechat.data;
 
 import org.jcommon.com.wechat.utils.WechatUtils;
 
-public class App extends JsonObject
-{
+public class App extends JsonObject{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
   private String access_token;
   private String appid;
   private String secret;

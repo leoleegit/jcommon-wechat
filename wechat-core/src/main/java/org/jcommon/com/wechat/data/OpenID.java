@@ -1,6 +1,10 @@
 package org.jcommon.com.wechat.data;
 
 public class OpenID extends JsonObject {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String openid;
 
 	public OpenID(String openid){

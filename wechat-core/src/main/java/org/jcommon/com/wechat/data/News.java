@@ -21,6 +21,10 @@ import org.json.JSONObject;
 
 public class News extends JsonObject
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
   private List<Articles> articles;
   public final static int max_size = 10;
   

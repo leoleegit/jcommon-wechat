@@ -12,14 +12,12 @@
 // ========================================================================
 package org.jcommon.com.wechat.data;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.jcommon.com.util.JsonUtils;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 public class User extends JsonObject{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String subscribe;
 	private String openid;
 	private String nickname;
@@ -30,53 +28,17 @@ public class User extends JsonObject{
 	private String country;
 	private String headimgurl;
 	private long subscribe_time;
+	private String unionid;
+	private String remark;
+	private String groupid;
 	
 	private long create_time;
 	
-	private  List<OpenID> openids;
-	private  long total;
-	private  long count;
-	private  String next_openid;
-	
 	public User(String json){
 		super(json);	
-		
-		if(json!=null){
-			JSONObject jsonObject = null;
-	        try {
-	        	jsonObject = new JSONObject(json);
-	        	total = jsonObject.has("total")?jsonObject.getLong("total"):0;
-	        	count = jsonObject.has("count")?jsonObject.getLong("count"):0;
-	        	if(count==0)
-	        		return;
-	        	next_openid = jsonObject.has("next_openid")?jsonObject.getString("next_openid"):null;
-	        	json = jsonObject.has("data")?jsonObject.getString("data"):null;
-	        	
-	        	openids = new ArrayList<OpenID>();
-	            jsonObject = JsonUtils.getJSONObject(json);
-	            if(jsonObject!=null){
-	            	String openids = jsonObject.has("openid")?jsonObject.getString("openid"):null;
-	            	if(openids.startsWith("["))
-	            		openids = openids.substring(1);
-        			if(openids.endsWith("]"))
-        				openids = openids.substring(0, openids.length()-1);
-	            	if(openids!=null){
-	            		String[] ids = openids.split(","); 
-	            		for(String id : ids){
-	            			if(id.startsWith("\""))
-	            				id = id.substring(1);
-	            			if(id.endsWith("\""))
-	            				id = id.substring(0, id.length()-1);
-	            			this.openids.add(new OpenID(id));
-	            		}
-	            	}else{
-	            		logger.info("openids is null:"+json);
-	            	}
-	            }
-	        } catch (JSONException e) {
-	        	 logger.error("", e);
-	        }
-		}
+	}
+	
+	public User(){	
 	}
 
 	public String getSubscribe() {
@@ -91,8 +53,9 @@ public class User extends JsonObject{
 		return openid;
 	}
 
-	public void setOpenid(String openid) {
+	public User setOpenid(String openid) {
 		this.openid = openid;
+		return this;
 	}
 
 	public String getNickname() {
@@ -167,35 +130,28 @@ public class User extends JsonObject{
 		this.create_time = create_time;
 	}
 
-	public List<OpenID> getOpenids() {
-		return openids;
+	public String getUnionid() {
+		return unionid;
 	}
 
-	public void setOpenids(List<OpenID> openids) {
-		this.openids = openids;
+	public void setUnionid(String unionid) {
+		this.unionid = unionid;
 	}
 
-	public long getTotal() {
-		return total;
+	public String getRemark() {
+		return remark;
 	}
 
-	public void setTotal(long total) {
-		this.total = total;
+	public void setRemark(String remark) {
+		this.remark = remark;
 	}
 
-	public long getCount() {
-		return count;
+	public String getGroupid() {
+		return groupid;
 	}
 
-	public void setCount(long count) {
-		this.count = count;
+	public void setGroupid(String groupid) {
+		this.groupid = groupid;
 	}
-
-	public String getNext_openid() {
-		return next_openid;
-	}
-
-	public void setNext_openid(String next_openid) {
-		this.next_openid = next_openid;
-	}
+	
 }

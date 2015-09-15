@@ -5,6 +5,10 @@ import java.security.NoSuchAlgorithmException;
 import org.jcommon.com.wechat.utils.MD5;
 
 public class CustomService extends JsonObject{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String kfaccount;
 	private String nickname;
 	private String passwd;

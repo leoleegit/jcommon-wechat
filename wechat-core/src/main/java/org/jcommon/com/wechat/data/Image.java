@@ -16,6 +16,10 @@ import org.jcommon.com.wechat.utils.MediaType;
 
 public class Image extends Media
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
   public Image(String data)
   {
     super(data);

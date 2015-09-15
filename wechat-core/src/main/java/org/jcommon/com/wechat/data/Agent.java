@@ -9,6 +9,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Agent extends Media{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String kf_account;
 	private String kf_nick;
 	private String kf_id;

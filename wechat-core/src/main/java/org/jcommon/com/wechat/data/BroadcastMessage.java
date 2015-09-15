@@ -5,6 +5,10 @@ import org.jcommon.com.wechat.data.filter.UserFilter;
 import org.jcommon.com.wechat.utils.MsgType;
 
 public class BroadcastMessage extends OutMessage {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
   private Filter filter;	
 
   public BroadcastMessage(MsgType type,Filter filter){

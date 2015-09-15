@@ -17,6 +17,10 @@ import java.util.List;
 import org.jcommon.com.wechat.utils.MsgType;
 
 public class OutMessage extends JsonObject{	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
   private String touser;
   private String msgtype;
   private Text text;

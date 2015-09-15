@@ -12,6 +12,7 @@
 // ========================================================================
 package org.jcommon.com.wechat.data;
 
+import java.io.Serializable;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
@@ -29,10 +30,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class JsonObject
-{
-  protected static Logger logger = Logger.getLogger(JsonObject.class);
-  private String json;
+public class JsonObject implements Serializable{
+  /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	protected static Logger logger = Logger.getLogger(JsonObject.class);
+	private String json;
 
   public JsonObject(String json)
   {

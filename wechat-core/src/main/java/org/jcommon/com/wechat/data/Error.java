@@ -16,6 +16,10 @@ import org.jcommon.com.wechat.utils.ErrorType;
 
 public class Error extends JsonObject
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
   private String errmsg;
   private int errcode;
   private ErrorType type;

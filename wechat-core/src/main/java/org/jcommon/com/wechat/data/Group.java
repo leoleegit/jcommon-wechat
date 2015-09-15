@@ -9,7 +9,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class Group extends JsonObject{
-	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String id;
 	private String name;
 	private long count;
@@ -18,6 +21,11 @@ public class Group extends JsonObject{
 	public Group(String json){
 		super(json);
 		groups = getGroups(json);
+	}
+	
+	public Group(String id, String name){
+		this.id  = id;
+		this.name= name;
 	}
 	
 	public static List<Group> getGroups(String json){

@@ -5,6 +5,10 @@ import java.util.List;
 import org.jcommon.com.wechat.data.Group;
 
 public class GroupFilter extends Filter{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private boolean is_to_all;
 	private  List<Group> groups;
 	

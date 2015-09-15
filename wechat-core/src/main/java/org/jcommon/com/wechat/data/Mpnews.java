@@ -5,7 +5,10 @@ import java.util.List;
 import org.jcommon.com.wechat.utils.MediaType;
 
 public class Mpnews extends Media{
-  
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private List<Articles> articles;
 	  
 	public Mpnews(String data){

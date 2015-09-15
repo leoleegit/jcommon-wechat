@@ -35,36 +35,41 @@ public class AgentManager extends ResponseHandler{
 		}
 	}
 	
-	public void getAgent(AgentManagerListener listener){
+	public HttpRequest getAgent(AgentManagerListener listener){
 		HttpRequest request = RequestFactory.getAgentRequest(this, session.getApp().getAccess_token());
 		if(listener!=null)
 			request.setAttribute(request, listener);
 		super.addHandlerObject(request, Agent.class);
 		logger.info(request.getUrl());
 		session.execute(request);
+		return request;
 	}
 	
-	public void addAgent(Agent agent, RequestCallback callback){
+	public HttpRequest addAgent(Agent agent, RequestCallback callback){
 		HttpRequest request = RequestFactory.addAgentRequest(callback, session.getApp().getAccess_token(),agent.toJson());
 		logger.info(request.getUrl());
 		session.execute(request);
+		return request;
 	}
 	
-	public void updateAgent(Agent agent, RequestCallback callback){
+	public HttpRequest updateAgent(Agent agent, RequestCallback callback){
 		HttpRequest request = RequestFactory.updateAgentRequest(callback, session.getApp().getAccess_token(),agent.toJson());
 		logger.info(request.getUrl());
 		session.execute(request);
+		return request;
 	}
 	
-	public void delAgent(Agent agent, RequestCallback callback){
+	public HttpRequest delAgent(Agent agent, RequestCallback callback){
 		HttpRequest request = RequestFactory.delAgentRequest(callback, session.getApp().getAccess_token(),agent.toJson());
 		logger.info(request.getUrl());
 		session.execute(request);
+		return request;
 	}
 	
-	public void uploadAgentHeadImg(Agent agent, RequestCallback callback){
+	public HttpRequest uploadAgentHeadImg(Agent agent, RequestCallback callback){
 		HttpRequest request = RequestFactory.uploadHeadImgRequest(callback, session.getApp().getAccess_token(),agent.getMedia(),agent.getKf_account());
 		logger.info(request.getUrl());
 		session.execute(request);
+		return request;
 	}
 }

@@ -5,6 +5,10 @@ import java.util.List;
 import org.jcommon.com.wechat.data.OpenID;
 
 public class UserFilter extends Filter{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private List<OpenID> touser;
 	 
 	public UserFilter(List<OpenID> touser){

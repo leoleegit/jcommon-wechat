@@ -12,8 +12,11 @@
 // ========================================================================
 package org.jcommon.com.wechat.data;
 
-public class Articles extends Media
-{
+public class Articles extends Media{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
   private String title;
   private String description;
   private String picurl;

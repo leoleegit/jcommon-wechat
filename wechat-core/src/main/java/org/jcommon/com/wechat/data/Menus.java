@@ -21,6 +21,10 @@ import org.json.JSONObject;
 
 public class Menus extends JsonObject
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
   private List<Button> button;
 
   public Menus(String json)

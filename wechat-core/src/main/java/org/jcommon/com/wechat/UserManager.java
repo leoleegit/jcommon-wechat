@@ -1,274 +1,230 @@
 package org.jcommon.com.wechat;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import org.apache.log4j.Logger;
 import org.jcommon.com.util.http.HttpRequest;
-import org.jcommon.com.util.system.SystemListener;
-import org.jcommon.com.wechat.data.App;
 import org.jcommon.com.wechat.data.Error;
-import org.jcommon.com.wechat.data.Event;
 import org.jcommon.com.wechat.data.Group;
-import org.jcommon.com.wechat.data.InMessage;
 import org.jcommon.com.wechat.data.OpenID;
 import org.jcommon.com.wechat.data.User;
-import org.jcommon.com.wechat.utils.EventType;
+import org.jcommon.com.wechat.data.Users;
+import org.jcommon.com.wechat.data.format.OutGroup;
+import org.jcommon.com.wechat.data.format.OutUser;
+import org.jcommon.com.wechat.utils.Lang;
 
-public class UserManager extends ResponseHandler implements SystemListener{
-	private Logger logger = Logger.getLogger(this.getClass());
-	
-	private Map<String,User> users = new HashMap<String,User>();
-	private static final long expires = 1000 * 60 * 30;
-	
-	private  List<OpenID> openids;
-	private  long total;
-	private  long count;
-	
+public class UserManager  extends ResponseHandler{
+	private Logger logger = Logger.getLogger(getClass());
 	private WechatSession session;
-	private List<Group> groups;
-	private App app;
-	    
-	private Timer load_groups;
-	private Timer load_users;
-	private Timer update_users;
 	
 	public UserManager(WechatSession session){
-	    this.setSession(session);
-	    this.app = session.getApp();
-	}
-
-	public void onEvent(Event event){
-		if(EventType.subscribe == EventType.getType(event.getEvent()) ||
-				EventType.unsubscribe == EventType.getType(event.getEvent())){
-			 String open_id = event.getFromUserName();
-			 if(openids!=null){
-				 OpenID id = null;
-				 synchronized(openids){
-					 for(OpenID o_id : openids){
-						 if(o_id.getOpenid().equals(open_id)){
-							 id = o_id;
-							 break;
-						 }
-					  }
-				 }
-				 if(EventType.subscribe == EventType.getType(event.getEvent())){
-					 openids.add(id);
-				 }else  if(EventType.unsubscribe == EventType.getType(event.getEvent())){
-					 openids.remove(id);
-				 }
-			  }
-		}   
-	}
-	
-	@Override
-	public void startup(){
-		loadGroups();
-		loadUsers(null);
-	}
-	
-	@Override
-	public void shutdown(){
-		if(groups!=null){
-			groups.clear();
-			groups = null;
-		}
-		if(load_groups!=null){
-			try{
-				load_groups.cancel();
-				load_groups = null;
-			}catch(Exception e){}
-		}
-		if(update_users!=null){
-			try{
-				update_users.cancel();
-				update_users = null;
-			}catch(Exception e){}
-		}
-		if(load_users!=null){
-			try{
-				load_users.cancel();
-				load_users = null;
-			}catch(Exception e){}
-		}
-	}
-	
-	public List<OpenID> getAllUsers(){
-		return openids;
-	}
-	
-	public void loadUsers(String next_openid){
-		HttpRequest request = RequestFactory.createGetUsersReqeust(this, app.getAccess_token(), next_openid);
-	    addHandlerObject(request, User.class);
-	    request.setAttribute(WechatSession.RequestAction, "loadUsers");
-	    request.setAttribute("next_openid", next_openid);
-	    session.execute(request);
-	}
-	
-	public HttpRequest getUser(InMessage message){
-		User user = users.get(message.getFromUserName());
-		if(user!=null){
-			message.setFrom(user);
-			session.onMessage(message);
-			return null;
-		}
-		HttpRequest request = RequestFactory.createUserInfoRequest(this, app.getAccess_token(), message.getFromUserName(), null);
-    	request.setHandler(message);
-    	addHandlerObject(request,User.class);
-    	session.execute(request);
-    	return request;
-	}
-	
-	private void loadGroups(){
-		load_groups = null;
-		HttpRequest request = RequestFactory.createGetGroupsReqeust(this,this.app.getAccess_token());
-		request.setAttribute(WechatSession.RequestAction, "loadGroups");
-		addHandlerObject(request,Group.class);
-		session.execute(request);
-	}
-	
-	public void setSession(WechatSession session) {
 		this.session = session;
 	}
 
-	public WechatSession getSession() {
-		return session;
+	@Override
+	public void onError(HttpRequest paramHttpRequest, Error paramError) {
+		// TODO Auto-generated method stub
+		if(paramHttpRequest.getAttibute(paramHttpRequest)!=null){
+			UserManagerListener listener = (UserManagerListener) paramHttpRequest.getAttibute(paramHttpRequest);
+			listener.onError(paramError);
+		}	
 	}
 
-	public void setGroups(List<Group> groups) {
-		this.groups = groups;
-	}
-
-	public List<Group> getGroups() {
-		return groups;
+	@Override
+	public void onOk(HttpRequest paramHttpRequest, Object paramObject) {
+		// TODO Auto-generated method stub
+		if(paramObject instanceof Group){
+			Group group = (Group) paramObject;
+			//logger.info(group.getGroups().size());
+			if(paramHttpRequest.getAttibute(paramHttpRequest)!=null){
+				UserManagerListener listener = (UserManagerListener) paramHttpRequest.getAttibute(paramHttpRequest);
+				listener.onGroup(group.getGroups());
+			}	
+		}else if(paramObject instanceof OutGroup){
+			OutGroup group = (OutGroup) paramObject;
+			logger.info(group.getGroupid());
+			if(paramHttpRequest.getAttibute(paramHttpRequest)!=null){
+				UserManagerListener listener = (UserManagerListener) paramHttpRequest.getAttibute(paramHttpRequest);
+				listener.onGroup(new Group(group.getGroupid(),null));
+			}	
+		}else if(paramObject instanceof User){
+			User user = (User) paramObject;
+			logger.info(user);
+			if(paramHttpRequest.getAttibute(paramHttpRequest)!=null){
+				UserManagerListener listener = (UserManagerListener) paramHttpRequest.getAttibute(paramHttpRequest);
+				listener.onUser(user);
+			}	
+		}else if(paramObject instanceof OutUser){
+			OutUser user = (OutUser) paramObject;
+			logger.info(user);
+			if(paramHttpRequest.getAttibute(paramHttpRequest)!=null){
+				UserManagerListener listener = (UserManagerListener) paramHttpRequest.getAttibute(paramHttpRequest);
+				listener.onUsers(user.getUser_info_list());
+			}	
+		}else if(paramObject instanceof Users){
+			Users user = (Users) paramObject;
+			logger.info(user);
+			if(paramHttpRequest.getAttibute(paramHttpRequest)!=null){
+				UserManagerListener listener = (UserManagerListener) paramHttpRequest.getAttibute(paramHttpRequest);
+				listener.onUsers(user);
+			}	
+		}
 	}
 	
-	public String getGroupsStr(){
-		if(groups==null)
+	/**
+	 * =========================== User Manager Start===========================
+	 */
+	/**
+	 * require : openID
+	 */
+	public HttpRequest getUserInfo(User user, UserManagerListener listener){
+		if(user==null || user.getOpenid()==null){
+			logger.warn("user or user id is null");
 			return null;
-		return Group.getGroupsStr(groups);
-	}
-
-	@Override
-	public void onError(final HttpRequest request, Error paramError) {
-		// TODO Auto-generated method stub
-		logger.info(paramError.toJson());
-		String request_action = (String) request.getAttibute(WechatSession.RequestAction);
-		if("loadGroups".equals(request_action)){
-			load_groups = org.jcommon.com.util.thread.TimerTaskManger.instance().schedule("loadGroups", 
-					new TimerTask(){
-						public void run(){
-							UserManager.this.loadGroups();
-						}
-			}, 20000);
-		}else if("loadUsers".equals(request_action)){
-			load_users = org.jcommon.com.util.thread.TimerTaskManger.instance().schedule("load_users", 
-					new TimerTask(){
-						public void run(){
-							String next_openid = request.getAttibute("next_openid")!=null?(String)request.getAttibute("next_openid"):null;
-							UserManager.this.loadUsers(next_openid);
-						}
-			}, 20000);
-		}else if("onMessage".equals(request_action)){
-			Object handle = request.getHandler();
-			InMessage h = (InMessage)handle;
-			User u = new User(null);
-			u.setOpenid(h.getFromUserName());
-		    h.setFrom(u);
-			session.onMessage(h);
 		}
+		String open_id = user.getOpenid();
+		Lang lang = Lang.getLang(user.getLanguage());
+		HttpRequest request = RequestFactory.userInfoRequest(this, session.getApp().getAccess_token(),open_id,lang);
+		if(listener!=null)
+			request.setAttribute(request, listener);
+		super.addHandlerObject(request, User.class);
+		logger.info(request.getUrl());
+		session.execute(request);
+		return request;
 	}
-
-	@Override
-	public void onOk(HttpRequest request, Object paramObject) {
-		// TODO Auto-generated method stub
-		logger.info(paramObject);
-		String request_action = (String) request.getAttibute(WechatSession.RequestAction);
-		if("loadGroups".equals(request_action)){
-			if(paramObject instanceof Group){
-				groups = ((Group)paramObject).getGroups();
-			}else{
-				logger.warn("class can't map Group:"+paramObject);
-			}
-			
-		}else if("loadUsers".equals(request_action)){
-			if(paramObject instanceof User){
-				User user = (User)paramObject;
-				if(user.getCount()==0)
-					return;
-				String next_openid = user.getNext_openid();
-				this.setCount(user.getCount());
-				this.setTotal(user.getTotal());
-				List<OpenID> openids = user.getOpenids();
-				
-				if(request.getAttibute("next_openid")==null){
-					this.openids = openids;
-				}else{
-					if(this.openids==null)
-						this.openids = new ArrayList<OpenID>();
-					for(OpenID id : openids)
-						this.openids.add(id);
-					openids.clear();
-					openids = null;
-				}
-				if(next_openid!=null)
-					this.loadUsers(next_openid);
-			}else{
-				logger.warn("class can't map user:"+paramObject);
-			}
-		}else if("onMessage".equals(request_action)){
-			Object handle = request.getHandler();
-			InMessage h = (InMessage)handle;
-			User u = null;
-			if (paramObject instanceof User) {
-			     u = (User)paramObject;
-			     h.setFrom(u);
-			     u.setCreate_time(new Date().getTime());
-			     users.put(h.getFromUserName(), u);
-			     if(update_users==null){
-			    	 update_users = org.jcommon.com.util.thread.TimerTaskManger.instance().schedule("update_users",
-			    			 new TimerTask(){
-			    		 public void run(){
-			    			 List<User> clear = new ArrayList<User>();
-			    			 synchronized(users){
-			    				 long now = new Date().getTime();
-			    				 for(User u : users.values()){
-			    					 if(now-u.getCreate_time()>expires)
-			    						 clear.add(u);
-			    				 }
-			    				 for(User u : clear){
-				    				 users.remove(u.getOpenid());
-				    			 }
-			    				 clear.clear();
-			    				 clear = null;
-			    			 }
-			    			
-			    		 }
-			    	 }, expires, expires);
-			     }
-			}
-			session.onMessage(h);
+	/**
+	 * require : openID
+	 */
+	public HttpRequest getUserInfos(List<User> users, UserManagerListener listener){
+		if(users==null || users.size()==0){
+			logger.warn("user or user id is null");
+			return null;
 		}
+		OutUser user_format = new OutUser();
+		user_format.setUser_list(users);
+		HttpRequest request = RequestFactory.userInfosRequest(this, session.getApp().getAccess_token(),user_format.toJson());
+		if(listener!=null)
+			request.setAttribute(request, listener);
+		super.addHandlerObject(request, OutUser.class);
+		logger.info(request.getUrl());
+		session.execute(request);
+		return request;
 	}
-
-	public long getTotal() {
-		return total;
+	/**
+	 * require : openID & remark
+	 */
+	public HttpRequest updateRemark(User user, RequestCallback callback){
+		if(user==null || user.getOpenid()==null){
+			logger.warn("user or user id is null");
+			return null;
+		}
+		HttpRequest request = RequestFactory.updateRemarkRequest(callback, session.getApp().getAccess_token(),user.toJson());
+		logger.info(request.getUrl());
+		session.execute(request);
+		return request;
 	}
-
-	public void setTotal(long total) {
-		this.total = total;
+	
+	public HttpRequest getUsers(String next_openid, UserManagerListener listener){
+		HttpRequest request = RequestFactory.getUsersReqeust(this, session.getApp().getAccess_token(),next_openid);
+		if(listener!=null)
+			request.setAttribute(request, listener);
+		super.addHandlerObject(request, Users.class);
+		logger.info(request.getUrl());
+		session.execute(request);
+		return request;
 	}
-
-	public long getCount() {
-		return count;
+	/**
+	 * =========================== User Manager End=============================
+	 */
+	
+	
+	/**
+	 * =========================== Group Manager Start===========================
+	 */
+	/**
+	 * require : group name
+	 */
+	public HttpRequest createGroup(Group group, RequestCallback callback){
+		if(group==null){
+			logger.warn("group or group id is null");
+			return null;
+		}
+		OutGroup group_format = new OutGroup();
+		group_format.setGroup(group);
+		HttpRequest request = RequestFactory.createGroupsReqeust(callback, session.getApp().getAccess_token(),group_format.updateFormat());
+		logger.info(request.getUrl());
+		session.execute(request);
+		return request;
 	}
-
-	public void setCount(long count) {
-		this.count = count;
+	
+	public HttpRequest getGroups(UserManagerListener listener){
+		HttpRequest request = RequestFactory.getGroupsReqeust(this, session.getApp().getAccess_token());
+		if(listener!=null)
+			request.setAttribute(request, listener);
+		super.addHandlerObject(request, Group.class);
+		logger.info(request.getUrl());
+		session.execute(request);
+		return request;
 	}
+	/**
+	 * require : openid
+	 */
+	public HttpRequest getGroupByUser(OpenID id, UserManagerListener listener){
+		OutGroup group_format = new OutGroup();
+		group_format.setOpenid(id.getOpenid());
+		HttpRequest request = RequestFactory.getGroupsByUserReqeust(this, session.getApp().getAccess_token(),group_format.toJson());
+		if(listener!=null)
+			request.setAttribute(request, listener);
+		super.addHandlerObject(request, OutGroup.class);
+		logger.info(request.getUrl());
+		session.execute(request);
+		return request;
+	}
+	/**
+	 * require : group id & group name
+	 */
+	public HttpRequest updateGroupName(Group group, RequestCallback callback){
+		if(group==null || group.getId()==null){
+			logger.warn("group or group id is null");
+			return null;
+		}
+		OutGroup group_format = new OutGroup();
+		group_format.setGroup(group);
+		HttpRequest request = RequestFactory.updateGroupsReqeust(callback, session.getApp().getAccess_token(),group_format.updateFormat());
+		logger.info(request.getUrl());
+		session.execute(request);
+		return request;
+	}
+	
+	public HttpRequest moveGroup(List<OpenID> ids, String to_groupid, RequestCallback callback){
+		if(ids==null || ids.size()==0){
+			logger.warn("group or group id is null");
+			return null;
+		}
+		OutGroup group_format = new OutGroup();
+		group_format.setOpenid_list(ids);
+		group_format.setTo_groupid(to_groupid);
+		HttpRequest request = RequestFactory.moveGroupsReqeust(callback, session.getApp().getAccess_token(),group_format.moveFormat());
+		logger.info(request.getUrl());
+		session.execute(request);
+		return request;
+	}
+	/**
+	 * require : group id
+	 */
+	public HttpRequest delGroup(Group group, RequestCallback callback){
+		if(group==null || group.getId()==null){
+			logger.warn("group or group id is null");
+			return null;
+		}
+		OutGroup group_format = new OutGroup();
+		group_format.setId(group.getId());
+		HttpRequest request = RequestFactory.delGroupsReqeust(callback, session.getApp().getAccess_token(),group_format.delFormat());
+		logger.info(request.getUrl());
+		session.execute(request);
+		return request;
+	}
+	/**
+	 * =========================== Group Manager End=============================
+	 */
 }

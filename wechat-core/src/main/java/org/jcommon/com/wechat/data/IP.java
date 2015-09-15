@@ -9,6 +9,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class IP extends JsonObject{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String ip;
 	private Set<IP> ip_list;
 	

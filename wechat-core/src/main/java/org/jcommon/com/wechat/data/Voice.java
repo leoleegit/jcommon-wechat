@@ -16,6 +16,10 @@ import org.jcommon.com.wechat.utils.MediaType;
 
 public class Voice extends Media
 {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
   public Voice(String data)
   {
     super(data);
