@@ -112,7 +112,7 @@ public class MediaManager_bak extends ResponseHandler{
 		        m = new Media();
 		        FileRequest re = (FileRequest)request;
 		        
-		        m.setContent_type(re.getContent_type());
+		        //m.setContent_type(re.getContent_type());
 		        m.setMedia(re.getFile());
 		        
 		        msg.setMedia(m);

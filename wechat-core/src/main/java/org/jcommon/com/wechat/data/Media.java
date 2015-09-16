@@ -13,11 +13,6 @@
 package org.jcommon.com.wechat.data;
 
 import java.io.File;
-import java.security.NoSuchAlgorithmException;
-
-import org.jcommon.com.wechat.WechatSession;
-import org.jcommon.com.wechat.WechatSessionManager;
-import org.jcommon.com.wechat.utils.MD5;
 import org.jcommon.com.wechat.utils.MsgType;
 
 public class Media extends JsonObject{
@@ -75,49 +70,12 @@ public class Media extends JsonObject{
   public File getMedia() {
     return this.media;
   }
-  public void setMedia(File media) {
-    this.media = media;
-    if(media!=null){
-    	String path = media.getAbsolutePath();
-    	String wechat_path = System.getProperty(WechatSession.WECHATMEDIAURL);
-    	if(wechat_path!=null){
-    		if(content_type==null){
-    			content_type = WechatSessionManager.instance().getContent_type_cache().getContentType(content_type);
-    		}
-    		try {
-				String key = MD5.getMD5(content_type.getBytes());
-				setUrl(wechat_path + "/" + key  +"/"+ path.substring(path.lastIndexOf("\\")+1));
-			} catch (NoSuchAlgorithmException e) {
-				// TODO Auto-generated catch block
-				logger.error("", e);
-			}
-    	}
-    }
-  }
   
   public String getUrl() {
 	return url;
   }
   public void setUrl(String url) {
 	this.url = url;
-  }
-
-  public String getContent_type() {
-	return content_type;
-  }
-
-  public void setContent_type(String content_type) {
-	this.content_type = content_type;
-	if(content_type!=null){
-		try {
-			String key = MD5.getMD5(content_type.getBytes());
-			logger.info(key);
-			WechatSessionManager.instance().getContent_type_cache().putContentType(key, content_type);
-		} catch (NoSuchAlgorithmException e) {
-			// TODO Auto-generated catch block
-			logger.error("", e);
-		}
-	}
   }
 
   public void setThumb_media_id(String thumb_media_id) {
@@ -127,6 +85,18 @@ public class Media extends JsonObject{
 
   public String getThumb_media_id() {
 	return thumb_media_id;
+  }
+  
+  public void setMedia(File file) {
+	  this.media = file;
+  }
+  
+  public void setContent_type(String content_type) {
+	  this.content_type = content_type;
+  }
+
+  public String getContent_type() {
+	  return content_type;
   }
   
   public static Media getMedia(Media media){
@@ -145,4 +115,7 @@ public class Media extends JsonObject{
 	  media.setMedia(file);
 	  return media;
   }
+
+
+
 }

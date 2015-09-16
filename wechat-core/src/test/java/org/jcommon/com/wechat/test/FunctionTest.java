@@ -10,6 +10,8 @@ import org.jcommon.com.wechat.AgentManager;
 import org.jcommon.com.wechat.AgentManagerListener;
 import org.jcommon.com.wechat.AppManager;
 import org.jcommon.com.wechat.AppManagerListener;
+import org.jcommon.com.wechat.MediaManager;
+import org.jcommon.com.wechat.MediaManagerListener;
 import org.jcommon.com.wechat.RequestCallback;
 import org.jcommon.com.wechat.UserManager;
 import org.jcommon.com.wechat.UserManagerListener;
@@ -19,6 +21,7 @@ import org.jcommon.com.wechat.data.App;
 import org.jcommon.com.wechat.data.Error;
 import org.jcommon.com.wechat.data.Group;
 import org.jcommon.com.wechat.data.IP;
+import org.jcommon.com.wechat.data.Media;
 import org.jcommon.com.wechat.data.OpenID;
 import org.jcommon.com.wechat.data.User;
 import org.jcommon.com.wechat.data.Users;
@@ -28,6 +31,7 @@ import org.jcommon.com.wechat.utils.MD5;
 public class FunctionTest extends TestBase implements AppManagerListener,
 	AgentManagerListener,
 	UserManagerListener,
+	MediaManagerListener,
 	RequestCallback{
 
 	/**
@@ -37,7 +41,7 @@ public class FunctionTest extends TestBase implements AppManagerListener,
 	public static void main(String[] args) throws NoSuchAlgorithmException {
 		// TODO Auto-generated method stub
 		FunctionTest test = new FunctionTest();
-		String access_token = "AwbmUoShtspzcQKutoYVGOU3NRJyddIQiQmso3zJCechlhbWMJGdubKJBXtHOzklfTlnMJNJoDGNOnhB5aNDpZXdxA3hn5Z-PD8SVcW4fNY";
+		String access_token = "q-P1N1mGRqpcMOByeI1jw33vxqbyMng2jfotZUGJ_xYZstZAl5yrvJv_dcooT1MaoGnssJvT5mMSB3A_YUZBiWkdlRb93dpuCSVQP5XyifY";
 		App app = new App(access_token,"wx742941360129cd17", "37492ad273076440c0f123716865e1da", "spotlight-wechat");
 	    WechatSession session = new WechatSession("gh_f49bb9a333b3", app, null);
 	  
@@ -50,7 +54,7 @@ public class FunctionTest extends TestBase implements AppManagerListener,
 	    //Agent agent = new Agent("leolee@leolee-wechat","客服1",MD5.getMD5("leolee".getBytes()));
 	    //manager.addAgent(agent, test);
 	    
-	    UserManager manager = new UserManager(session);
+	    //UserManager manager = new UserManager(session);
 	    //manager.getGroups(test);
 	    //manager.createGroup(new Group(null,"test1"), test);
 	    //manager.updateGroupName(new Group("100","test2"), test);
@@ -58,21 +62,26 @@ public class FunctionTest extends TestBase implements AppManagerListener,
 	    //manager.getGroupByUser(new OpenID("of-Yet8DPKkGqVfu_Ph4t3ty8P4A"), test);
 	    
 //	    List<User> users = new ArrayList<User>();
-	    User user = new User(null);
-	    user.setOpenid("of-YetzJFYxGTltb4eCvgccHzHF0");
-	    user.setLanguage(Lang.zh_CN.name());
+	    //User user = new User(null);
+	    //user.setOpenid("of-YetzJFYxGTltb4eCvgccHzHF0");
+	    //user.setLanguage(Lang.zh_CN.name());
 //	    users.add(user);
 //	    user = new User(null);
 //	    user.setOpenid("of-Yet2V8ymhYEHi1N56AIEPgbZc");
 //	    user.setLanguage(Lang.zh_CN.name());
 //	    users.add(user);
-	    manager.getUserInfo(user, test);
+//	    manager.getUserInfo(user, test);
 	    //manager.getUserInfos(users, test);
 //	    manager.getUsers(null, test);
 //	    User user = new User();
 //	    user.setOpenid("of-YetzJFYxGTltb4eCvgccHzHF0");
 //	    user.setRemark("测试");
 //	    manager.updateRemark(user, test);
+	    
+	    MediaManager manager = new MediaManager(session);
+	    Media media          = new Media();
+	    media.setMedia_id("MN2qp-B2wYMUbdJyovde-Ey1HRLb179J--KQ_0VXrKTH_sTLB6lixkF8pCmqvYsH");
+	    manager.downloadMedia(media, test);
 	}
 
 	@Override
@@ -153,6 +162,12 @@ public class FunctionTest extends TestBase implements AppManagerListener,
 			logger.info(user.toJson());
 		for(User group : users.getUsers())
 			onUser(group);
+	}
+
+	@Override
+	public void onMedia(Media media) {
+		// TODO Auto-generated method stub
+		logger.info(media.toJson());
 	}
 
 }

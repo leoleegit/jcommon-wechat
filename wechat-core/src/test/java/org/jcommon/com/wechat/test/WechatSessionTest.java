@@ -100,7 +100,7 @@ public class WechatSessionTest extends Monitor
     if(message.getMedia()!=null){
     	String from = message.getFrom().getOpenid();
     	Media media  = message.getMedia();
-    	logger.info(media.getMedia() + "	"+message.getMedia().getContent_type());
+    	//logger.info(media.getMedia() + "	"+message.getMedia().getContent_type());
     	logger.info(media.getUrl());
     	
 //    	Image image = new Image();
