@@ -18,19 +18,14 @@ public enum MediaType
   voice, 
   video, 
   thumb,
-  mpnews;
+  mpnews,
+  news;
 
   public static MediaType getType(String name) {
-    if (image.toString().equalsIgnoreCase(name))
-      return image;
-    if (voice.toString().equalsIgnoreCase(name))
-      return voice;
-    if (video.toString().equalsIgnoreCase(name))
-      return video;
-    if (thumb.toString().equalsIgnoreCase(name))
-      return thumb;
-    if (mpnews.toString().equalsIgnoreCase(name))
-        return mpnews;
+    for(MediaType mt : MediaType.class.getEnumConstants()){
+    	if(mt.name().equalsIgnoreCase(name))
+    		return mt;
+    }
     return null;
   }
 }

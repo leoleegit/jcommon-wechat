@@ -6,7 +6,9 @@ import org.apache.log4j.Logger;
 import org.jcommon.com.util.http.FileRequest;
 import org.jcommon.com.util.http.HttpRequest;
 import org.jcommon.com.wechat.data.Error;
+import org.jcommon.com.wechat.data.MaterialsCount;
 import org.jcommon.com.wechat.data.Media;
+import org.jcommon.com.wechat.data.format.Materials;
 import org.jcommon.com.wechat.media.DefaultMediaFactory;
 import org.jcommon.com.wechat.media.MediaFactory;
 
@@ -25,7 +27,7 @@ public class MediaManager extends ResponseHandler{
 		// TODO Auto-generated method stub
 		if(paramHttpRequest.getAttibute(paramHttpRequest)!=null){
 			MediaManagerListener listener = (MediaManagerListener) paramHttpRequest.getAttibute(paramHttpRequest);
-			listener.onError(paramError);
+			listener.onError(paramHttpRequest,paramError);
 		}	
 	}
 
@@ -41,17 +43,52 @@ public class MediaManager extends ResponseHandler{
 				if(listener!=null){
 					if(paramObject instanceof Media){
 						Media media_return = (Media) paramObject;
-						listener.onMedia(media_return);
+						listener.onMedia(paramHttpRequest,media_return);
+					}else if(paramObject instanceof MaterialsCount){
+						MaterialsCount media_return = (MaterialsCount) paramObject;
+						listener.onMaterialsCount(paramHttpRequest,media_return);
 					}else if(media!=null){
 						String content_type = request.getContent_type();
 						media.setMedia(request.getFile());
 						media.setContent_type(content_type);
-						listener.onMedia(getMedia_factory().createUrl(media));
+						listener.onMedia(paramHttpRequest,getMedia_factory().createUrl(media));
 					}
 				}
 				
 			}
+		}else{
+			if(paramHttpRequest.getAttibute(paramHttpRequest)!=null){
+				MediaManagerListener listener = (MediaManagerListener) paramHttpRequest.getAttibute(paramHttpRequest);
+				if(listener!=null){
+					if(paramObject instanceof MaterialsCount){
+						MaterialsCount media_return = (MaterialsCount) paramObject;
+						listener.onMaterialsCount(paramHttpRequest,media_return);
+					}
+				}
+			}
 		}
+	}
+	
+	public HttpRequest getMaterials(String type, int offset, int count, MediaManagerListener listener){
+		if(count<=0 || count>20)
+			count = 20;
+		
+		HttpRequest request = RequestFactory.getMaterialsReqeust(this, session.getApp().getAccess_token(),new Materials(type,offset,count).toJson());
+		if(listener!=null)
+			request.setAttribute(request, listener);
+		logger.info(request.getUrl());
+		session.execute(request);
+		return request;
+	}
+	
+	public HttpRequest getMaterialCount(MediaManagerListener listener){	
+		HttpRequest request = RequestFactory.getMaterialCountReqeust(this, session.getApp().getAccess_token());
+		if(listener!=null)
+			request.setAttribute(request, listener);
+		super.addHandlerObject(request, MaterialsCount.class);
+		logger.info(request.getUrl());
+		session.execute(request);
+		return request;
 	}
 
 	public HttpRequest downloadMedia(Media media, MediaManagerListener listener){

@@ -22,12 +22,14 @@ import org.jcommon.com.wechat.data.App;
 import org.jcommon.com.wechat.data.Error;
 import org.jcommon.com.wechat.data.Group;
 import org.jcommon.com.wechat.data.IP;
+import org.jcommon.com.wechat.data.MaterialsCount;
 import org.jcommon.com.wechat.data.Media;
 import org.jcommon.com.wechat.data.OpenID;
 import org.jcommon.com.wechat.data.User;
 import org.jcommon.com.wechat.data.Users;
 import org.jcommon.com.wechat.utils.Lang;
 import org.jcommon.com.wechat.utils.MD5;
+import org.jcommon.com.wechat.utils.MediaType;
 import org.jcommon.com.wechat.utils.MsgType;
 
 public class FunctionTest extends TestBase implements AppManagerListener,
@@ -43,7 +45,7 @@ public class FunctionTest extends TestBase implements AppManagerListener,
 	public static void main(String[] args) throws NoSuchAlgorithmException {
 		// TODO Auto-generated method stub
 		FunctionTest test = new FunctionTest();
-		String access_token = "ek8iw4KhVIZ6vCPGzJbhgzWFdm-2JXQS8WYf8Vv5JUNmjrPdUTzS6-IULtI7YE2N3UX0jYTItrz87Kb0Vfq4CyL6aUW6u2DXpqLEp4EirtQ";
+		String access_token = "q-P1N1mGRqpcMOByeI1jw7gX1xSk9r_-v9d-RTO0iaRdKEUwbDz3GLNBvnjTB0pltoaeKLg9yyAwlJYOzrE3bJCCWF2ww9ynbR0nMAABg3Q";
 		App app = new App(access_token,"wx742941360129cd17", "37492ad273076440c0f123716865e1da", "spotlight-wechat");
 	    WechatSession session = new WechatSession("gh_f49bb9a333b3", app, null);
 	  
@@ -81,31 +83,34 @@ public class FunctionTest extends TestBase implements AppManagerListener,
 //	    manager.updateRemark(user, test);
 	    
 	    MediaManager manager = new MediaManager(session);
-	    Media media          = new Media();
+	    //Media media          = new Media();
 	   //media.setMedia_id("MN2qp-B2wYMUbdJyovde-Ey1HRLb179J--KQ_0VXrKTH_sTLB6lixkF8pCmqvYsH");
 	   //manager.downloadMedia(media, test);
 	    //MediaManager.getMedia_factory().getMediaFromUrl("/634546cf1fbb14c2a8abc986dba3da6e/MN2qp-B2wYMUbdJyovde-Ey1HRLb179J--KQ_0VXrKTH_sTLB6lixkF8pCmqvYsH");
-	    media.setUrl("/634546cf1fbb14c2a8abc986dba3da6e/MN2qp-B2wYMUbdJyovde-Ey1HRLb179J--KQ_0VXrKTH_sTLB6lixkF8pCmqvYsH.jpg");
+	    //media.setUrl("/634546cf1fbb14c2a8abc986dba3da6e/MN2qp-B2wYMUbdJyovde-Ey1HRLb179J--KQ_0VXrKTH_sTLB6lixkF8pCmqvYsH.jpg");
 	    //media.setMedia(new File(System.getProperty("user.dir"),"test.jpg"));
-	    media.setType(MsgType.image.name());
-	    manager.uploadNewsImg(media, test);
+	    //media.setType(MsgType.image.name());
+	   // manager.uploadNewsImg(media, test);
+	    
+	   // manager.getMaterials(MediaType.video.name(), 10, 10, test);
+	    manager.getMaterialCount(test);
 	}
 
 	@Override
-	public void onError(Error error) {
+	public void onError(HttpRequest reqeust,Error error) {
 		// TODO Auto-generated method stub
 		logger.info(error.toJson());
 	}
 
 	@Override
-	public void onIPs(Set<IP> ips) {
+	public void onIPs(HttpRequest reqeust,Set<IP> ips) {
 		// TODO Auto-generated method stub
 		for(IP ip : ips)
 			System.out.print(ip.getIp() + ";");
 	}
 
 	@Override
-	public void onAgents(Set<Agent> agents) {
+	public void onAgents(HttpRequest reqeust,Set<Agent> agents) {
 		// TODO Auto-generated method stub
 		for(Agent ip : agents)
 			System.out.print(ip.getKf_account() + ";");
@@ -136,45 +141,51 @@ public class FunctionTest extends TestBase implements AppManagerListener,
 	}
 
 	@Override
-	public void onGroup(List<Group> groups) {
+	public void onGroup(HttpRequest request, List<Group> groups) {
 		// TODO Auto-generated method stub
 		for(Group group : groups)
-			onGroup(group);
+			onGroup(request,group);
 	}
 
 	@Override
-	public void onGroup(Group group) {
+	public void onGroup(HttpRequest request, Group group) {
 		// TODO Auto-generated method stub
 		logger.info(group.toJson());
 	}
 
 	@Override
-	public void onUser(User user) {
+	public void onUser(HttpRequest request, User user) {
 		// TODO Auto-generated method stub
 		logger.info(user.toJson());
 	}
 
 	@Override
-	public void onUsers(List<User> users) {
+	public void onUsers(HttpRequest request, List<User> users) {
 		// TODO Auto-generated method stub
 		for(User group : users)
-			onUser(group);
+			onUser(request,group);
 	}
 
 	@Override
-	public void onUsers(Users users) {
+	public void onUsers(HttpRequest request, Users users) {
 		// TODO Auto-generated method stub
 		logger.info(users.getCount() + " / " + users.getTotal());
 		for(OpenID user : users.getOpenids())
 			logger.info(user.toJson());
 		for(User group : users.getUsers())
-			onUser(group);
+			onUser(request,group);
 	}
 
 	@Override
-	public void onMedia(Media media) {
+	public void onMedia(HttpRequest request, Media media) {
 		// TODO Auto-generated method stub
 		logger.info(media.toJson());
+	}
+
+	@Override
+	public void onMaterialsCount(HttpRequest request, MaterialsCount material) {
+		// TODO Auto-generated method stub
+		logger.info(material.toJson());
 	}
 
 }

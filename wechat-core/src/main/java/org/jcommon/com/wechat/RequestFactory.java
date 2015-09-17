@@ -216,6 +216,22 @@ public class RequestFactory
     url = JsonUtils.toRequestURL(url, keys, values);
     return new HttpRequest(url, listener, true);
   }
+  
+  public static HttpRequest getMaterialsReqeust(HttpListener listener, String access_token, String content) {
+    String url = api_url+ "/material/batchget_material";
+    String[] keys = { "access_token"};
+    String[] values = { access_token};
+    url = JsonUtils.toRequestURL(url, keys, values);
+    return new HttpRequest(url, content, HttpRequest.POST, listener, true);
+  }
+  
+  public static HttpRequest getMaterialCountReqeust(HttpListener listener, String access_token) {
+    String url = api_url+ "/material/get_materialcount";
+    String[] keys = { "access_token" };
+    String[] values = { access_token};
+    url = JsonUtils.toRequestURL(url, keys, values);
+    return new HttpRequest(url, listener, true);
+  }
 
   public static HttpRequest downloadMediaRequest(HttpListener listener, String access_token, String media_id, File file) {
     String url = api_url+ "/media/get";

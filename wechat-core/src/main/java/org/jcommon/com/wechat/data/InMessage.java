@@ -13,12 +13,7 @@
 package org.jcommon.com.wechat.data;
 
 
-public class InMessage extends XmlObject
-{
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+public class InMessage extends XmlObject{
   private Media media;
   private User from;
   private String ToUserName;

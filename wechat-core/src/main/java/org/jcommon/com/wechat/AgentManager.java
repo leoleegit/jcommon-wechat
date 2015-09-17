@@ -18,7 +18,7 @@ public class AgentManager extends ResponseHandler{
 		// TODO Auto-generated method stub
 		if(paramHttpRequest.getAttibute(paramHttpRequest)!=null){
 			AgentManagerListener listener = (AgentManagerListener) paramHttpRequest.getAttibute(paramHttpRequest);
-			listener.onError(paramError);
+			listener.onError(paramHttpRequest,paramError);
 		}	
 	}
 
@@ -30,7 +30,7 @@ public class AgentManager extends ResponseHandler{
 			logger.info(agent.getKf_list().size());
 			if(paramHttpRequest.getAttibute(paramHttpRequest)!=null){
 				AgentManagerListener listener = (AgentManagerListener) paramHttpRequest.getAttibute(paramHttpRequest);
-				listener.onAgents(agent.getKf_list());
+				listener.onAgents(paramHttpRequest,agent.getKf_list());
 			}	
 		}
 	}

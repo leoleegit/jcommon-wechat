@@ -83,7 +83,7 @@ public class AppManager extends ResponseHandler{
 		// TODO Auto-generated method stub
 		if(paramHttpRequest.getAttibute(paramHttpRequest)!=null){
 			AppManagerListener listener = (AppManagerListener) paramHttpRequest.getAttibute(paramHttpRequest);
-			listener.onError(paramError);
+			listener.onError(paramHttpRequest,paramError);
 		}	
 	}
 
@@ -95,7 +95,7 @@ public class AppManager extends ResponseHandler{
 			logger.info(ip.getIp_list().size());
 			if(paramHttpRequest.getAttibute(paramHttpRequest)!=null){
 				AppManagerListener listener = (AppManagerListener) paramHttpRequest.getAttibute(paramHttpRequest);
-				listener.onIPs(ip.getIp_list());
+				listener.onIPs(paramHttpRequest,ip.getIp_list());
 			}	
 		}
 	}

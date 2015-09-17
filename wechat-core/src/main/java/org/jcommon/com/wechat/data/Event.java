@@ -13,10 +13,7 @@
 package org.jcommon.com.wechat.data;
 
 public class Event extends XmlObject{
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 1L;
+
   private String ToUserName;
   private String FromUserName;
   private long CreateTime;

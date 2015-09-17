@@ -26,7 +26,7 @@ public class UserManager  extends ResponseHandler{
 		// TODO Auto-generated method stub
 		if(paramHttpRequest.getAttibute(paramHttpRequest)!=null){
 			UserManagerListener listener = (UserManagerListener) paramHttpRequest.getAttibute(paramHttpRequest);
-			listener.onError(paramError);
+			listener.onError(paramHttpRequest,paramError);
 		}	
 	}
 
@@ -38,35 +38,35 @@ public class UserManager  extends ResponseHandler{
 			//logger.info(group.getGroups().size());
 			if(paramHttpRequest.getAttibute(paramHttpRequest)!=null){
 				UserManagerListener listener = (UserManagerListener) paramHttpRequest.getAttibute(paramHttpRequest);
-				listener.onGroup(group.getGroups());
+				listener.onGroup(paramHttpRequest,group.getGroups());
 			}	
 		}else if(paramObject instanceof OutGroup){
 			OutGroup group = (OutGroup) paramObject;
 			logger.info(group.getGroupid());
 			if(paramHttpRequest.getAttibute(paramHttpRequest)!=null){
 				UserManagerListener listener = (UserManagerListener) paramHttpRequest.getAttibute(paramHttpRequest);
-				listener.onGroup(new Group(group.getGroupid(),null));
+				listener.onGroup(paramHttpRequest,new Group(group.getGroupid(),null));
 			}	
 		}else if(paramObject instanceof User){
 			User user = (User) paramObject;
 			logger.info(user);
 			if(paramHttpRequest.getAttibute(paramHttpRequest)!=null){
 				UserManagerListener listener = (UserManagerListener) paramHttpRequest.getAttibute(paramHttpRequest);
-				listener.onUser(user);
+				listener.onUser(paramHttpRequest,user);
 			}	
 		}else if(paramObject instanceof OutUser){
 			OutUser user = (OutUser) paramObject;
 			logger.info(user);
 			if(paramHttpRequest.getAttibute(paramHttpRequest)!=null){
 				UserManagerListener listener = (UserManagerListener) paramHttpRequest.getAttibute(paramHttpRequest);
-				listener.onUsers(user.getUser_info_list());
+				listener.onUsers(paramHttpRequest,user.getUser_info_list());
 			}	
 		}else if(paramObject instanceof Users){
 			Users user = (Users) paramObject;
 			logger.info(user);
 			if(paramHttpRequest.getAttibute(paramHttpRequest)!=null){
 				UserManagerListener listener = (UserManagerListener) paramHttpRequest.getAttibute(paramHttpRequest);
-				listener.onUsers(user);
+				listener.onUsers(paramHttpRequest,user);
 			}	
 		}
 	}
