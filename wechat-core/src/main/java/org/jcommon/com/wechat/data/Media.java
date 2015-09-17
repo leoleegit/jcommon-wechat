@@ -27,6 +27,7 @@ public class Media extends JsonObject{
   private File media;
   private String url;
   private String content_type;
+  private String media_name;
   public final long max_image = 1*1024*1024; //1M
   public final long max_voice = 2*1024*1024; //2M
   public final long max_video = 10*1024*1024;//10M
@@ -99,6 +100,14 @@ public class Media extends JsonObject{
 	  return content_type;
   }
   
+  public void setMedia_name(String media_name) {
+	  this.media_name = media_name;
+  }
+
+  public String getMedia_name() {
+	  return media_name;
+  }
+  
   public static Media getMedia(Media media){
 	  MsgType type = MsgType.getType(media.getType());
 	  File file    = media.getMedia();
@@ -115,7 +124,5 @@ public class Media extends JsonObject{
 	  media.setMedia(file);
 	  return media;
   }
-
-
 
 }

@@ -37,12 +37,19 @@ public class MediaManager extends ResponseHandler{
 			if(paramHttpRequest.getAttibute(paramHttpRequest)!=null){
 				MediaManagerListener listener = (MediaManagerListener) paramHttpRequest.getAttibute(paramHttpRequest);
 				Media media                   = (Media) paramHttpRequest.getAttibute(media_object);
-				if(listener!=null && media!=null){
-					String content_type = request.getContent_type();
-					media.setMedia(request.getFile());
-					media.setContent_type(content_type);
-					listener.onMedia(getMedia_factory().createUrl(media));
+				
+				if(listener!=null){
+					if(paramObject instanceof Media){
+						Media media_return = (Media) paramObject;
+						listener.onMedia(media_return);
+					}else if(media!=null){
+						String content_type = request.getContent_type();
+						media.setMedia(request.getFile());
+						media.setContent_type(content_type);
+						listener.onMedia(getMedia_factory().createUrl(media));
+					}
 				}
+				
 			}
 		}
 	}
@@ -59,6 +66,53 @@ public class MediaManager extends ResponseHandler{
 			request.setAttribute(request, listener);
 		request.setAttribute(media_object, media);
 		logger.info(request.getUrl());
+		session.execute(request);
+		return request;
+	}
+	
+	public HttpRequest uploadMedia(Media media, MediaManagerListener listener){
+		if(media==null || media.getType()==null){
+			logger.warn("media or media type is null");
+			return null;
+		}
+		File file = media.getMedia();
+		if(file==null)
+			file = getMedia_factory().getMediaFromUrl(media.getUrl()).getMedia();
+		if(file==null){
+			logger.warn("media file is null");
+			return null;
+		}
+		String media_type = media.getType();
+		HttpRequest request = RequestFactory.uploadMediaRequest(this, session.getApp().getAccess_token(),file,media_type);
+		if(listener!=null)
+			request.setAttribute(request, listener);
+		request.setAttribute(media_object, media);
+		super.addHandlerObject(request, Media.class);
+		logger.info(request.getUrl());
+		logger.info(file.getAbsoluteFile());
+		session.execute(request);
+		return request;
+	}
+	
+	public HttpRequest uploadNewsImg(Media media, MediaManagerListener listener){
+		if(media==null){
+			logger.warn("media is null");
+			return null;
+		}
+		File file = media.getMedia();
+		if(file==null)
+			file = getMedia_factory().getMediaFromUrl(media.getUrl()).getMedia();
+		if(file==null){
+			logger.warn("media file is null");
+			return null;
+		}
+		HttpRequest request = RequestFactory.uploadImgRequest(this, session.getApp().getAccess_token(),file);
+		if(listener!=null)
+			request.setAttribute(request, listener);
+		request.setAttribute(media_object, media);
+		super.addHandlerObject(request, Media.class);
+		logger.info(request.getUrl());
+		logger.info(file.getAbsoluteFile());
 		session.execute(request);
 		return request;
 	}

@@ -25,20 +25,12 @@ public class RequestFactory
 	private static final String api_root = "https://api.weixin.qq.com";
 	private static final String api_url  = "https://api.weixin.qq.com/cgi-bin";
   
-  public static HttpRequest createMediaUploadRequest(HttpListener listener, String access_token, File file, String type){
-    String url = api_url+ "/media/upload";
-    String[] keys = { "access_token", "type" };
-    String[] values = { access_token, type };
-    url = JsonUtils.toRequestURL(url, keys, values);
-    return new FileRequest(url, HttpRequest.POST, listener, file);
-  }
-  
   public static HttpRequest uploadHeadImgRequest(HttpListener listener, String access_token, File file, String kf_account){
 	String url = api_root+ "/customservice/kfaccount/uploadheadimg";
 	String[] keys = { "access_token", "kf_account" };
 	String[] values = { access_token, kf_account };
 	url = JsonUtils.toRequestURL(url, keys, values);
-	return new FileRequest(url, HttpRequest.POST, listener, file);
+	return new FileRequest(url, file, HttpRequest.POST, listener);
   }
   
   public static HttpRequest addAgentRequest(HttpListener listener, String access_token, String content){
@@ -78,7 +70,7 @@ public class RequestFactory
 	    String[] keys = { "access_token", "type" };
 	    String[] values = { access_token, type };
 	    url = JsonUtils.toRequestURL(url, keys, values);
-	    return new FileRequest(url, HttpRequest.POST, listener, file);
+	    return new FileRequest(url, file, HttpRequest.POST, listener);
   }
 
   public static HttpRequest createMsgReqeust(HttpListener listener, String access_token, String content) {
@@ -230,6 +222,22 @@ public class RequestFactory
     String[] keys = { "access_token", "media_id" };
     String[] values = { access_token, media_id };
     url = JsonUtils.toRequestURL(url, keys, values);
-    return new FileRequest(url, HttpRequest.GET, listener, file);
+    return new FileRequest(url, file, listener);
+  }
+  
+  public static HttpRequest uploadMediaRequest(HttpListener listener, String access_token, File file, String type){
+    String url = api_url+ "/media/upload";
+    String[] keys = { "access_token", "type" };
+    String[] values = { access_token, type };
+    url = JsonUtils.toRequestURL(url, keys, values);
+    return new FileRequest(url, file, HttpRequest.POST, listener);
+  }
+  
+  public static HttpRequest uploadImgRequest(HttpListener listener, String access_token, File file){
+    String url = api_url+ "/media/uploadimg";
+    String[] keys = { "access_token"};
+    String[] values = { access_token};
+    url = JsonUtils.toRequestURL(url, keys, values);
+    return new FileRequest(url, file, HttpRequest.POST, listener);
   }
 }

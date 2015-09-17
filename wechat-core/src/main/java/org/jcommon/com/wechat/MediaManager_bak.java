@@ -39,11 +39,11 @@ public class MediaManager_bak extends ResponseHandler{
     	File file   = media.getMedia();
     	String type = media.getType();
     	
-    	FileRequest request = (FileRequest)RequestFactory.createMediaUploadRequest(this, app.getAccess_token(), file, type);
-    	request.setHandler(message);
-        addHandlerObject(request, Media.class);
-        session.execute(request);
-        return request;
+//    	FileRequest request = (FileRequest)RequestFactory.createMediaUploadRequest(this, app.getAccess_token(), file, type);
+//    	request.setHandler(message);
+//        addHandlerObject(request, Media.class);
+//        session.execute(request);
+        return null;
     }
     
     public FileRequest uploadMultiMedia(List<?> medias){

@@ -31,9 +31,9 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.apache.log4j.Logger;
-import org.jcommon.com.wechat.WechatSession;
-import org.jcommon.com.wechat.WechatSessionManager;
-import org.jcommon.com.wechat.cache.FileCache;
+import org.jcommon.com.wechat.MediaManager;
+import org.jcommon.com.wechat.data.JsonObject;
+import org.jcommon.com.wechat.data.Media;
 import org.jcommon.com.wechat.utils.ErrorType;
 
 public class MediaServlet extends HttpServlet {
@@ -42,18 +42,18 @@ public class MediaServlet extends HttpServlet {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private String upload_path = FileCache.instance().getFile_root();
 	
 	public void init(ServletConfig config) throws ServletException {
-		logger.info("media path is :"+ System.getProperty(WechatSession.WECHATMEDIAPATH));
+		logger.info("MediaFactory :"+ MediaManager.getMedia_factory().getClass().getName());
 	}
 	
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException{
+    	throws ServletException, IOException{
 	    request.setCharacterEncoding("utf-8");
 		
 		String errormsg = null;
 		List<FileItem> list   = new ArrayList<FileItem>();
+		List<UrlObject> urls  = new ArrayList<UrlObject>();
 		if(ServletFileUpload.isMultipartContent(request)){
 			FileItem item = null;
 			try{
@@ -74,7 +74,6 @@ public class MediaServlet extends HttpServlet {
 			}
 		}else{
 			errormsg = "not found multipart content";
-			return;
 		}
 		if(errormsg!=null){
 			error(response,errormsg);
@@ -82,22 +81,17 @@ public class MediaServlet extends HttpServlet {
 		}
 		for(FileItem item : list){
 			try{
-				String file_name  =  item.getName();
-				String file_id    = org.jcommon.com.util.BufferUtils.generateRandom(20);
-				String file_type  = file_name.indexOf(".")!=-1?file_name.substring(file_name.lastIndexOf(".")):"";
+				String file_name     =  item.getName();
+				String file_id       = org.jcommon.com.util.BufferUtils.generateRandom(20);
+				String content_type  = item.getContentType();
+				
+				Media media = new Media();
+				media.setContent_type(content_type);
+				media.setMedia_id(file_id);
+				media.setMedia_name(file_name);
 				
 				FileOutputStream out_file = null;
-				java.io.File file  = new java.io.File(upload_path);
-				if(!file.exists())
-					if(!file.mkdirs()){
-						throw new Exception("file mkdir fail! -->"+file.getName());
-					}
-				String save_name = file_id+file_type;
-				file = new java.io.File(upload_path,save_name);
-				if(!file.exists())
-					if(!file.createNewFile()){
-						throw new Exception("file createNewFile fail! -->"+file.getName());
-					}
+				java.io.File file  = MediaManager.getMedia_factory().createEmptyFile(media);
 				
 				out_file = new FileOutputStream(file);
 				InputStream is = item.getInputStream();
@@ -121,10 +115,10 @@ public class MediaServlet extends HttpServlet {
 					// TODO Auto-generated catch block
 					throw e;
 				}
-				logger.info("done...............");
-				String msg = "{\"id\":\""+file_id+"\"}";
-				logger.info(msg);
-				response.getWriter().println(msg);
+				String url = MediaManager.getMedia_factory().createUrl(media).getUrl();
+				logger.info(url);
+				urls.add(new UrlObject(url));
+				
 			}catch (Throwable e){
 				logger.error("", e);
 				errormsg = "transfer exception";
@@ -133,6 +127,16 @@ public class MediaServlet extends HttpServlet {
 		if(errormsg!=null){
 			error(response,errormsg);
 			return;
+		}else{
+			String msg = "";
+			if(urls.size()>0){
+				if(urls.size()==1)
+					msg = urls.get(0).toJson();
+				else
+					msg = org.jcommon.com.util.JsonObject.list2Json(urls);
+			}
+			logger.info(msg);
+			response.getWriter().println(msg);
 		}	
   }
 
@@ -143,69 +147,78 @@ public class MediaServlet extends HttpServlet {
 	  response.getWriter().println(error.toJson());
   }
   
-    // patch= /content type(md5)/openID/filename
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		String path = request.getPathInfo();
-		logger.info("path:"+path);
-		if(path!=null && path.startsWith("/"))
-			path = path.substring(1);
+  protected void doGet(HttpServletRequest request, HttpServletResponse response) 
+  	throws ServletException, IOException {
+	  String path = request.getPathInfo();
+	  logger.info("path:"+path);
 		
-		String errormsg = null;
-		if(path==null)
-			errormsg = "access path is null";
-		else{
-			String[] ps = path.split("/");
-			if(ps.length>1){
-				String file_name = ps[1];
-				//String open_id = ps[1];
-				String content_type = ps[0];
-				logger.info(String.format("file_name:%s;content_type:%s", file_name,content_type));
-				content_type = WechatSessionManager.instance().getContent_type_cache().getContentType(content_type);
-				logger.info("content_type:"+content_type);
-				java.io.File file  = new java.io.File(System.getProperty(WechatSession.WECHATMEDIAPATH),file_name);
-				if(!file.exists()){
-					logger.warn("file not found:"+file.getAbsolutePath());
-					errormsg = "file not found";
-				}else{
-					try{
-						response.reset();  
-						response.setContentType( content_type ); 
-			            response.addHeader( "Content-Disposition" ,  "attachment;filename=\""   +   file_name+"\"");  
-			            response.addHeader( "Content-Length" ,  ""   +  file.length());  
-			            
-						InputStream is = new FileInputStream(file);
-						OutputStream out = response.getOutputStream();
-						
-						byte[] b = new byte[1024];
-						int nRead;
-						while((nRead = is.read(b, 0, 1024))>0){
-						   out.write(b, 0, nRead);
-						}
-						try {
-							out.close();
-							out.flush();
-						} catch (IOException e1) {
-							// TODO Auto-generated catch block
-							throw e1;
-						}
-						try {
-							is.close();
-						} catch (IOException e) {
-							// TODO Auto-generated catch block
-							throw e;
-						}
-					}catch(IOException e){
-						logger.error("", e);
-						errormsg = e.getMessage();
-					}			
+	  String errormsg = null;
+	  if(path==null)
+		  errormsg = "access path is null";
+	  else{
+		  Media media = MediaManager.getMedia_factory().getMediaFromUrl(path);
+		  String file_name    = media.getMedia_name();
+		  String content_type = media.getContent_type();
+		  java.io.File   file = media.getMedia();
+		  if(file==null || !file.exists()){
+			  logger.warn("file not found:"+file.getAbsolutePath());
+			  errormsg = "file not found";
+		  }else{
+			  try{
+					response.reset();  
+					response.setContentType( content_type ); 
+		            response.addHeader( "Content-Disposition" ,  "attachment;filename=\""   +   file_name+"\"");  
+		            response.addHeader( "Content-Length" ,  ""   +  file.length());  
+		            
+					InputStream is = new FileInputStream(file);
+					OutputStream out = response.getOutputStream();
+					
+					byte[] b = new byte[1024];
+					int nRead;
+					while((nRead = is.read(b, 0, 1024))>0){
+					   out.write(b, 0, nRead);
+					}
+					try {
+						out.close();
+						out.flush();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						throw e1;
+					}
+					try {
+						is.close();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						throw e;
+					}
+				}catch(IOException e){
+					logger.error("", e);
+					errormsg = e.getMessage();
 				}
-			}else{
-				errormsg = "error request";
-			}		
+		    }	
 		}
 		if(errormsg!=null){
 			logger.info(errormsg);
 			response.getWriter().print(errormsg);
 		}
 	}
+  
+    class UrlObject extends JsonObject{
+
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+		private String url;
+		public UrlObject(String url){
+			this.url = url;
+		}
+		
+		public void setUrl(String url) {
+			this.url = url;
+		}
+		public String getUrl() {
+			return url;
+		}
+    } 
 }

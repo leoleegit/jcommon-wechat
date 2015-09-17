@@ -1,5 +1,6 @@
 package org.jcommon.com.wechat.test;
 
+import java.io.File;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +28,7 @@ import org.jcommon.com.wechat.data.User;
 import org.jcommon.com.wechat.data.Users;
 import org.jcommon.com.wechat.utils.Lang;
 import org.jcommon.com.wechat.utils.MD5;
+import org.jcommon.com.wechat.utils.MsgType;
 
 public class FunctionTest extends TestBase implements AppManagerListener,
 	AgentManagerListener,
@@ -41,7 +43,7 @@ public class FunctionTest extends TestBase implements AppManagerListener,
 	public static void main(String[] args) throws NoSuchAlgorithmException {
 		// TODO Auto-generated method stub
 		FunctionTest test = new FunctionTest();
-		String access_token = "q-P1N1mGRqpcMOByeI1jw33vxqbyMng2jfotZUGJ_xYZstZAl5yrvJv_dcooT1MaoGnssJvT5mMSB3A_YUZBiWkdlRb93dpuCSVQP5XyifY";
+		String access_token = "ek8iw4KhVIZ6vCPGzJbhgzWFdm-2JXQS8WYf8Vv5JUNmjrPdUTzS6-IULtI7YE2N3UX0jYTItrz87Kb0Vfq4CyL6aUW6u2DXpqLEp4EirtQ";
 		App app = new App(access_token,"wx742941360129cd17", "37492ad273076440c0f123716865e1da", "spotlight-wechat");
 	    WechatSession session = new WechatSession("gh_f49bb9a333b3", app, null);
 	  
@@ -80,8 +82,13 @@ public class FunctionTest extends TestBase implements AppManagerListener,
 	    
 	    MediaManager manager = new MediaManager(session);
 	    Media media          = new Media();
-	    media.setMedia_id("MN2qp-B2wYMUbdJyovde-Ey1HRLb179J--KQ_0VXrKTH_sTLB6lixkF8pCmqvYsH");
-	    manager.downloadMedia(media, test);
+	   //media.setMedia_id("MN2qp-B2wYMUbdJyovde-Ey1HRLb179J--KQ_0VXrKTH_sTLB6lixkF8pCmqvYsH");
+	   //manager.downloadMedia(media, test);
+	    //MediaManager.getMedia_factory().getMediaFromUrl("/634546cf1fbb14c2a8abc986dba3da6e/MN2qp-B2wYMUbdJyovde-Ey1HRLb179J--KQ_0VXrKTH_sTLB6lixkF8pCmqvYsH");
+	    media.setUrl("/634546cf1fbb14c2a8abc986dba3da6e/MN2qp-B2wYMUbdJyovde-Ey1HRLb179J--KQ_0VXrKTH_sTLB6lixkF8pCmqvYsH.jpg");
+	    //media.setMedia(new File(System.getProperty("user.dir"),"test.jpg"));
+	    media.setType(MsgType.image.name());
+	    manager.uploadNewsImg(media, test);
 	}
 
 	@Override
