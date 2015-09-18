@@ -6,8 +6,12 @@ import org.apache.log4j.Logger;
 import org.jcommon.com.util.http.FileRequest;
 import org.jcommon.com.util.http.HttpRequest;
 import org.jcommon.com.wechat.data.Error;
+import org.jcommon.com.wechat.data.Image;
 import org.jcommon.com.wechat.data.MaterialsCount;
 import org.jcommon.com.wechat.data.Media;
+import org.jcommon.com.wechat.data.Thumb;
+import org.jcommon.com.wechat.data.Video;
+import org.jcommon.com.wechat.data.Voice;
 import org.jcommon.com.wechat.data.format.Materials;
 import org.jcommon.com.wechat.media.DefaultMediaFactory;
 import org.jcommon.com.wechat.media.MediaFactory;
@@ -44,9 +48,6 @@ public class MediaManager extends ResponseHandler{
 					if(paramObject instanceof Media){
 						Media media_return = (Media) paramObject;
 						listener.onMedia(paramHttpRequest,media_return);
-					}else if(paramObject instanceof MaterialsCount){
-						MaterialsCount media_return = (MaterialsCount) paramObject;
-						listener.onMaterialsCount(paramHttpRequest,media_return);
 					}else if(media!=null){
 						String content_type = request.getContent_type();
 						media.setMedia(request.getFile());
@@ -102,7 +103,6 @@ public class MediaManager extends ResponseHandler{
 		if(listener!=null)
 			request.setAttribute(request, listener);
 		request.setAttribute(media_object, media);
-		logger.info(request.getUrl());
 		session.execute(request);
 		return request;
 	}
@@ -125,10 +125,52 @@ public class MediaManager extends ResponseHandler{
 			request.setAttribute(request, listener);
 		request.setAttribute(media_object, media);
 		super.addHandlerObject(request, Media.class);
-		logger.info(request.getUrl());
 		logger.info(file.getAbsoluteFile());
 		session.execute(request);
 		return request;
+	}
+	
+	public HttpRequest uploadMaterialMedia(Media media, String description, MediaManagerListener listener){
+		if(media==null || media.getType()==null){
+			logger.warn("media or media type is null");
+			return null;
+		}
+		File file = media.getMedia();
+		if(file==null)
+			file = getMedia_factory().getMediaFromUrl(media.getUrl()).getMedia();
+		if(file==null){
+			logger.warn("media file is null");
+			return null;
+		}
+		String media_type = media.getType();
+		HttpRequest request = RequestFactory.uploadMaterialMediaRequest(this, session.getApp().getAccess_token(),file,media_type,description);
+		if(listener!=null)
+			request.setAttribute(request, listener);
+		request.setAttribute(media_object, media);
+		super.addHandlerObject(request, Media.class);
+		logger.info(description);
+		session.execute(request);
+		return request;
+	}
+	
+	public HttpRequest uploadMaterialMedia(Image image, MediaManagerListener listener){
+		return uploadMaterialMedia(image,null,listener);
+	}
+	
+	public HttpRequest uploadMaterialMedia(Voice voice, MediaManagerListener listener){
+		return uploadMaterialMedia(voice,null,listener);
+	}
+	
+	public HttpRequest uploadMaterialMedia(Thumb thumb, MediaManagerListener listener){
+		return uploadMaterialMedia(thumb,null,listener);
+	}
+	
+	public HttpRequest uploadMaterialMedia(Video video, MediaManagerListener listener){
+		if(video==null){
+			logger.warn("media is null");
+			return null;
+		}
+		return uploadMaterialMedia(video,video.toJson(),listener);
 	}
 	
 	public HttpRequest uploadNewsImg(Media media, MediaManagerListener listener){
@@ -148,7 +190,6 @@ public class MediaManager extends ResponseHandler{
 			request.setAttribute(request, listener);
 		request.setAttribute(media_object, media);
 		super.addHandlerObject(request, Media.class);
-		logger.info(request.getUrl());
 		logger.info(file.getAbsoluteFile());
 		session.execute(request);
 		return request;

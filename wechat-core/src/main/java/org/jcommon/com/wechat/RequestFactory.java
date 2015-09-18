@@ -22,8 +22,9 @@ import org.jcommon.com.wechat.utils.Lang;
 
 public class RequestFactory
 {
-	private static final String api_root = "https://api.weixin.qq.com";
-	private static final String api_url  = "https://api.weixin.qq.com/cgi-bin";
+	private static final String api_root  = "https://api.weixin.qq.com";
+	private static final String api_url   = "https://api.weixin.qq.com/cgi-bin";
+	private static final String file_url  = "http://file.api.weixin.qq.com/cgi-bin";
   
   public static HttpRequest uploadHeadImgRequest(HttpListener listener, String access_token, File file, String kf_account){
 	String url = api_root+ "/customservice/kfaccount/uploadheadimg";
@@ -66,7 +67,7 @@ public class RequestFactory
   }
   
   public static HttpRequest createVideoUploadRequest(HttpListener listener, String access_token, File file, String type){
-	    String url = "https://file.api.weixin.qq.com/cgi-bin/media/uploadvideo";
+	    String url = file_url+ "/media/uploadvideo";
 	    String[] keys = { "access_token", "type" };
 	    String[] values = { access_token, type };
 	    url = JsonUtils.toRequestURL(url, keys, values);
@@ -246,7 +247,7 @@ public class RequestFactory
     String[] keys = { "access_token", "type" };
     String[] values = { access_token, type };
     url = JsonUtils.toRequestURL(url, keys, values);
-    return new FileRequest(url, file, HttpRequest.POST, listener);
+    return new FileRequest(url, file, "media", listener);
   }
   
   public static HttpRequest uploadImgRequest(HttpListener listener, String access_token, File file){
@@ -254,6 +255,19 @@ public class RequestFactory
     String[] keys = { "access_token"};
     String[] values = { access_token};
     url = JsonUtils.toRequestURL(url, keys, values);
-    return new FileRequest(url, file, HttpRequest.POST, listener);
+    return new FileRequest(url, file, "media", listener);
+  }
+  
+  public static HttpRequest uploadMaterialMediaRequest(HttpListener listener, String access_token, File file, String type, String description){
+    String url = api_url+ "/material/add_material";
+    String[] keys = { "access_token", "type" };
+    String[] values = { access_token, type };
+    url = JsonUtils.toRequestURL(url, keys, values);
+    if(description!=null){
+    	FileRequest request = new FileRequest(url, file, "description", listener);
+    	request.addHeader("description", description);
+    	return request;
+    }
+    return new FileRequest(url, file, "media", listener);
   }
 }

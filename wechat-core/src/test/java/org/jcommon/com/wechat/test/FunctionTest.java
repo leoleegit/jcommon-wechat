@@ -27,6 +27,7 @@ import org.jcommon.com.wechat.data.Media;
 import org.jcommon.com.wechat.data.OpenID;
 import org.jcommon.com.wechat.data.User;
 import org.jcommon.com.wechat.data.Users;
+import org.jcommon.com.wechat.data.Video;
 import org.jcommon.com.wechat.utils.Lang;
 import org.jcommon.com.wechat.utils.MD5;
 import org.jcommon.com.wechat.utils.MediaType;
@@ -45,7 +46,7 @@ public class FunctionTest extends TestBase implements AppManagerListener,
 	public static void main(String[] args) throws NoSuchAlgorithmException {
 		// TODO Auto-generated method stub
 		FunctionTest test = new FunctionTest();
-		String access_token = "q-P1N1mGRqpcMOByeI1jw7gX1xSk9r_-v9d-RTO0iaRdKEUwbDz3GLNBvnjTB0pltoaeKLg9yyAwlJYOzrE3bJCCWF2ww9ynbR0nMAABg3Q";
+		String access_token = "K1oad4RV42PbxrdowUBhtdbvKu9WCpBagYVlGmeTfuJWUtT4LvohpYH8l6uoyWAPVUcWu39g6Sf-o7t8RsHAVFve3QCUIHlgp8wkoM6MjPM";
 		App app = new App(access_token,"wx742941360129cd17", "37492ad273076440c0f123716865e1da", "spotlight-wechat");
 	    WechatSession session = new WechatSession("gh_f49bb9a333b3", app, null);
 	  
@@ -90,10 +91,15 @@ public class FunctionTest extends TestBase implements AppManagerListener,
 	    //media.setUrl("/634546cf1fbb14c2a8abc986dba3da6e/MN2qp-B2wYMUbdJyovde-Ey1HRLb179J--KQ_0VXrKTH_sTLB6lixkF8pCmqvYsH.jpg");
 	    //media.setMedia(new File(System.getProperty("user.dir"),"test.jpg"));
 	    //media.setType(MsgType.image.name());
-	   // manager.uploadNewsImg(media, test);
+	    //manager.uploadNewsImg(media, test);
 	    
-	   // manager.getMaterials(MediaType.video.name(), 10, 10, test);
-	    manager.getMaterialCount(test);
+	    //manager.getMaterials(MediaType.image.name(), 10, 10, test);
+	    //manager.getMaterialCount(test);
+	    
+	    //manager.uploadMedia(media, test);
+	    Video video = new Video("VIDEO_TITLE","INTRODUCTION");
+	    video.setMedia(new File(System.getProperty("user.dir"),"d22acda6f7a24ec85f80ba2caa3c3f9d.mp4"));
+	    manager.uploadMaterialMedia(video,test);
 	}
 
 	@Override
