@@ -560,13 +560,14 @@ public class WechatSession extends ResponseHandler
 
   public void execute(HttpRequest request) {
 	// TODO Auto-generated method stub
-	  logger.info("out:"+(request.getContent()==null?HttpRequest.GET:request.getContent()));
+	  logger.info("out:"+ request.getUrl());
+	  logger.info("out:"+(request.getContent()==null?"":request.getContent()));
 	  ThreadManager.instance().execute(request);
   }
   
   public HttpRequest resetHttpRequest(HttpRequest request) {
 		// TODO Auto-generated method stub
-	  logger.info("out:"+(request.getContent()==null?HttpRequest.GET:request.getContent()));
+	  logger.info("out:"+(request.getContent()==null?"":request.getContent()));
 	  return request;
   }
 

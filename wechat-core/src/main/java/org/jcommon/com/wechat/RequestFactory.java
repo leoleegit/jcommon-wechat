@@ -218,8 +218,32 @@ public class RequestFactory
     return new HttpRequest(url, listener, true);
   }
   
+  public static HttpRequest getMaterialReqeust(HttpListener listener, String access_token, String content, File file) {
+    String url = api_url+ "/material/get_material";
+    String[] keys = { "access_token"};
+    String[] values = { access_token};
+    url = JsonUtils.toRequestURL(url, keys, values);
+    return new HttpRequest(url, content, HttpRequest.POST, listener, true);
+  }
+  
   public static HttpRequest getMaterialsReqeust(HttpListener listener, String access_token, String content) {
     String url = api_url+ "/material/batchget_material";
+    String[] keys = { "access_token"};
+    String[] values = { access_token};
+    url = JsonUtils.toRequestURL(url, keys, values);
+    return new HttpRequest(url, content, HttpRequest.POST, listener, true);
+  }
+  
+  public static HttpRequest delMaterialReqeust(HttpListener listener, String access_token, String content) {
+    String url = api_url+ "/material/del_material";
+    String[] keys = { "access_token"};
+    String[] values = { access_token};
+    url = JsonUtils.toRequestURL(url, keys, values);
+    return new HttpRequest(url, content, HttpRequest.POST, listener, true);
+  }
+  
+  public static HttpRequest updateMaterialReqeust(HttpListener listener, String access_token, String content) {
+    String url = api_url+ "/material/update_news";
     String[] keys = { "access_token"};
     String[] values = { access_token};
     url = JsonUtils.toRequestURL(url, keys, values);
@@ -269,5 +293,13 @@ public class RequestFactory
     	return request;
     }
     return new FileRequest(url, file, "media", listener);
+  }
+  
+  public static HttpRequest uploadNewsRequest(HttpListener listener, String access_token, String content) {
+	String url = api_url+ "/material/add_news";
+	String[] keys = { "access_token" };
+	String[] values = { access_token };
+	url = JsonUtils.toRequestURL(url, keys, values);
+	return new HttpRequest(url, content, HttpRequest.POST, listener, true);
   }
 }

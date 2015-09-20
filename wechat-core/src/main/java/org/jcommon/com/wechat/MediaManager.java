@@ -5,14 +5,17 @@ import java.io.File;
 import org.apache.log4j.Logger;
 import org.jcommon.com.util.http.FileRequest;
 import org.jcommon.com.util.http.HttpRequest;
+import org.jcommon.com.wechat.data.Articles;
 import org.jcommon.com.wechat.data.Error;
 import org.jcommon.com.wechat.data.Image;
 import org.jcommon.com.wechat.data.MaterialsCount;
 import org.jcommon.com.wechat.data.Media;
+import org.jcommon.com.wechat.data.Mpnews;
 import org.jcommon.com.wechat.data.Thumb;
 import org.jcommon.com.wechat.data.Video;
 import org.jcommon.com.wechat.data.Voice;
 import org.jcommon.com.wechat.data.format.Materials;
+import org.jcommon.com.wechat.data.format.OutMpnews;
 import org.jcommon.com.wechat.media.DefaultMediaFactory;
 import org.jcommon.com.wechat.media.MediaFactory;
 
@@ -64,10 +67,26 @@ public class MediaManager extends ResponseHandler{
 					if(paramObject instanceof MaterialsCount){
 						MaterialsCount media_return = (MaterialsCount) paramObject;
 						listener.onMaterialsCount(paramHttpRequest,media_return);
+					}else if(paramObject instanceof Mpnews){
+						Mpnews media_return = (Mpnews) paramObject;
+						listener.onMpnews(paramHttpRequest,media_return);
+					}else if(paramObject instanceof Media){
+						Media media_return = (Media) paramObject;
+						listener.onMedia(paramHttpRequest,media_return);
 					}
 				}
 			}
 		}
+	}
+	
+	public HttpRequest uploadNews(Mpnews mpnews, MediaManagerListener listener){
+		HttpRequest request = RequestFactory.uploadNewsRequest(this, session.getApp().getAccess_token(),mpnews.toJson());
+		if(listener!=null)
+			request.setAttribute(request, listener);
+		super.addHandlerObject(request, Mpnews.class);
+		logger.info(request.getUrl());
+		session.execute(request);
+		return request;
 	}
 	
 	public HttpRequest getMaterials(String type, int offset, int count, MediaManagerListener listener){
@@ -77,7 +96,20 @@ public class MediaManager extends ResponseHandler{
 		HttpRequest request = RequestFactory.getMaterialsReqeust(this, session.getApp().getAccess_token(),new Materials(type,offset,count).toJson());
 		if(listener!=null)
 			request.setAttribute(request, listener);
-		logger.info(request.getUrl());
+		session.execute(request);
+		return request;
+	}
+	
+	public HttpRequest getMaterial(Media media,MediaManagerListener listener){
+		if(media==null || media.getMedia_id()==null){
+			logger.warn("media or media id is null");
+			return null;
+		}
+
+		HttpRequest request = RequestFactory.getMaterialReqeust(this, session.getApp().getAccess_token(),media.toJson(),null);
+		if(listener!=null)
+			request.setAttribute(request, listener);
+		super.addHandlerObject(request, Media.class);
 		session.execute(request);
 		return request;
 	}
@@ -88,6 +120,28 @@ public class MediaManager extends ResponseHandler{
 			request.setAttribute(request, listener);
 		super.addHandlerObject(request, MaterialsCount.class);
 		logger.info(request.getUrl());
+		session.execute(request);
+		return request;
+	}
+	
+	public HttpRequest delMaterial(Media media, RequestCallback callback){	
+		if(media==null || media.getMedia_id()==null){
+			logger.warn("media or media id is null");
+			return null;
+		}
+		HttpRequest request = RequestFactory.delMaterialReqeust(callback, session.getApp().getAccess_token(),media.toJson());
+		session.execute(request);
+		return request;
+	}
+	
+	public HttpRequest updateMaterial(Articles articles, int index, RequestCallback callback){	
+		if(articles==null || articles.getMedia_id()==null){
+			logger.warn("media or media id is null");
+			return null;
+		}
+		OutMpnews out = new OutMpnews(articles,index);
+		out.setMedia_id(articles.getMedia_id());
+		HttpRequest request = RequestFactory.updateMaterialReqeust(callback, session.getApp().getAccess_token(),out.toJson());
 		session.execute(request);
 		return request;
 	}

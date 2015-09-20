@@ -19,11 +19,13 @@ import org.jcommon.com.wechat.UserManagerListener;
 import org.jcommon.com.wechat.WechatSession;
 import org.jcommon.com.wechat.data.Agent;
 import org.jcommon.com.wechat.data.App;
+import org.jcommon.com.wechat.data.Articles;
 import org.jcommon.com.wechat.data.Error;
 import org.jcommon.com.wechat.data.Group;
 import org.jcommon.com.wechat.data.IP;
 import org.jcommon.com.wechat.data.MaterialsCount;
 import org.jcommon.com.wechat.data.Media;
+import org.jcommon.com.wechat.data.Mpnews;
 import org.jcommon.com.wechat.data.OpenID;
 import org.jcommon.com.wechat.data.User;
 import org.jcommon.com.wechat.data.Users;
@@ -46,7 +48,7 @@ public class FunctionTest extends TestBase implements AppManagerListener,
 	public static void main(String[] args) throws NoSuchAlgorithmException {
 		// TODO Auto-generated method stub
 		FunctionTest test = new FunctionTest();
-		String access_token = "K1oad4RV42PbxrdowUBhtdbvKu9WCpBagYVlGmeTfuJWUtT4LvohpYH8l6uoyWAPVUcWu39g6Sf-o7t8RsHAVFve3QCUIHlgp8wkoM6MjPM";
+		String access_token = "j2F1vjJtpIP3tkhnkizyzpTMCoZNNkTA5xbxX5NbyvweUkfYgfvXMpL0llyNdcH5QJllg_AALRNPSzsdfyt1LTU-cWF-gERaCvoBOrVu4zQ";
 		App app = new App(access_token,"wx742941360129cd17", "37492ad273076440c0f123716865e1da", "spotlight-wechat");
 	    WechatSession session = new WechatSession("gh_f49bb9a333b3", app, null);
 	  
@@ -85,7 +87,7 @@ public class FunctionTest extends TestBase implements AppManagerListener,
 	    
 	    MediaManager manager = new MediaManager(session);
 	    //Media media          = new Media();
-	   //media.setMedia_id("MN2qp-B2wYMUbdJyovde-Ey1HRLb179J--KQ_0VXrKTH_sTLB6lixkF8pCmqvYsH");
+	   // media.setMedia_id("QJB2K1gqwHLYZILw2kU2c8RbQ1X44GE8x4OeCRpFILk");
 	   //manager.downloadMedia(media, test);
 	    //MediaManager.getMedia_factory().getMediaFromUrl("/634546cf1fbb14c2a8abc986dba3da6e/MN2qp-B2wYMUbdJyovde-Ey1HRLb179J--KQ_0VXrKTH_sTLB6lixkF8pCmqvYsH");
 	    //media.setUrl("/634546cf1fbb14c2a8abc986dba3da6e/MN2qp-B2wYMUbdJyovde-Ey1HRLb179J--KQ_0VXrKTH_sTLB6lixkF8pCmqvYsH.jpg");
@@ -93,13 +95,32 @@ public class FunctionTest extends TestBase implements AppManagerListener,
 	    //media.setType(MsgType.image.name());
 	    //manager.uploadNewsImg(media, test);
 	    
-	    //manager.getMaterials(MediaType.image.name(), 10, 10, test);
+	    manager.getMaterials(MediaType.image.name(), 0, 10, test);
 	    //manager.getMaterialCount(test);
+	    //manager.getMaterial(media, test);
+	    //manager.delMaterial(media, test);
 	    
 	    //manager.uploadMedia(media, test);
-	    Video video = new Video("VIDEO_TITLE","INTRODUCTION");
-	    video.setMedia(new File(System.getProperty("user.dir"),"d22acda6f7a24ec85f80ba2caa3c3f9d.mp4"));
-	    manager.uploadMaterialMedia(video,test);
+	    //Video video = new Video("VIDEO_TITLE","INTRODUCTION");
+	    //video.setMedia(new File(System.getProperty("user.dir"),"d22acda6f7a24ec85f80ba2caa3c3f9d.mp4"));
+	   // manager.uploadMaterialMedia(video,test);
+	    List<Articles> articles = new ArrayList<Articles>();
+	    Articles art = new Articles("TITLE11","content","digest","http://demo.protel.com.hk",
+	  		  "leolee",1);
+	    art.setThumb_media_id("fOE5ZBSeEpfRGQcGJjbocObGlHdPTsaC5fL76jiAtDM");
+	    articles.add(art);
+//	    art = new Articles("TITLE2","content","digest","http://demo.protel.com.hkm",
+//		  		  "leolee");
+//	    art.setThumb_media_id("7TlXZ_bwQbQD-r8hoJlinVWAZ_lIsAWLu8tvsHdfdSM");
+//	    articles.add(art);
+//	    art = new Articles("TITLE4","content","digest","http://demo.protel.com.hk",
+//		  		  "leolee");
+//	    art.setThumb_media_id("7TlXZ_bwQbQD-r8hoJlinZJAaD8kdDofqLdQUDjQhvg");
+//	    articles.add(art);
+	    //Mpnews mpnews = new Mpnews(articles);
+	    //manager.uploadNews(mpnews, test);
+	    //art.setMedia_id("QJB2K1gqwHLYZILw2kU2c8RbQ1X44GE8x4OeCRpFILk");
+	    //manager.updateMaterial(art, 2, test);
 	}
 
 	@Override
@@ -192,6 +213,12 @@ public class FunctionTest extends TestBase implements AppManagerListener,
 	public void onMaterialsCount(HttpRequest request, MaterialsCount material) {
 		// TODO Auto-generated method stub
 		logger.info(material.toJson());
+	}
+
+	@Override
+	public void onMpnews(HttpRequest request, Mpnews news) {
+		// TODO Auto-generated method stub
+		logger.info(news.toJson());
 	}
 
 }
