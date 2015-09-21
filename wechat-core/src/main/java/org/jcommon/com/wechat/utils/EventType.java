@@ -12,28 +12,26 @@
 // ========================================================================
 package org.jcommon.com.wechat.utils;
 
-public enum EventType
-{
+public enum EventType{
   subscribe, 
   unsubscribe, 
   scan, 
   LOCATION, 
   CLICK,
-  MASSSENDJOBFINISH;
+  MASSSENDJOBFINISH,
+  VIEW,
+  scancode_push,
+  scancode_waitmsg,
+  pic_sysphoto,
+  pic_photo_or_album,
+  pic_weixin,
+  location_select;
 
   public static EventType getType(String name) {
-    if (subscribe.toString().equalsIgnoreCase(name))
-      return subscribe;
-    if (unsubscribe.toString().equalsIgnoreCase(name))
-      return unsubscribe;
-    if (scan.toString().equalsIgnoreCase(name))
-      return scan;
-    if (LOCATION.toString().equalsIgnoreCase(name))
-      return LOCATION;
-    if (CLICK.toString().equalsIgnoreCase(name))
-      return CLICK;
-    if (MASSSENDJOBFINISH.toString().equalsIgnoreCase(name))
-        return MASSSENDJOBFINISH;
+    for(EventType et : EventType.class.getEnumConstants()){
+    	if(et.name().equalsIgnoreCase(name))
+    		return et;
+    }
     return null;
   }
 }

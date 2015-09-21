@@ -13,6 +13,8 @@ import org.jcommon.com.wechat.AppManager;
 import org.jcommon.com.wechat.AppManagerListener;
 import org.jcommon.com.wechat.MediaManager;
 import org.jcommon.com.wechat.MediaManagerListener;
+import org.jcommon.com.wechat.MenusManager;
+import org.jcommon.com.wechat.MenusManagerListener;
 import org.jcommon.com.wechat.RequestCallback;
 import org.jcommon.com.wechat.UserManager;
 import org.jcommon.com.wechat.UserManagerListener;
@@ -20,16 +22,20 @@ import org.jcommon.com.wechat.WechatSession;
 import org.jcommon.com.wechat.data.Agent;
 import org.jcommon.com.wechat.data.App;
 import org.jcommon.com.wechat.data.Articles;
+import org.jcommon.com.wechat.data.Button;
 import org.jcommon.com.wechat.data.Error;
 import org.jcommon.com.wechat.data.Group;
 import org.jcommon.com.wechat.data.IP;
+import org.jcommon.com.wechat.data.MaterialItem;
 import org.jcommon.com.wechat.data.MaterialsCount;
 import org.jcommon.com.wechat.data.Media;
+import org.jcommon.com.wechat.data.Menus;
 import org.jcommon.com.wechat.data.Mpnews;
 import org.jcommon.com.wechat.data.OpenID;
 import org.jcommon.com.wechat.data.User;
 import org.jcommon.com.wechat.data.Users;
 import org.jcommon.com.wechat.data.Video;
+import org.jcommon.com.wechat.utils.ButtonType;
 import org.jcommon.com.wechat.utils.Lang;
 import org.jcommon.com.wechat.utils.MD5;
 import org.jcommon.com.wechat.utils.MediaType;
@@ -39,6 +45,7 @@ public class FunctionTest extends TestBase implements AppManagerListener,
 	AgentManagerListener,
 	UserManagerListener,
 	MediaManagerListener,
+	MenusManagerListener,
 	RequestCallback{
 
 	/**
@@ -48,7 +55,7 @@ public class FunctionTest extends TestBase implements AppManagerListener,
 	public static void main(String[] args) throws NoSuchAlgorithmException {
 		// TODO Auto-generated method stub
 		FunctionTest test = new FunctionTest();
-		String access_token = "j2F1vjJtpIP3tkhnkizyzpTMCoZNNkTA5xbxX5NbyvweUkfYgfvXMpL0llyNdcH5QJllg_AALRNPSzsdfyt1LTU-cWF-gERaCvoBOrVu4zQ";
+		String access_token = "AH26Ew-8JtZGtta-GfnM7zFKItWzjsH42UHialSjxgPpNW3lFOOn77L-71pszm16x3a-LocvSHQvXF8Uay2-rupia_PXWf3xdzMx5lo2kDk";
 		App app = new App(access_token,"wx742941360129cd17", "37492ad273076440c0f123716865e1da", "spotlight-wechat");
 	    WechatSession session = new WechatSession("gh_f49bb9a333b3", app, null);
 	  
@@ -95,7 +102,7 @@ public class FunctionTest extends TestBase implements AppManagerListener,
 	    //media.setType(MsgType.image.name());
 	    //manager.uploadNewsImg(media, test);
 	    
-	    manager.getMaterials(MediaType.image.name(), 0, 10, test);
+	    manager.getMaterials(MediaType.news.name(), 0, 10, test);
 	    //manager.getMaterialCount(test);
 	    //manager.getMaterial(media, test);
 	    //manager.delMaterial(media, test);
@@ -104,11 +111,11 @@ public class FunctionTest extends TestBase implements AppManagerListener,
 	    //Video video = new Video("VIDEO_TITLE","INTRODUCTION");
 	    //video.setMedia(new File(System.getProperty("user.dir"),"d22acda6f7a24ec85f80ba2caa3c3f9d.mp4"));
 	   // manager.uploadMaterialMedia(video,test);
-	    List<Articles> articles = new ArrayList<Articles>();
-	    Articles art = new Articles("TITLE11","content","digest","http://demo.protel.com.hk",
-	  		  "leolee",1);
-	    art.setThumb_media_id("fOE5ZBSeEpfRGQcGJjbocObGlHdPTsaC5fL76jiAtDM");
-	    articles.add(art);
+//	    List<Articles> articles = new ArrayList<Articles>();
+//	    Articles art = new Articles("TITLE11","content","digest","http://demo.protel.com.hk",
+//	  		  "leolee",1);
+//	    art.setThumb_media_id("fOE5ZBSeEpfRGQcGJjbocObGlHdPTsaC5fL76jiAtDM");
+//	    articles.add(art);
 //	    art = new Articles("TITLE2","content","digest","http://demo.protel.com.hkm",
 //		  		  "leolee");
 //	    art.setThumb_media_id("7TlXZ_bwQbQD-r8hoJlinVWAZ_lIsAWLu8tvsHdfdSM");
@@ -121,6 +128,33 @@ public class FunctionTest extends TestBase implements AppManagerListener,
 	    //manager.uploadNews(mpnews, test);
 	    //art.setMedia_id("QJB2K1gqwHLYZILw2kU2c8RbQ1X44GE8x4OeCRpFILk");
 	    //manager.updateMaterial(art, 2, test);
+	    
+	    //MenusManager manager = new MenusManager(session);
+	    //manager.getMenus(test);
+	    //manager.delMenus(test);
+	    
+	    List<Button> button = new ArrayList<Button>();
+	    Button button1 = new Button("Button1",null);
+	    button1.addSubButton(new Button("赞一下",ButtonType.click,"V1001_GOOD"));
+	    button1.addSubButton(new Button("视频",ButtonType.view,"http://v.qq.com/"));
+	    button1.addSubButton(new Button("扫码带提示",ButtonType.scancode_push,"rselfmenu_0_0"));
+	    button1.addSubButton(new Button("扫码推事件",ButtonType.scancode_waitmsg,"rselfmenu_0_1"));
+	    
+	    Button button2 = new Button("Button2",null);
+	    button2.addSubButton(new Button("系统拍照发图",ButtonType.pic_sysphoto,"rselfmenu_1_0"));
+	    button2.addSubButton(new Button("拍照或者相册发图",ButtonType.pic_photo_or_album,"rselfmenu_1_1"));
+	    button2.addSubButton(new Button("微信相册发图",ButtonType.pic_weixin,"rselfmenu_1_2"));
+	    
+	    Button button3 = new Button("Button3",null);
+	    button3.addSubButton(new Button("发送位置",ButtonType.location_select,"rselfmenu_2_0"));
+	    button3.addSubButton(new Button("图片",ButtonType.media_id,"rselfmenu_2_1"));
+	    button3.addSubButton(new Button("图文消息",ButtonType.view_limited,"rselfmenu_2_2"));
+	    
+	    button.add(button1);
+	    button.add(button2);
+	    button.add(button3);
+	    Menus menus = new Menus(button);
+	    //manager.createMenus(menus, test);
 	}
 
 	@Override
@@ -219,6 +253,18 @@ public class FunctionTest extends TestBase implements AppManagerListener,
 	public void onMpnews(HttpRequest request, Mpnews news) {
 		// TODO Auto-generated method stub
 		logger.info(news.toJson());
+	}
+
+	@Override
+	public void onMaterialItem(HttpRequest request, MaterialItem item) {
+		// TODO Auto-generated method stub
+		logger.info(item.toJson());
+	}
+
+	@Override
+	public void onMenus(HttpRequest request, Menus menus) {
+		// TODO Auto-generated method stub
+		logger.info(menus.toJson());
 	}
 
 }

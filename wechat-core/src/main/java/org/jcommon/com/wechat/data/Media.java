@@ -26,8 +26,10 @@ public class Media extends JsonObject{
   private long created_at;
   private File media;
   private String url;
+  private String name;
   private String content_type;
   private String media_name;
+  private String update_time;
   public final long max_image = 1*1024*1024; //1M
   public final long max_voice = 2*1024*1024; //2M
   public final long max_video = 10*1024*1024;//10M
@@ -125,4 +127,20 @@ public class Media extends JsonObject{
 	  return media;
   }
 
+  public void setUpdate_time(String update_time) {
+	  this.update_time = update_time;
+  }
+	
+  public String getUpdate_time() {
+	  return update_time;
+  }
+
+  public void setName(String name) {
+	  this.name = name;
+  }
+
+  public String getName() {
+	  return name;
+  }
+  
 }

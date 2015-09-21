@@ -106,7 +106,7 @@ public class RequestFactory
     return new HttpRequest(url, content, HttpRequest.POST, listener, true);
   }
 
-  public static HttpRequest createGetMenusReqeust(HttpListener listener, String access_token) {
+  public static HttpRequest getMenusReqeust(HttpListener listener, String access_token) {
     String url = api_url+ "/menu/get";
     String[] keys = { "access_token" };
     String[] values = { access_token };
@@ -114,12 +114,20 @@ public class RequestFactory
     return new HttpRequest(url, listener, true);
   }
 
-  public static HttpRequest createDeleteMenusReqeust(HttpListener listener, String access_token) {
+  public static HttpRequest delMenusReqeust(HttpListener listener, String access_token) {
     String url = api_url+ "/menu/delete";
     String[] keys = { "access_token" };
     String[] values = { access_token };
     url = JsonUtils.toRequestURL(url, keys, values);
     return new HttpRequest(url, listener, true);
+  }
+  
+  public static HttpRequest createMenusReqeust(HttpListener listener, String access_token, String content) {
+	String url = api_url+ "/menu/create";
+	String[] keys = { "access_token" };
+	String[] values = { access_token };
+	url = JsonUtils.toRequestURL(url, keys, values);
+	return new HttpRequest(url, content, HttpRequest.POST, listener, true);
   }
   
   public static HttpRequest userInfoRequest(HttpListener listener, String access_token, String open_id, Lang lang){

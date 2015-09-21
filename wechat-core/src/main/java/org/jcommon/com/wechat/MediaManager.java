@@ -8,6 +8,7 @@ import org.jcommon.com.util.http.HttpRequest;
 import org.jcommon.com.wechat.data.Articles;
 import org.jcommon.com.wechat.data.Error;
 import org.jcommon.com.wechat.data.Image;
+import org.jcommon.com.wechat.data.MaterialItem;
 import org.jcommon.com.wechat.data.MaterialsCount;
 import org.jcommon.com.wechat.data.Media;
 import org.jcommon.com.wechat.data.Mpnews;
@@ -73,6 +74,9 @@ public class MediaManager extends ResponseHandler{
 					}else if(paramObject instanceof Media){
 						Media media_return = (Media) paramObject;
 						listener.onMedia(paramHttpRequest,media_return);
+					}else if(paramObject instanceof MaterialItem){
+						MaterialItem media_return = (MaterialItem) paramObject;
+						listener.onMaterialItem(paramHttpRequest,media_return);
 					}
 				}
 			}
@@ -96,6 +100,7 @@ public class MediaManager extends ResponseHandler{
 		HttpRequest request = RequestFactory.getMaterialsReqeust(this, session.getApp().getAccess_token(),new Materials(type,offset,count).toJson());
 		if(listener!=null)
 			request.setAttribute(request, listener);
+		super.addHandlerObject(request, MaterialItem.class);
 		session.execute(request);
 		return request;
 	}

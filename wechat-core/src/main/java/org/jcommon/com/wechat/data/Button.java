@@ -13,10 +13,10 @@
 package org.jcommon.com.wechat.data;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import org.jcommon.com.util.JsonUtils;
 import org.jcommon.com.wechat.utils.ButtonType;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -30,6 +30,7 @@ public class Button extends JsonObject
   private String name;
   private String key;
   private String url;
+  private String media_id;
   private List<Button> sub_button;
 
   public Button(String json)
@@ -39,8 +40,11 @@ public class Button extends JsonObject
     if (jsonO != null)
       try {
         if (jsonO.has("sub_button")) {
-          List<Object> list = json2Objects(Articles.class, jsonO.getString("sub_button"));
-          resetButton(list);
+        	JSONArray arr = JsonUtils.getJSONArray(jsonO.getString("sub_button"));
+        	sub_button    = new ArrayList<Button>();
+        	for (int index = 0; index < arr.length(); index++) {
+        		sub_button.add(new Button(arr.getString(index)));
+      	    }
         }
       }
       catch (JSONException e) {
@@ -53,26 +57,15 @@ public class Button extends JsonObject
     setSub_button(list);
   }
 
-  private void resetButton(List<Object> list)
-  {
-    if (list == null) return;
-    if (this.sub_button == null) this.sub_button = new ArrayList<Button>();
-    for (Iterator<?> i$ = list.iterator(); i$.hasNext(); ) {
-      Object o = i$.next();
-      this.sub_button.add((Button)o);
-    }
-    list.clear();
-    list = null;
-  }
-
-  public Button(String name, ButtonType type, String urlorkey)
-  {
+  public Button(String name, ButtonType type, String urlorkey){
     this.name = name;
     this.type = type.toString();
-    if (type == ButtonType.click)
+    if (type == ButtonType.view)
+        this.url = urlorkey;
+    else if (type == ButtonType.media_id || type == ButtonType.view_limited)
+        this.media_id = urlorkey;
+    else
       this.key = urlorkey;
-    else if (type == ButtonType.view)
-      this.url = urlorkey;
   }
 
   public void addSubButton(Button button) {
@@ -119,4 +112,12 @@ public class Button extends JsonObject
   public void setSub_button(List<Button> sub_button) {
     this.sub_button = sub_button;
   }
+
+public void setMedia_id(String media_id) {
+	this.media_id = media_id;
+}
+
+public String getMedia_id() {
+	return media_id;
+}
 }

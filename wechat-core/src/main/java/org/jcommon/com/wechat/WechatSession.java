@@ -509,7 +509,7 @@ public class WechatSession extends ResponseHandler
       this.logger.warn("app can't be null!");
       return null;
     }
-    HttpRequest request = RequestFactory.createGetMenusReqeust(callback, this.app.getAccess_token());
+    HttpRequest request = RequestFactory.getMenusReqeust(callback, this.app.getAccess_token());
     execute(request);
     return request;
   }
@@ -519,7 +519,7 @@ public class WechatSession extends ResponseHandler
       this.logger.warn("app can't be null!");
       return null;
     }
-    HttpRequest request = RequestFactory.createDeleteMenusReqeust(callback, this.app.getAccess_token());
+    HttpRequest request = RequestFactory.delMenusReqeust(callback, this.app.getAccess_token());
     execute(request);
     return request;
   }

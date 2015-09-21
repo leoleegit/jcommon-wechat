@@ -13,9 +13,9 @@
 package org.jcommon.com.wechat.data;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import org.jcommon.com.util.JsonUtils;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -33,9 +33,15 @@ public class Menus extends JsonObject
     JSONObject jsonO = JsonUtils.getJSONObject(json);
     if (jsonO != null)
       try {
-        if (jsonO.has("button")) {
-          List<Object> list = json2Objects(Articles.class, jsonO.getString("button"));
-          resetButton(list);
+        if (jsonO.has("menu")) {
+        	jsonO = JsonUtils.getJSONObject(jsonO.getString("menu"));
+        	if (jsonO.has("button")) {
+        		JSONArray arr = JsonUtils.getJSONArray(jsonO.getString("button"));
+        		button      = new ArrayList<Button>();
+	        	for (int index = 0; index < arr.length(); index++) {
+	        		button.add(new Button(arr.getString(index)));
+	      	    }
+	        }
         }
       }
       catch (JSONException e) {
@@ -55,18 +61,6 @@ public class Menus extends JsonObject
   public void addButton(Button button) {
     if (this.button == null) this.button = new ArrayList<Button>();
     this.button.add(button);
-  }
-
-  private void resetButton(List<Object> list)
-  {
-    if (list == null) return;
-    if (this.button == null) this.button = new ArrayList<Button>();
-    for (Iterator<?> i$ = list.iterator(); i$.hasNext(); ) {
-      Object o = i$.next();
-      this.button.add((Button)o);
-    }
-    list.clear();
-    list = null;
   }
 
   public List<Button> getButton() {

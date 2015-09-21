@@ -3,7 +3,11 @@ package org.jcommon.com.wechat.data;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.jcommon.com.util.JsonUtils;
 import org.jcommon.com.wechat.utils.MediaType;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class Mpnews extends Media{
 	/**
@@ -16,6 +20,24 @@ public class Mpnews extends Media{
 	public Mpnews(String data){
 		super(data);
 		setType(MediaType.mpnews.toString());
+		JSONObject jsonO =  JsonUtils.getJSONObject(data);
+	    if (jsonO != null){
+	    	try {
+		        if (jsonO.has("content")) {
+		        	jsonO =  JsonUtils.getJSONObject(jsonO.getString("content"));
+		        	if (jsonO.has("news_item")) {
+		        		JSONArray arr = JsonUtils.getJSONArray(jsonO.getString("news_item"));
+			        	articles      = new ArrayList<Articles>();
+			        	for (int index = 0; index < arr.length(); index++) {
+			        		articles.add(new Articles(arr.getString(index)));
+			      	    }
+			        }
+		        }
+		    }
+		    catch (JSONException e) {
+		        logger.error("", e);
+		    }
+	    }
 	}
 	  
 	public Mpnews(){
@@ -50,4 +72,5 @@ public class Mpnews extends Media{
 	public void setIndex(int index) {
 		this.index = index;
 	}
+
 }
