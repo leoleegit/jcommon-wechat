@@ -14,20 +14,17 @@ package org.jcommon.com.wechat.data;
 
 import org.jcommon.com.wechat.utils.MediaType;
 
-public class Image extends Media
-{
+public class Image extends Media{
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-  public Image(String data)
-  {
+  public Image(String data){
     super(data);
     setType(MediaType.image.toString());
   }
   
-  public Image()
-  {
+  public Image(){
     super();
     setType(MediaType.image.toString());
   }

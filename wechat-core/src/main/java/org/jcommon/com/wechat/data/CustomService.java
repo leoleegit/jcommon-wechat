@@ -17,6 +17,16 @@ public class CustomService extends JsonObject{
 	private String kf_id;
 	private String kf_headimg;
 
+	public CustomService(String kfaccount){
+		this.kfaccount = kfaccount;
+	}
+	
+	public CustomService(String kfaccount, String nickname, String passwd){
+		setNickname(nickname);
+		setKfaccount(kfaccount);
+		setPasswd(passwd);
+	}
+	
 	public String getKf_nick() {
 		return kf_nick;
 	}
@@ -40,16 +50,6 @@ public class CustomService extends JsonObject{
 
 	public void setKf_headimg(String kf_headimg) {
 		this.kf_headimg = kf_headimg;
-	}
-
-	public CustomService(String kfaccount){
-		this.kfaccount = kfaccount;
-	}
-	
-	public CustomService(String kfaccount, String nickname, String passwd){
-		setNickname(nickname);
-		setKfaccount(kfaccount);
-		setPasswd(passwd);
 	}
 	
 	public void setKfaccount(String kfaccount) {

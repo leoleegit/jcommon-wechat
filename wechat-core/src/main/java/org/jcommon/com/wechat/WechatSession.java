@@ -59,7 +59,7 @@ public class WechatSession extends ResponseHandler
   public final static String  WECHATMEDIAURL  = "wechat-media-url";
   
   private UserManager_bak  userManager;
-  private MsgManager   msgManager;
+  private MsgManager_bak   msgManager;
   private MediaManager_bak mediaManager;
   
   private Timer app_keepalive;
@@ -71,7 +71,7 @@ public class WechatSession extends ResponseHandler
     this.listener = listener;
     
     userManager  = new UserManager_bak(this);
-    msgManager   = new MsgManager(this);
+    msgManager   = new MsgManager_bak(this);
     mediaManager = new MediaManager_bak(this);
   }
 
@@ -499,7 +499,7 @@ public class WechatSession extends ResponseHandler
       this.logger.warn("app can't be null!");
       return null;
     }
-    HttpRequest request = RequestFactory.createNewMenusReqeust(callback, this.app.getAccess_token(), menus.toJson());
+    HttpRequest request = RequestFactory.createMenusReqeust(callback, this.app.getAccess_token(), menus.toJson());
     execute(request);
     return request;
   }
@@ -579,11 +579,11 @@ public class WechatSession extends ResponseHandler
 		this.userManager = userManager;
 	}
 	
-	public MsgManager getMsgManager() {
+	public MsgManager_bak getMsgManager() {
 		return msgManager;
 	}
 	
-	public void setMsgManager(MsgManager msgManager) {
+	public void setMsgManager(MsgManager_bak msgManager) {
 		this.msgManager = msgManager;
 	}
 	
