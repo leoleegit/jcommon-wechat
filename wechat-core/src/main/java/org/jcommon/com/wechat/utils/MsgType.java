@@ -24,31 +24,15 @@ public enum MsgType
   link, 
   event,
   mpnews,
-  thumb;
+  thumb,
+  mpvideo,
+  shortvideo;
 
   public static MsgType getType(String name) {
-    if (text.toString().equalsIgnoreCase(name))
-      return text;
-    if (image.toString().equalsIgnoreCase(name))
-      return image;
-    if (voice.toString().equalsIgnoreCase(name))
-      return voice;
-    if (location.toString().equalsIgnoreCase(name))
-      return location;
-    if (link.toString().equalsIgnoreCase(name))
-      return link;
-    if (event.toString().equalsIgnoreCase(name))
-      return event;
-    if (music.toString().equalsIgnoreCase(name))
-      return music;
-    if (news.toString().equalsIgnoreCase(name))
-      return news;
-    if (video.toString().equalsIgnoreCase(name))
-      return video;
-    if (mpnews.toString().equalsIgnoreCase(name))
-        return mpnews;
-    if (thumb.toString().equalsIgnoreCase(name))
-        return thumb;
+    for(MsgType mt : MsgType.class.getEnumConstants()){
+    	if(mt.name().equalsIgnoreCase(name))
+    		return mt;
+    }
     return text;
   }
 }

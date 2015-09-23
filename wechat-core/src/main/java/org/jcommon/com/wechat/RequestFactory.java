@@ -25,7 +25,7 @@ public class RequestFactory
 	public static final String api_root  = "https://api.weixin.qq.com";
 	public static final String api_url   = "https://api.weixin.qq.com/cgi-bin";
 	public static final String mp_url    = "https://mp.weixin.qq.com/cgi-bin";
-	public static final String file_url  = "http://file.api.weixin.qq.com/cgi-bin";
+	public static final String file_url  = "https://file.api.weixin.qq.com/cgi-bin";
   
   public static HttpRequest uploadHeadImgRequest(HttpListener listener, String access_token, File file, String kf_account){
 	String url = api_root+ "/customservice/kfaccount/uploadheadimg";
@@ -75,12 +75,20 @@ public class RequestFactory
     return new HttpRequest(url, content, HttpRequest.POST, listener, true);
   }
   
-  public static HttpRequest createVideoUploadRequest(HttpListener listener, String access_token, File file, String type){
-	    String url = file_url+ "/media/uploadvideo";
-	    String[] keys = { "access_token", "type" };
-	    String[] values = { access_token, type };
-	    url = JsonUtils.toRequestURL(url, keys, values);
-	    return new FileRequest(url, file, HttpRequest.POST, listener);
+  public static HttpRequest broadcastReqeust(HttpListener listener, String access_token, String content) {
+    String url = api_url+ "/message/mass/sendall";
+    String[] keys = { "access_token" };
+    String[] values = { access_token };
+    url = JsonUtils.toRequestURL(url, keys, values);
+    return new HttpRequest(url, content, HttpRequest.POST, listener, true);
+  }
+  
+  public static HttpRequest videoMsgRequest(HttpListener listener, String access_token, String content) {
+    String url = file_url+ "/media/uploadvideo";
+    String[] keys = { "access_token" };
+    String[] values = { access_token };
+    url = JsonUtils.toRequestURL(url, keys, values);
+    return new HttpRequest(url, content, HttpRequest.POST, listener, true);
   }
   
   public static HttpRequest createNewsUploadRequest(HttpListener listener, String access_token, String content){
@@ -91,14 +99,6 @@ public class RequestFactory
 	    return new HttpRequest(url, content, HttpRequest.POST, listener, true);
   }
   
-  public static HttpRequest createBroadcastRequest(HttpListener listener, String access_token, String content){
-	    String url = api_url+ "/message/mass/send";
-	    String[] keys = { "access_token" };
-	    String[] values = { access_token };
-	    url = JsonUtils.toRequestURL(url, keys, values);
-	    return new HttpRequest(url, content, HttpRequest.POST, listener, true);
-  }
-
   public static HttpRequest getMenusReqeust(HttpListener listener, String access_token) {
     String url = api_url+ "/menu/get";
     String[] keys = { "access_token" };
@@ -301,7 +301,7 @@ public class RequestFactory
     	request.addHeader("description", description);
     	return request;
     }
-    return new FileRequest(url, file, "description", listener);
+    return new FileRequest(url, file, "media", listener);
   }
   
   public static HttpRequest uploadNewsRequest(HttpListener listener, String access_token, String content) {

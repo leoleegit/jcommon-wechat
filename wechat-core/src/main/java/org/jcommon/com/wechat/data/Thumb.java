@@ -16,4 +16,8 @@ public class Thumb extends Media{
 	    super();
 	    setType(MediaType.thumb.toString());
 	 }
+	 
+	 public String getType() {
+		return MediaType.thumb.name();
+	 }
 }

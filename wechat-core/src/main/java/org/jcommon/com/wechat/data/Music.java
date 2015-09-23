@@ -12,6 +12,8 @@
 // ========================================================================
 package org.jcommon.com.wechat.data;
 
+import org.jcommon.com.wechat.utils.MediaType;
+
 public class Music extends Media{
 	/**
 	 * 
@@ -75,5 +77,9 @@ public class Music extends Media{
 
   public void setThumb_media_id(String thumb_media_id) {
     this.thumb_media_id = thumb_media_id;
+  }
+  
+  public String getType() {
+	return MediaType.music.name();
   }
 }

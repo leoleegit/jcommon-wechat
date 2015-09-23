@@ -42,7 +42,6 @@ public class Mpnews extends Media{
 	  
 	public Mpnews(){
 		super();
-		setType(MediaType.mpnews.toString());
 	}
 	
 	public Mpnews(int index, Articles article){
@@ -73,4 +72,7 @@ public class Mpnews extends Media{
 		this.index = index;
 	}
 
+	public String getType() {
+		return MediaType.mpnews.name();
+    }
 }

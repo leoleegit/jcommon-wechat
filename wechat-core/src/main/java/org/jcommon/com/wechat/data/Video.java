@@ -58,4 +58,8 @@ public class Video extends Media
   public void setDescription(String description) {
     this.description = description;
   }
+  
+  public String getType() {
+	return MediaType.video.name();
+  }
 }

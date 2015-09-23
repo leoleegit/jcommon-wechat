@@ -31,4 +31,8 @@ public class Voice extends Media
     super();
     setType(MediaType.voice.toString());
   }
+  
+  public String getType() {
+	return MediaType.voice.name();
+  }
 }

@@ -9,7 +9,7 @@ import org.jcommon.com.wechat.servlet.Callback;
 
 public class TestBase implements SystemListener{
 	public static URL init_file_is = Callback.class.getResource("/wechat-log4j.xml");
-	Logger logger = Logger.getLogger(getClass());
+	protected Logger logger = Logger.getLogger(getClass());
 	static{
 	    if (init_file_is != null)
 	      DOMConfigurator.configure(init_file_is);

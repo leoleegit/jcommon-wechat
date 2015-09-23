@@ -110,7 +110,6 @@ public class AppManager extends ResponseHandler{
 			if(listener!=null)
 				request.setAttribute(request, listener);
 			super.addHandlerObject(request, IP.class);
-			logger.info(request.getUrl());
 			session.execute(request);
 		}
 		return ips;

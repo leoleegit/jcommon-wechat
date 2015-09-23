@@ -19,6 +19,7 @@ public enum EventType{
   LOCATION, 
   CLICK,
   MASSSENDJOBFINISH,
+  TEMPLATESENDJOBFINISH,
   VIEW,
   scancode_push,
   scancode_waitmsg,

@@ -26,7 +26,6 @@ import org.dom4j.Element;
 import org.jcommon.com.util.collections.MapStoreListener;
 import org.jcommon.com.util.jmx.Monitor;
 import org.jcommon.com.util.thread.TimerTaskManger;
-import org.jcommon.com.wechat.cache.ContentTypeCache;
 import org.jcommon.com.wechat.cache.SessionCache;
 import org.jcommon.com.wechat.data.App;
 import org.jcommon.com.wechat.data.Event;
@@ -38,7 +37,6 @@ public class WechatSessionManager extends Monitor
 {
   private Logger logger = Logger.getLogger(getClass());
   private static WechatSessionManager instance;
-  private ContentTypeCache content_type_cache;
 
   public static WechatSessionManager instance(){
     if (instance == null) {
@@ -50,7 +48,6 @@ public class WechatSessionManager extends Monitor
   public WechatSessionManager() {
     super("WechatSessionManager");
     instance = this;
-    content_type_cache = new ContentTypeCache(System.getProperty("java.io.tmpdir"),"content_type_cache",".wehcat",-1);
   }
 
   @Override 
@@ -244,10 +241,6 @@ public class WechatSessionManager extends Monitor
 			return true;
 	}
     return false;
-  }
-
-  public ContentTypeCache getContent_type_cache() {
-	return content_type_cache;
   }
 
 }

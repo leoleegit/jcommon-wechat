@@ -43,6 +43,7 @@ import org.jcommon.com.wechat.data.Text;
 import org.jcommon.com.wechat.data.User;
 import org.jcommon.com.wechat.data.Users;
 import org.jcommon.com.wechat.data.Video;
+import org.jcommon.com.wechat.data.filter.UserFilter;
 import org.jcommon.com.wechat.utils.ButtonType;
 import org.jcommon.com.wechat.utils.Lang;
 import org.jcommon.com.wechat.utils.MD5;
@@ -66,7 +67,7 @@ public class FunctionTest extends TestBase implements AppManagerListener,
 	public static void main(String[] args) throws NoSuchAlgorithmException {
 		// TODO Auto-generated method stub
 		test = new FunctionTest();
-		String access_token = "D-cTyJAhnWzk9Mp2zIDrL2plfCF3Nyc5bX_5FdmQVGM9uzE9T44OEAZh9nmp_ja6eK18yiTvcdBjcelRMsN0dHvg8PN2vMN5wryILhwJmjM";
+		String access_token = "j2uBLa7hGOcpWlgwYD9JYJoGYAYFGUW6I0Vjm7XVIhzLnChd9YJSh56hisPGIpbkqOntLKw-cFbJQI65w13fVaUxc1ykLeVhh2x8__FGkjg";
 		App app = new App(access_token,"wx742941360129cd17", "37492ad273076440c0f123716865e1da", "spotlight-wechat");
 	    WechatSession session = new WechatSession("gh_f49bb9a333b3", app, null);
 	  
@@ -103,8 +104,8 @@ public class FunctionTest extends TestBase implements AppManagerListener,
 //	    user.setRemark("测试");
 //	    manager.updateRemark(user, test);
 	    
-	    MediaManager manager = new MediaManager(session);
-	    Media media          = new Media();
+	    //MediaManager manager = new MediaManager(session);
+	    //Media media          = new Media();
 	   // media.setMedia_id("QJB2K1gqwHLYZILw2kU2c8RbQ1X44GE8x4OeCRpFILk");
 	   //manager.downloadMedia(media, test);
 	    //MediaManager.getMedia_factory().getMediaFromUrl("/634546cf1fbb14c2a8abc986dba3da6e/MN2qp-B2wYMUbdJyovde-Ey1HRLb179J--KQ_0VXrKTH_sTLB6lixkF8pCmqvYsH");
@@ -113,7 +114,7 @@ public class FunctionTest extends TestBase implements AppManagerListener,
 	    //media.setType(MsgType.image.name());
 	    //manager.uploadNewsImg(media, test);
 	    
-	    //manager.getMaterials(MediaType.image.name(), 0, 10, test);
+	    //manager.getMaterials(MediaType.news.name(), 0, 10, test);
 	    //manager.getMaterialCount(test);
 	    //manager.getMaterial(media, test);
 	    //manager.delMaterial(media, test);
@@ -122,7 +123,7 @@ public class FunctionTest extends TestBase implements AppManagerListener,
 	    Video video = new Video("VIDEO_TITLE","INTRODUCTION");
 	    video.setUrl("/634546cf1fbb14c2a8abc986dba3da6e/d22acda6f7a24ec85f80ba2caa3c3f9d.mp4");
 	    //video.setMedia(new File(System.getProperty("user.dir"),"d22acda6f7a24ec85f80ba2caa3c3f9d.mp4"));
-	    manager.uploadMaterialMedia(video,test);
+	    // manager.uploadMaterialMedia(video,test);
 //	    List<Articles> articles = new ArrayList<Articles>();
 //	    Articles art = new Articles("TITLE11","content","digest","http://demo.protel.com.hk",
 //	  		  "leolee",1);
@@ -175,8 +176,7 @@ public class FunctionTest extends TestBase implements AppManagerListener,
 //	    manager.createQrcode(info, test);
 	    
 //	    String touser = "of-YetzJFYxGTltb4eCvgccHzHF0";//"of-Yet8X2VaQmqxFKyXE0lniG7pc";
-//	    MsgManager manager = new MsgManager(session);
-//	    manager.setMedia_manager(new MediaManager(session));
+	    MsgManager manager = new MsgManager(session);
 	    //manager.sendText(touser, new Text("hello world"), test);
 //	    Image image = new Image();
 //	    image.setUrl("/634546cf1fbb14c2a8abc986dba3da6e/MN2qp-B2wYMUbdJyovde-Ey1HRLb179J--KQ_0VXrKTH_sTLB6lixkF8pCmqvYsH.jpg");
@@ -195,6 +195,14 @@ public class FunctionTest extends TestBase implements AppManagerListener,
 //	    articles.add(art);
 //	    News mpnews = new News(articles);
 //	    manager.sendNews(touser, mpnews, test);
+	    
+	    List<OpenID> touser = new ArrayList<OpenID>();
+	    //touser.add(new OpenID("of-Yet8X2VaQmqxFKyXE0lniG7pc"));
+	    touser.add(new OpenID("of-YetzJFYxGTltb4eCvgccHzHF0"));
+	    //manager.broadcastVideo(new UserFilter(touser), video, test);
+	    Mpnews news = new Mpnews();
+	    news.setMedia_id("ksZGzGa8qmgIMzd34UlE3D2nRm8wh7ztKk-Us-E6JEw");
+	    manager.broadcastMpnews(new UserFilter(touser), news, test);
 	}
 
 	@Override

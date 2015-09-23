@@ -21,11 +21,13 @@ public class Image extends Media{
 	private static final long serialVersionUID = 1L;
   public Image(String data){
     super(data);
-    setType(MediaType.image.toString());
   }
   
   public Image(){
     super();
-    setType(MediaType.image.toString());
+  }
+  
+  public String getType() {
+    return MediaType.image.name();
   }
 }

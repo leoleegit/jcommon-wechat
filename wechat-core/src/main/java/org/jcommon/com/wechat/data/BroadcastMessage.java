@@ -9,7 +9,8 @@ public class BroadcastMessage extends OutMessage {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-  private Filter filter;	
+  private Filter filter;
+  private Mpvideo mpvideo;
 
   public BroadcastMessage(MsgType type,Filter filter){
 	  super(type,null);
@@ -41,5 +42,20 @@ public class BroadcastMessage extends OutMessage {
 		  return sb.toString();
 	  }
 	  return super.toJson();
+  }
+
+	public void setMpvideo(Mpvideo mpvideo) {
+		this.mpvideo = mpvideo;
+	}
+	
+	public Mpvideo getMpvideo() {
+		return mpvideo;
+	}
+	
+	public Media getMedia() {
+	  MsgType type = MsgType.getType(this.getMsgtype());
+	  if(type == MsgType.mpvideo)
+		  return mpvideo;
+	  else return super.getMedia();
   }
 }

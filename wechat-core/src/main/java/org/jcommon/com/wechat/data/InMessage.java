@@ -68,8 +68,12 @@ public class InMessage extends XmlObject{
   public void setCreateTime(long createTime) {
     this.CreateTime = createTime;
   }
-  public org.jcommon.com.wechat.utils.MsgType getMsgType() {
+  public org.jcommon.com.wechat.utils.MsgType getMessageType() {
     return org.jcommon.com.wechat.utils.MsgType.getType(this.MsgType);
+  }
+  
+  public String getMsgType() {
+	 return this.MsgType;
   }
   public void setMsgType(String msgType) {
     this.MsgType = msgType;

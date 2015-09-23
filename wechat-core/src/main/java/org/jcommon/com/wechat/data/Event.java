@@ -29,6 +29,9 @@ public class Event extends XmlObject{
   private String timestamp;
   private String nonce;
   
+  private String Status;
+  private String MsgID;
+  
   public Event(String xml){
 	    super(xml);
   }
@@ -124,5 +127,21 @@ public class Event extends XmlObject{
 	
 	public void setSignature(String signature) {
 		this.signature = signature;
+	}
+
+	public void setStatus(String status) {
+		Status = status;
+	}
+
+	public String getStatus() {
+		return Status;
+	}
+
+	public void setMsgID(String msgID) {
+		MsgID = msgID;
+	}
+
+	public String getMsgID() {
+		return MsgID;
 	}
 }

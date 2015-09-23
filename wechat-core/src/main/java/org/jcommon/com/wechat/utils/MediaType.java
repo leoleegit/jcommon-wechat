@@ -19,7 +19,10 @@ public enum MediaType
   video, 
   thumb,
   mpnews,
-  news;
+  news,
+  mpvideo,
+  music,
+  shortvideo;
 
   public static MediaType getType(String name) {
     for(MediaType mt : MediaType.class.getEnumConstants()){
@@ -27,5 +30,12 @@ public enum MediaType
     		return mt;
     }
     return null;
+  }
+  
+  public static boolean isMediaType(MsgType type){
+	  MediaType mt = getType(type.name());
+	  if(mt==image || mt==voice || mt==video || mt== thumb || mt== music || mt== shortvideo)
+		  return true;
+	  return false;
   }
 }

@@ -15,9 +15,9 @@ package org.jcommon.com.wechat;
 import org.jcommon.com.wechat.data.Event;
 import org.jcommon.com.wechat.data.InMessage;
 
-public abstract interface WechatSessionListener
+public interface WechatSessionListener
 {
-  public abstract void onEvent(Event paramEvent);
+  public void onEvent(Event paramEvent);
 
-  public abstract void onMessage(InMessage paramInMessage);
+  public void onMessage(InMessage paramInMessage);
 }

@@ -11,11 +11,12 @@ public class DefaultMediaFactory extends MediaFactory{
 	private Logger logger = Logger.getLogger(getClass());
 	private static final String MEDIA_STORE="wechat.media.store";
 	private static final String MEDIA_URL  ="wechat.media.url";
+	private static final String DEFAULT_STORE = System.getProperty("user.dir")+File.separator+"mediastroe";
 	
 	@Override
 	public File createEmptyFile(Media media) {
 		// TODO Auto-generated method stub
-		String store = System.getProperty(MEDIA_STORE, System.getProperty("user.dir"));
+		String store = System.getProperty(MEDIA_STORE, DEFAULT_STORE);
 		checkDir(store);
 	    String id    = media.getMedia_id();
 	    File file    = new File(store,id);
@@ -70,7 +71,7 @@ public class DefaultMediaFactory extends MediaFactory{
 		// TODO Auto-generated method stub
 		Media media = new Media();
 		if(url!=null){
-			String store = System.getProperty(MEDIA_STORE, System.getProperty("user.dir"));
+			String store = System.getProperty(MEDIA_STORE, DEFAULT_STORE);
 			String url_start = System.getProperty(MEDIA_URL, "/");
 			url              = url.substring(url.indexOf(url_start)+url_start.length());
 			
