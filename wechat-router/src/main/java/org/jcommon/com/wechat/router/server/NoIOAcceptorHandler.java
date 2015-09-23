@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
+import java.sql.Timestamp;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.TimerTask;
@@ -24,6 +25,7 @@ import org.jcommon.com.wechat.router.Router;
 import org.jcommon.com.wechat.router.RouterHandler;
 import org.jcommon.com.wechat.router.RouterType;
 import org.jcommon.com.wechat.router.WechatRouter;
+import org.jcommon.com.wechat.utils.WechatUtils;
 
 public class NoIOAcceptorHandler extends IoHandlerAdapter implements RouterHandler{
 	protected Logger logger = Logger.getLogger(getClass());
@@ -225,10 +227,19 @@ public class NoIOAcceptorHandler extends IoHandlerAdapter implements RouterHandl
 		// TODO Auto-generated method stub
 		logger.info(token.toJson());
 		if(token!=null && token.getWechatID()!=null){
-			for(IoSession session : getIoSession(token.getWechatID())){
-				Router router = new Router(null);
-				router.setType(RouterType.Token.toString());
-				router.setXml(token.toJson());
+			String Token     = token.getToken();
+			String wechatID  = token.getWechatID();
+			
+			String timestamp = String.valueOf(new Timestamp(System.currentTimeMillis()).getTime()); 
+		    String nonce     = org.jcommon.com.util.BufferUtils.generateRandom(6);
+		    String signature = WechatUtils.createSignature(Token, timestamp, nonce); 
+			String xml       = new Token(token.getAccess_token(),token.getExpires_in()).toJson();
+			Router router = new Router(timestamp,nonce,signature,xml);
+			router.setType(RouterType.Token.toString());
+			router.setXml(token.toJson());
+			router.setWechatID(wechatID);
+			
+			for(IoSession session : getIoSession(wechatID)){
 				this.send(session, router);
 			}
 		}

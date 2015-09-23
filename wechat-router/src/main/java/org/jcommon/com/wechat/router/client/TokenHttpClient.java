@@ -9,6 +9,7 @@ import org.jcommon.com.util.JsonUtils;
 import org.jcommon.com.util.http.HttpListener;
 import org.jcommon.com.util.http.HttpRequest;
 import org.jcommon.com.util.thread.ThreadManager;
+import org.jcommon.com.wechat.WechatSessionManager;
 import org.jcommon.com.wechat.data.Token;
 import org.jcommon.com.wechat.router.WechatRouter;
 import org.jcommon.com.wechat.utils.WechatUtils;
@@ -52,7 +53,8 @@ public class TokenHttpClient implements HttpListener{
 		token.setTimestamp(timestamp);
 		token.setNonce(nonce);
 		token.setSignature(signature);
-	    WechatRouter.instance().onToken(token);
+		WechatSessionManager.instance().onToken(
+				token.getSignature(), token.getTimestamp(), token.getNonce(), token.toJson());
 	}
 	
 	public String toString(){
