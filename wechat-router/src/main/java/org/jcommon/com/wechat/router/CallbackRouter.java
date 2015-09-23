@@ -1,16 +1,21 @@
 package org.jcommon.com.wechat.router;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.apache.log4j.Logger;
 import org.jcommon.com.wechat.WechatSession;
 import org.jcommon.com.wechat.cache.SessionCache;
 import org.jcommon.com.wechat.data.App;
 import org.jcommon.com.wechat.data.Event;
 import org.jcommon.com.wechat.data.InMessage;
+import org.jcommon.com.wechat.data.Token;
 
 public class CallbackRouter extends WechatSession{
 	private Logger logger = Logger.getLogger(getClass());
 	private final static String WECHATID = "*";
 	private final static String APPID    = "wechat-app-id";
+	private Set<Token> tokens = new HashSet<Token>();
 	
 	private WechatRouter router;
 	
@@ -47,6 +52,26 @@ public class CallbackRouter extends WechatSession{
 	    	r.setWechatID(message.getToUserName());
 	    	router.onRouter(r);
 	    }
+	}
+	
+	public void onToken(Token token) {
+		logger.info(token.toJson());
+		super.onToken(token);
+		if(router!=null)
+			router.onToken(token);
+		
+		Token temp = getToken(token.getWechatID());
+		if(temp!=null)
+			tokens.remove(temp);
+		tokens.add(token);
+	}
+	
+	public Token getToken(String wechatID) {
+		for(Token token : tokens){
+			if(wechatID!=null && wechatID.equals(token.getWechatID()))
+				return token;
+		}
+		return null;
 	}
 
 	public WechatRouter getRouter() {

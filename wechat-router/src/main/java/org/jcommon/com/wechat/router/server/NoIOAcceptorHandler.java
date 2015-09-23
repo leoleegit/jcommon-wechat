@@ -129,7 +129,7 @@ public class NoIOAcceptorHandler extends IoHandlerAdapter implements RouterHandl
     	    	session.setAttribute(WECHATID, wechatID);
     	    	if(this.router!=null)
     	    		this.router.addNoIORouter(session);
-    	    	Token token = this.getRouter().getToken_router().getToken(wechatID);
+    	    	Token token = this.getRouter().getCallback_router().getToken(wechatID);
     	    	if(token!=null)
     	    		this.onToken(token);
     	    	else

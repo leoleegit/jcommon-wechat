@@ -16,7 +16,6 @@ public class WechatRouter extends Monitor{
 	private Logger logger = Logger.getLogger(getClass());
 	
 	private CallbackRouter  callback_router;
-	private TokenRouter     token_router;
 	private RouterHandler[] router_handlers;
 	
 	private static WechatRouter instance;
@@ -30,7 +29,6 @@ public class WechatRouter extends Monitor{
 		super("WechatRouter");
 		// TODO Auto-generated constructor stub
 		callback_router = new CallbackRouter(this);
-		token_router    = new TokenRouter(this);
 		router_handlers = new RouterHandler[]{new HttpHandler(this),new NoIOAcceptorHandler(this)};
 		instance = this;
 	}
@@ -161,7 +159,6 @@ public class WechatRouter extends Monitor{
 	
 	public void startup(){
 		callback_router.startup();
-		token_router.startup();
 		if(router_handlers!=null){
 			for(RouterHandler h : router_handlers)
 				h.startup();
@@ -172,7 +169,6 @@ public class WechatRouter extends Monitor{
 	
 	public void shutdown(){
 		callback_router.shutdown();
-		token_router.shutdown();
 		if(router_handlers!=null){
 			for(RouterHandler h : router_handlers)
 				h.shutdown();
@@ -218,13 +214,5 @@ public class WechatRouter extends Monitor{
 
 	public void setCallback_router(CallbackRouter callback_router) {
 		this.callback_router = callback_router;
-	}
-
-	public TokenRouter getToken_router() {
-		return token_router;
-	}
-
-	public void setToken_router(TokenRouter token_router) {
-		this.token_router = token_router;
 	}
 }

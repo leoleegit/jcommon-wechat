@@ -3,7 +3,11 @@ package org.jcommon.com.wechat.router;
 import org.jcommon.com.wechat.data.JsonObject;
 
 public class Router extends JsonObject{
-    private String wechatID;
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	private String wechatID;
 	private String signature; 
 	private String timestamp; 
 	private String nonce;

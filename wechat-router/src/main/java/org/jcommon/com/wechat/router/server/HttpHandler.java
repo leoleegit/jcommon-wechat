@@ -91,6 +91,7 @@ public class HttpHandler implements RouterHandler, HttpListener{
 	@Override
 	public void onToken(Token token) {
 		// TODO Auto-generated method stub
+		logger.info(token.toJson());
 		if(token!=null){
 			String Token     = token.getToken();
 			String wechatID  = token.getWechatID();

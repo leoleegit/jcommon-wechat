@@ -13,7 +13,6 @@ import org.apache.mina.filter.logging.LoggingFilter;
 import org.apache.mina.filter.ssl.SslFilter;
 import org.apache.mina.transport.socket.nio.NioSocketConnector;
 import org.jcommon.com.wechat.WechatSessionManager;
-import org.jcommon.com.wechat.data.Token;
 import org.jcommon.com.wechat.router.Router;
 import org.jcommon.com.wechat.router.RouterType;
 import org.jcommon.com.wechat.router.WechatRouter;
@@ -133,8 +132,8 @@ public class NoIOClient extends NoIOAcceptorHandler {
 	 		logger.info(router.getJson());
 
 	 		if(RouterType.Token == RouterType.getType(router.getType())){
-	 			Token token = new Token(router.getXml());
-	 			WechatRouter.instance().onToken(token);
+	 			WechatSessionManager.instance().onToken(
+	 					router.getSignature(), router.getTimestamp(), router.getNonce(), router.getXml());
 	 		}else{
 	 			WechatSessionManager.instance().onCallback(
 	 					router.getSignature(), router.getTimestamp(), router.getNonce(), router.getXml());

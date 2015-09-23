@@ -12,7 +12,7 @@ public class TokenHttpClientTest {
 	 */
 	public static void main(String[] args) throws IOException {
 		// TODO Auto-generated method stub
-		new TokenHttpClient("gh_f49bb9a333b3","spotlight-wechat","http://127.0.0.1/wechat-router/token").go();
+		new TokenHttpClient("gh_f49bb9a333b3","spotlight-wechat","http://223.255.155.172/wechat-router/token").go();
 		
 		System.in.read();
 	}
