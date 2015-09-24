@@ -28,9 +28,12 @@ import org.jcommon.com.util.jmx.Monitor;
 import org.jcommon.com.util.thread.TimerTaskManger;
 import org.jcommon.com.wechat.cache.SessionCache;
 import org.jcommon.com.wechat.data.App;
+import org.jcommon.com.wechat.data.Encrypt;
 import org.jcommon.com.wechat.data.Event;
 import org.jcommon.com.wechat.data.InMessage;
 import org.jcommon.com.wechat.data.Token;
+
+import com.qq.weixin.mp.aes.AesException;
 
 public class WechatSessionManager extends Monitor
   implements MapStoreListener
@@ -196,6 +199,43 @@ public class WechatSessionManager extends Monitor
 	    	logger.warn("can't find session of "+touser);
   }
 
+  public void onCallback(String encrypt_type, String msg_signature, String signature, String timestamp, String nonce, String xml) {
+	  this.logger.info(xml);
+	  Document document = null;
+	  Element root = null;
+	  boolean done = false;
+	  String touser = null;
+	  try {
+	      document = DocumentHelper.parseText(xml);
+	      root = document.getRootElement();
+	  } catch (DocumentException e) {
+	      this.logger.error(xml, e);
+	  }
+	  if (root == null) return;
+	  
+	  List<WechatSession> sessions = SessionCache.instance().getAllWechatSession();
+	  if (root.element("Encrypt") != null) {
+		  Encrypt encrypt = new Encrypt(encrypt_type,msg_signature,signature,timestamp,nonce,xml);
+	      touser = encrypt.getToUserName();
+	      for(WechatSession session : sessions){
+	      	  if((touser!=null && touser.equals(session.getWechatID()))||"*".equals(session.getWechatID())){
+	      		try {
+					String msg = session.onEncrypt(encrypt);
+					if(msg!=null){
+						onCallback(signature,timestamp,nonce,msg);
+					}
+					done = true;
+				} catch (AesException e) {
+					// TODO Auto-generated catch block
+					logger.error("", e);
+				}
+	      	  }
+	      }
+	  }
+	  if(!done)
+	    	logger.warn("can't find session of "+touser);
+  }
+  
   public void onCallback(String signature, String timestamp, String nonce, String xml) {
     this.logger.info(xml);
     Document document = null;
@@ -211,6 +251,16 @@ public class WechatSessionManager extends Monitor
     if (root == null) return;
     
     List<WechatSession> sessions = SessionCache.instance().getAllWechatSession();
+    if (root.element("Event") != null) {
+        Event event = new Event(xml,signature,timestamp,nonce);
+        touser = event.getToUserName();
+        for(WechatSession session : sessions){
+      	  if((touser!=null && touser.equals(session.getWechatID()))||"*".equals(session.getWechatID())){
+      		  session.onEvent(event);
+      		  done = true;
+      	  }
+        }
+    }
     if (root.element("Event") != null) {
       Event event = new Event(xml,signature,timestamp,nonce);
       touser = event.getToUserName();

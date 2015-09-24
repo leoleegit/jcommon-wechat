@@ -82,8 +82,10 @@ public class Callback extends HttpServlet
       reader.close();
       
       String post_data = xml.toString();
-      post_data = org.jcommon.com.util.CoderUtils.decode(post_data);
       logger.info(new StringBuilder().append(request.getRemoteHost()).append(" wechat:").append(post_data).toString());
+
+      String post_data_decode = org.jcommon.com.util.CoderUtils.decode(post_data);
+      logger.info(new StringBuilder().append(request.getRemoteHost()).append(" wechat decode:").append(post_data).toString());
 
       Map map = request.getParameterMap();
       for (Iterator<?> i$ = map.keySet().iterator(); i$.hasNext(); ) { Object key = i$.next();
@@ -96,8 +98,14 @@ public class Callback extends HttpServlet
       String signature = request.getParameter("signature");
       String timestamp = request.getParameter("timestamp");
       String nonce = request.getParameter("nonce");
-      if (WechatSessionManager.instance().appVerify(signature, timestamp, nonce)) 
-    	  WechatSessionManager.instance().onCallback(signature, timestamp, nonce, post_data);
+      String msg_signature = request.getParameter("msg_signature");
+      String encrypt_type  = request.getParameter("encrypt_type");
+      if (WechatSessionManager.instance().appVerify(signature, timestamp, nonce)) {
+    	  if(msg_signature!=null){
+    		  WechatSessionManager.instance().onCallback(encrypt_type, msg_signature, signature, timestamp, nonce, post_data);
+    	  }else
+    		  WechatSessionManager.instance().onCallback(signature, timestamp, nonce, post_data_decode);
+      } 
       else
     	  logger.warn("Illegal Data!");
     } catch (IOException e) {

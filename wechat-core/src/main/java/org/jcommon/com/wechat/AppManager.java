@@ -8,6 +8,7 @@ import org.apache.log4j.Logger;
 import org.jcommon.com.util.http.HttpListener;
 import org.jcommon.com.util.http.HttpRequest;
 import org.jcommon.com.util.thread.TimerTaskManger;
+import org.jcommon.com.wechat.data.App;
 import org.jcommon.com.wechat.data.Error;
 import org.jcommon.com.wechat.data.IP;
 import org.jcommon.com.wechat.data.Token;
@@ -29,14 +30,16 @@ public class AppManager extends ResponseHandler{
 	
 	public void shutdown(){
 		try {
-	       if(app_keepalive!=null)
+	       if(app_keepalive!=null){
 	        	this.app_keepalive.cancel();
-	       this.app_keepalive = null; 
-	       logger.info(session.logStr(""));
+	        	this.app_keepalive = null; 
+	        	logger.info(session.logStr(""));
+	       }
 	    } catch (Exception e) {}
 	}
 	
 	private void keepAlive() {
+		shutdown();
 		logger.info(session.logStr("start"));
 	    if (session.getApp().getAppid()==null | session.getApp().getSecret()==null) {
 	        this.logger.warn(String.format("app id:%s;app secret:%s", 
@@ -58,24 +61,27 @@ public class AppManager extends ResponseHandler{
 	      			  public void onFailure(HttpRequest reqeust, StringBuilder sResult){
 	      			      logger.warn(sResult.toString());
 	      			      session.getApp().setStatus("app is error:onFailure");
+	      			      session.getApp().setDelay(App.default_delay);
 	      			      keepAlive();
 	      			  }
 
 	      			  public void onTimeout(HttpRequest reqeust){
 	      			      logger.error("timeout");
 	      			      session.getApp().setStatus("app is error:onTimeout");
+	      			      session.getApp().setDelay(App.default_delay);
 	      			      keepAlive();
 	      			  }
 
 	      			  public void onException(HttpRequest reqeust, Exception e){
 	      			      logger.error("", e);
 	      			      session.getApp().setStatus("app is error:onException");
+	      			      session.getApp().setDelay(App.default_delay);
 	      			      keepAlive();
 	      			  }
 	      			 
 	      		 },session.getApp()));
 	      	}
-	    }, session.getApp().getDelay(), session.getApp().getExpires() > 0L ? session.getApp().getExpires()*1000 - 100L : 7200000L);
+	    }, session.getApp().getDelay(), session.getApp().getExpires() - 100L);
 	}
 
 	@Override

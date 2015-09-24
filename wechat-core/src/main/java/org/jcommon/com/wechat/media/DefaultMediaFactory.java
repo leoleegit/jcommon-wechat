@@ -72,22 +72,22 @@ public class DefaultMediaFactory extends MediaFactory{
 		Media media = new Media();
 		if(url!=null){
 			String store = System.getProperty(MEDIA_STORE, DEFAULT_STORE);
-			String url_start = System.getProperty(MEDIA_URL, "/");
+			String url_start =  "/";
 			url              = url.substring(url.indexOf(url_start)+url_start.length());
 			
 			String content_type = url.substring(0,url.indexOf("/"));
 			String file_name    = url.substring(url.indexOf(content_type)+content_type.length()+1);
 			
 			File type_dir    = new File(store,content_type);
-			content_type = ContentType.getContentByType(content_type, true).type;
-			logger.info(String.format("store:%s;file_name:%s;content_type:%s", store,file_name,content_type));
+			ContentType type = ContentType.getContentByType(content_type, true);
+			logger.info(String.format("store:%s;file_name:%s;content_type:%s", store,file_name,type.type));
 			
 			if(!type_dir.exists())
 				return media;
 			File file        = new File(type_dir.getAbsolutePath(),file_name);
 			media.setMedia(file);
-			media.setMedia_name(file_name);
-			media.setContent_type(content_type);
+			media.setMedia_name(file_name+type.name);
+			media.setContent_type(type.type);
 		}
 		
 		return media;

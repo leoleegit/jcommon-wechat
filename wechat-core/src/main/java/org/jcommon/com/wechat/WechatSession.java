@@ -9,6 +9,7 @@ import org.jcommon.com.util.http.HttpRequest;
 import org.jcommon.com.util.thread.ThreadManager;
 import org.jcommon.com.wechat.cache.SessionCache;
 import org.jcommon.com.wechat.data.App;
+import org.jcommon.com.wechat.data.Encrypt;
 import org.jcommon.com.wechat.data.Error;
 import org.jcommon.com.wechat.data.Event;
 import org.jcommon.com.wechat.data.Group;
@@ -23,6 +24,9 @@ import org.jcommon.com.wechat.data.Users;
 import org.jcommon.com.wechat.utils.MediaType;
 import org.jcommon.com.wechat.utils.MsgType;
 import org.jcommon.com.wechat.utils.WechatUtils;
+
+import com.qq.weixin.mp.aes.AesException;
+import com.qq.weixin.mp.aes.WXBizMsgCrypt;
 
 public class WechatSession implements WechatSessionListener,
 	MediaManagerListener,
@@ -41,6 +45,7 @@ public class WechatSession implements WechatSessionListener,
 	private MsgManager   msg_manager; 
 	private QrcodeManager qrcode_manager;
 	private UserManager  user_manager;
+	private WXBizMsgCrypt msg_crypt;
 	 
 	public WechatSession(String wechatID, App app, WechatSessionListener listener){
 		this.app      = app;
@@ -56,6 +61,11 @@ public class WechatSession implements WechatSessionListener,
 	    user_manager  = new UserManager(this);
 	}
 	
+	public WechatSession(WXBizMsgCrypt msg_crypt, String wechatID, App app, WechatSessionListener listener){
+		this(wechatID,app,listener);
+		this.msg_crypt = msg_crypt;
+	}
+	
 	public void startup(){
 		app_manager.startup();
 		SessionCache.instance().addWechatSession(this);
@@ -64,6 +74,7 @@ public class WechatSession implements WechatSessionListener,
 	
 	public void shutdown(){
 		app_manager.shutdown();
+		SessionCache.instance().removeWechatSession(this);
 		logger.info(logStr(""));
 	}
 
@@ -135,9 +146,9 @@ public class WechatSession implements WechatSessionListener,
         }else{
         	getApp().setStatus("app is error:"+token.getJson());
         }
-        if (expires_in!= getApp().getExpires() && expires_in!=0) {
-        	getApp().setExpires(expires_in);
-        	getApp().setDelay(app.getExpires()* 1000L-100);
+        if (expires_in>0) {
+        	getApp().setExpires(expires_in * 1000);
+        	getApp().setDelay(app.getExpires()-100);
         }
         SessionCache.instance().updateWechatSession(this);
 	}
@@ -285,5 +296,21 @@ public class WechatSession implements WechatSessionListener,
 			 return signature.equalsIgnoreCase(WechatUtils.createSignature(token, timestamp, nonce));
 		 }
 		 return false;
-	 }
+	}
+	
+	public String onEncrypt(Encrypt encrypt) throws AesException{
+		logger.info("IN:"+encrypt.getXml());
+		logger.info(logStr("msg_signature:%s;timestamp:%s;nonce:%s",encrypt.getMsg_signature(), encrypt.getTimestamp(), encrypt.getNonce()));
+		if(getMsg_crypt()!=null)
+			return getMsg_crypt().decryptMsg(encrypt.getMsg_signature(), encrypt.getTimestamp(), encrypt.getNonce(), encrypt.getXml());
+		return null;
+	}
+
+	public void setMsg_crypt(WXBizMsgCrypt msg_crypt) {
+		this.msg_crypt = msg_crypt;
+	}
+
+	public WXBizMsgCrypt getMsg_crypt() {
+		return msg_crypt;
+	}
 }

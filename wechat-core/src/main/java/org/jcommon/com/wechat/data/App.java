@@ -18,15 +18,18 @@ public class App extends JsonObject{
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
+  private static final long serialVersionUID = 1L;
+  public  final static long default_delay   = 3000L;
+  public  final static long default_expires = 7200 * 1000;
   private String access_token;
   private String appid;
   private String secret;
   private String Token;
-  private long expires = 7200L;
-  private long delay = 3000L;
+  private long expires = default_expires;
+  private long delay   = default_delay;
   private String start_time;
   private String status = "not ready";
+  
   
   public App(String appid, String secret, String Token)
   {
