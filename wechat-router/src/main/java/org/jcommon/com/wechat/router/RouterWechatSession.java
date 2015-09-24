@@ -15,7 +15,8 @@ public class RouterWechatSession extends WechatSession {
 	
 	public void onToken(Token token) {
 		// TODO Auto-generated method stub
-		WechatRouter.instance().onToken(token);
 		super.onToken(token);
+		token.setWechatID(getWechatID());
+		WechatRouter.instance().getCallback_router().onToken(token);
 	}
 }

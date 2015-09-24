@@ -12,6 +12,8 @@ public class Router extends JsonObject{
 	private String timestamp; 
 	private String nonce;
 	private String xml;
+	private String encrypt_type;
+	private String msg_signature;
 	
 	private String type;
 	
@@ -72,6 +74,22 @@ public class Router extends JsonObject{
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public void setEncrypt_type(String encrypt_type) {
+		this.encrypt_type = encrypt_type;
+	}
+
+	public String getEncrypt_type() {
+		return encrypt_type;
+	}
+
+	public void setMsg_signature(String msg_signature) {
+		this.msg_signature = msg_signature;
+	}
+
+	public String getMsg_signature() {
+		return msg_signature;
 	}
 }
 

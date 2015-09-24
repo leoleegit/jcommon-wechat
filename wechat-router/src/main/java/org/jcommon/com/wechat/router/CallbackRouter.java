@@ -7,9 +7,12 @@ import org.apache.log4j.Logger;
 import org.jcommon.com.wechat.WechatSession;
 import org.jcommon.com.wechat.cache.SessionCache;
 import org.jcommon.com.wechat.data.App;
+import org.jcommon.com.wechat.data.Encrypt;
 import org.jcommon.com.wechat.data.Event;
 import org.jcommon.com.wechat.data.InMessage;
 import org.jcommon.com.wechat.data.Token;
+
+import com.qq.weixin.mp.aes.AesException;
 
 public class CallbackRouter extends WechatSession{
 	private Logger logger = Logger.getLogger(getClass());
@@ -36,6 +39,18 @@ public class CallbackRouter extends WechatSession{
 		SessionCache.instance().addWechatSession(this);
 	}
 	
+	public String onEncrypt(Encrypt encrypt) throws AesException{
+		this.logger.info("IN:"+encrypt.getXml());
+		if(router!=null){
+	    	Router r = new Router(encrypt.getSignature(),encrypt.getTimestamp(),encrypt.getNonce(),encrypt.getXml());
+	    	r.setWechatID(encrypt.getToUserName());
+	    	r.setEncrypt_type(encrypt.getEncrypt_type());
+	    	r.setMsg_signature(encrypt.getMsg_signature());
+	    	router.onRouter(r);
+	    }
+		return null;
+	}
+	
 	public void onEvent(Event event){
 	    this.logger.info("IN:"+event.getXml());
 	    if(router!=null){
@@ -55,8 +70,8 @@ public class CallbackRouter extends WechatSession{
 	}
 	
 	public void onToken(Token token) {
-		logger.info(token.toJson());
 		super.onToken(token);
+		logger.info(token.toJson());
 		if(router!=null)
 			router.onToken(token);
 		

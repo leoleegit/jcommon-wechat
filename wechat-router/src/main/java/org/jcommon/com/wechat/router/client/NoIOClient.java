@@ -135,8 +135,12 @@ public class NoIOClient extends NoIOAcceptorHandler {
 	 			WechatSessionManager.instance().onToken(
 	 					router.getSignature(), router.getTimestamp(), router.getNonce(), router.getXml());
 	 		}else{
-	 			WechatSessionManager.instance().onCallback(
-	 					router.getSignature(), router.getTimestamp(), router.getNonce(), router.getXml());
+	 			if(router.getMsg_signature()!=null)
+	 				WechatSessionManager.instance().onCallback(
+	 						router.getEncrypt_type(),router.getMsg_signature(),router.getSignature(), router.getTimestamp(), router.getNonce(), router.getXml());
+	 			else
+		 			WechatSessionManager.instance().onCallback(
+		 					router.getSignature(), router.getTimestamp(), router.getNonce(), router.getXml());
 	 		}
 	 	}
 	}
