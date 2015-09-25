@@ -47,6 +47,12 @@
       <version>${project.version}</version>
       <scope>compile</scope>
     </dependency>
+     <dependency>
+	  <groupId>jcommon-wechat</groupId>
+      <artifactId>wechat-router</artifactId> 
+      <version>${project.version}</version>
+      <scope>compile</scope>
+    </dependency>
   </dependencies>
   
   <!--
