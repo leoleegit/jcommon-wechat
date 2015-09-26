@@ -6,7 +6,9 @@ import org.jcommon.com.wechat.data.InMessage;
 
 public abstract class Handler {
 	protected WechatSession session;
-	public Handler(WechatSession session) {
+	protected HandlerManager manager;
+	public Handler(HandlerManager manager, WechatSession session) {
+		this.manager = manager;
 		this.session = session;
 	}
 	public abstract String name();

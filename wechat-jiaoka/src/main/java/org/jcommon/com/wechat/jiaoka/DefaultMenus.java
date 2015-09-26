@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.jcommon.com.wechat.data.Menus;
 import org.jcommon.com.wechat.data.Button;
+import org.jcommon.com.wechat.jiaoka.handlers.Calculator;
 import org.jcommon.com.wechat.utils.ButtonType;
 
 public class DefaultMenus extends Menus {
@@ -13,12 +14,12 @@ public class DefaultMenus extends Menus {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	public static final String CalculatorKey = "CalculatorKey_001";
+	
 
 	public DefaultMenus(){
 		List<Button> button = new ArrayList<Button>();
 		
-	    Button button1 = new Button("计算器",ButtonType.click,CalculatorKey);
+	    Button button1 = new Button("计算器",ButtonType.click,Calculator.CalculatorKey);
 //	    button1.addSubButton(new Button("赞一下",ButtonType.click,"V1001_GOOD"));
 //	    button1.addSubButton(new Button("视频",ButtonType.view,"http://v.qq.com/"));
 //	    button1.addSubButton(new Button("扫码带提示",ButtonType.scancode_push,"rselfmenu_0_0"));

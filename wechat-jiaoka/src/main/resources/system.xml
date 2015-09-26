@@ -3,7 +3,7 @@
 	<system_object key="0" value="org.jcommon.com.util.jmx.JmxManager" />
 	<system_object key="1" value="org.jcommon.com.util.share.ShareManager" />
 	<system_object key="2" value="org.jcommon.com.wechat.WechatSessionManager" />
-	<system_object key="3" value="org.jcommon.com.wechat.test.WechatSessionTest" />
+	<system_object key="3" value="org.jcommon.com.wechat.jiaoka.Start" />
 	<init_threads>500</init_threads>
 	<version>20121111</version>
 	<mbean_server>jcommon_wechat_server</mbean_server>
