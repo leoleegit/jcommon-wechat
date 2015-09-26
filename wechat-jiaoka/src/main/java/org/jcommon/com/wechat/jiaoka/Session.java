@@ -23,6 +23,7 @@ public class Session extends WechatSession {
 	public void onEvent(Event event) {
 		// TODO Auto-generated method stub
 		logger.info("IN:"+event.getXml());
+
 	    String from = event.getFromUserName();
 	    if(from!=null){
 	    	HandlerManager handler = null;

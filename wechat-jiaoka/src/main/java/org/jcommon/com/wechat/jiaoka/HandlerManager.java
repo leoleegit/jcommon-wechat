@@ -8,6 +8,7 @@ import org.jcommon.com.wechat.data.Event;
 import org.jcommon.com.wechat.data.InMessage;
 import org.jcommon.com.wechat.data.Text;
 import org.jcommon.com.wechat.jiaoka.handlers.Calculator;
+import org.jcommon.com.wechat.jiaoka.handlers.JiaoKa;
 
 public class HandlerManager implements RequestCallback{
 	private Logger logger = Logger.getLogger(getClass());
@@ -17,7 +18,7 @@ public class HandlerManager implements RequestCallback{
 	private WechatSession session;
 	
 	public HandlerManager(WechatSession session){
-		handlers = new Handler[]{new Calculator(this, session)};
+		handlers = new Handler[]{new Calculator(this, session),new JiaoKa(this, session)};
 		this.session = session;
 	}
 	
