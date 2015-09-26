@@ -33,7 +33,7 @@ public class WechatSession implements WechatSessionListener,
 	UserManagerListener{
 	
 	protected Logger logger = Logger.getLogger(getClass());
-	private static final String INMESSAGE = "InMessage";
+	protected static final String INMESSAGE = "InMessage";
 	private WechatSessionListener listener;
 	private String wechatID;
 	private App app; 

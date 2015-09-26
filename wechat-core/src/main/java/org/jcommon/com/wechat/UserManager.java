@@ -1,6 +1,8 @@
 package org.jcommon.com.wechat;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.jcommon.com.util.http.HttpRequest;
@@ -16,6 +18,7 @@ import org.jcommon.com.wechat.utils.Lang;
 public class UserManager  extends ResponseHandler{
 	private Logger logger = Logger.getLogger(getClass());
 	private WechatSession session;
+	private Map<String,User> user_cache = new HashMap<String,User>();
 	
 	public UserManager(WechatSession session){
 		this.session = session;
@@ -50,6 +53,9 @@ public class UserManager  extends ResponseHandler{
 		}else if(paramObject instanceof User){
 			User user = (User) paramObject;
 			logger.info(user);
+			if(user.getOpenid()!=null){
+				user_cache.put(user.getOpenid(), user);
+			}
 			if(paramHttpRequest.getAttibute(paramHttpRequest)!=null){
 				UserManagerListener listener = (UserManagerListener) paramHttpRequest.getAttibute(paramHttpRequest);
 				listener.onUser(paramHttpRequest,user);
@@ -71,6 +77,14 @@ public class UserManager  extends ResponseHandler{
 		}
 	}
 	
+	public User getUserInfo(User user){
+		String open_id = user.getOpenid();
+		
+		if(open_id!=null && user_cache.containsKey(open_id)){
+			return user_cache.get(open_id);
+		}
+		return null;
+	}
 	/**
 	 * =========================== User Manager Start===========================
 	 */
@@ -83,6 +97,7 @@ public class UserManager  extends ResponseHandler{
 			return null;
 		}
 		String open_id = user.getOpenid();
+		
 		Lang lang = Lang.getLang(user.getLanguage());
 		HttpRequest request = RequestFactory.userInfoRequest(this, session.getApp().getAccess_token(),open_id,lang);
 		if(listener!=null)
