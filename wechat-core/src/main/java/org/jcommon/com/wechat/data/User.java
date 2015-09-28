@@ -36,6 +36,7 @@ public class User extends JsonObject{
 	
 	public User(String json){
 		super(json);	
+		this.create_time = System.currentTimeMillis();
 	}
 	
 	public User(){	

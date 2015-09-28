@@ -261,16 +261,7 @@ public class WechatSessionManager extends Monitor
       	  }
         }
     }
-    if (root.element("Event") != null) {
-      Event event = new Event(xml,signature,timestamp,nonce);
-      touser = event.getToUserName();
-      for(WechatSession session : sessions){
-    	  if((touser!=null && touser.equals(session.getWechatID()))||"*".equals(session.getWechatID())){
-    		  session.onEvent(event);
-    		  done = true;
-    	  }
-      }
-    } else {
+    else {
       InMessage msg = new InMessage(xml,signature,timestamp,nonce);
       touser = msg.getToUserName();
       for(WechatSession session : sessions){
