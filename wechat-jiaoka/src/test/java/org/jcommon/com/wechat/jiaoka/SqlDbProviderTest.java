@@ -9,10 +9,8 @@ public class SqlDbProviderTest {
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		String sql = "INSERT INTO 'jiaoka'.'wechatauditlog'('type','logstr','create_time')VALUES(?,?,?);";
-		String str = sql.substring(sql.indexOf("(")+1, sql.indexOf(")"));
-		System.out.println(sql.substring(0, 6));
-		System.out.println(str);
+		String sql  = "select * from User_in_role nt where nt.UserID=? ";
+	
 		for(String s : SqlDbProvider.getParameters(sql))
 			System.out.println(s);
 	}

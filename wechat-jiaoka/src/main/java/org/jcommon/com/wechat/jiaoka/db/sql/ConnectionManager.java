@@ -3,7 +3,7 @@ package org.jcommon.com.wechat.jiaoka.db.sql;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.Statement;
+import java.sql.ResultSet;
 
 import org.apache.log4j.Logger;
 
@@ -46,15 +46,8 @@ public class ConnectionManager extends org.jcommon.com.util.jdbc.ConnectionManag
         }
     }
     
-    public static void release(Connection conn, Statement st) {
-    	try {
-        	if (conn != null) {
-        		conn.close();
-        		conn = null;
-            }
-        } catch (Exception e) {
-        	logger.error("", e);
-        }
+    public static void release(Connection conn, PreparedStatement ps, ResultSet st) {
+    	release(conn,ps);
         try {
         	if (st != null) {
         		st.close();
