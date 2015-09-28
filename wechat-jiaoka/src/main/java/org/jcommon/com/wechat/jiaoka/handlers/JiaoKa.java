@@ -50,6 +50,7 @@ public class JiaoKa extends Handler implements RequestCallback{
 				if(JiaoKaKey1.equals(event.getEventKey()) || 
 						JiaoKaKey2.equals(event.getEventKey())||
 						JiaoKaKey3.equals(event.getEventKey())){
+					setExpiry();
 					logger.info(event.getXml());
 					String msg = null;
 					if(JiaoKaKey1.equals(event.getEventKey())){
@@ -79,6 +80,9 @@ public class JiaoKa extends Handler implements RequestCallback{
 	@Override
 	public boolean hanlderEvent(Event event) {
 		// TODO Auto-generated method stub
+		if(step==1){
+			return false;
+		}
 		return mapJob(event,null);
 	}
 
@@ -105,6 +109,7 @@ public class JiaoKa extends Handler implements RequestCallback{
 	@Override
 	public boolean hanlderMessage(InMessage message) {
 		// TODO Auto-generated method stub
+		setExpiry();
 		switch(step){
 			case 1:{
 				String msg = null;
@@ -117,23 +122,15 @@ public class JiaoKa extends Handler implements RequestCallback{
 						msg = msg + (i+1) + "."+ locations[i] + "\n";
 					}
 				}else if(jiaoka_types[1].equals(jiaoka_type)){
-					String error_msg = "不要玩啦，只允许输入1到"+locations.length+"的数字哟。(●'◡'●)\n";
-					if(errorCheck(message,error_msg)){
+					if(!setLocation_get(message)){
 						break;
 					}
-					String txt = message.getContent();
-					int num  = Integer.valueOf(txt);
-					this.location_get = locations[num];
-					msg = "请输入手机号码：\n";
+					msg = "请输入手机号码：";
 				}else if(jiaoka_types[2].equals(jiaoka_type)){
-					String error_msg = "不要玩啦，只允许输入1到"+locations.length+"的数字哟。(●'◡'●)\n";
-					if(errorCheck(message,error_msg)){
+					if(!setLocation_get(message)){
 						break;
 					}
-					String txt = message.getContent();
-					int num  = Integer.valueOf(txt);
-					this.location_get = locations[num];
-					msg = "请输入手机号码：\n";
+					msg = "请输入手机号码：";
 				}else{
 					manager.dutyEnd(this);
 					break;
@@ -150,11 +147,17 @@ public class JiaoKa extends Handler implements RequestCallback{
 					if(!setLocation_get(message)){
 						break;
 					}
-					msg = "请输入联系手机号码：\n";
+					msg = "请输入联系手机号码：";
 				}else if(jiaoka_types[1].equals(jiaoka_type)){
-					msg = "请输入预定数量：\n";
+					if(!setPhone_number(message)){
+						break;
+					}
+					msg = "请输入预定数量：";
 				}else if(jiaoka_types[2].equals(jiaoka_type)){
-					msg = "请输入预定数量：\n";
+					if(!setPhone_number(message)){
+						break;
+					}
+					msg = "请输入预定数量：";
 				}else{
 					manager.dutyEnd(this);
 					break;
@@ -171,11 +174,29 @@ public class JiaoKa extends Handler implements RequestCallback{
 					if(!setPhone_number(message)){
 						break;
 					}
-					msg = "请输入预定数量：\n";
+					msg = "请输入预定数量：";
 				}else if(jiaoka_types[1].equals(jiaoka_type)){
-					msg = "请输入预定数量：\n";
+					if(!setCard_number(message)){
+						break;
+					}
+					msg = OrderStr(message);
+					Text text  = new Text(msg);
+					String touser = message.getFromUserName();
+					session.getMsg_manager().sendText(touser, text, this);
+					step = 0;
+					manager.dutyEnd(this);
+					break;
 				}else if(jiaoka_types[2].equals(jiaoka_type)){
-					msg = "请输入预定数量：\n";
+					if(!setCard_number(message)){
+						break;
+					}
+					msg = OrderStr(message);
+					Text text  = new Text(msg);
+					String touser = message.getFromUserName();
+					session.getMsg_manager().sendText(touser, text, this);
+					step = 0;
+					manager.dutyEnd(this);
+					break;
 				}else{
 					manager.dutyEnd(this);
 					break;
@@ -192,11 +213,7 @@ public class JiaoKa extends Handler implements RequestCallback{
 					if(!setCard_number(message)){
 						break;
 					}
-					msg = OrderStr();
-				}else if(jiaoka_types[1].equals(jiaoka_type)){
-					msg = "请输入预定数量：\n";
-				}else if(jiaoka_types[2].equals(jiaoka_type)){
-					msg = "请输入预定数量：\n";
+					msg = OrderStr(message);
 				}else{
 					manager.dutyEnd(this);
 					break;
@@ -215,10 +232,16 @@ public class JiaoKa extends Handler implements RequestCallback{
 		return false;
 	}
 
-	public String OrderStr(){
+	public String OrderStr(InMessage message){	
 		StringBuilder sb = new StringBuilder();
-		String title     = "您的订单如下：\n";
-		sb.append(title);
+		//String title     = "订单 \r\t \r\t";
+		//sb.append(title);
+		if(message.getFrom()!=null){
+			String nickname = message.getFrom().getNickname();
+			//String openid   = message.getFrom().getOpenid();
+			sb.append("微信昵称:").append(nickname).append("\n");
+		}
+		sb.append("----------------------------\n");
 		if(jiaoka_types[0].equals(jiaoka_type)){
 			sb.append("类型:").append(jiaoka_type).append("\n")
 			.append("交卡地点:").append(this.getLocation_give()).append("\n")
@@ -226,10 +249,18 @@ public class JiaoKa extends Handler implements RequestCallback{
 			.append("联系手机:").append(this.getPhone_number()).append("\n")
 			.append("预定数量:").append(this.getCard_number()).append("\n");
 		}else if(jiaoka_types[1].equals(jiaoka_type)){
-			
+			sb.append("类型:").append(jiaoka_type).append("\n")
+			.append("领卡地点:").append(this.getLocation_get()).append("\n")
+			.append("联系手机:").append(this.getPhone_number()).append("\n")
+			.append("预定数量:").append(this.getCard_number()).append("\n");
 		}else if(jiaoka_types[2].equals(jiaoka_type)){
-		 
+			sb.append("类型:").append(jiaoka_type).append("\n")
+			.append("领卡地点:").append(this.getLocation_get()).append("\n")
+			.append("联系手机:").append(this.getPhone_number()).append("\n")
+			.append("预定数量:").append(this.getCard_number()).append("\n");
 		}
+		sb.append("----------------------------\n");
+		sb.append("日期:").append(org.jcommon.com.util.DateUtils.getNowSinceYear());
 		return sb.toString();
 	}
 	
@@ -246,7 +277,7 @@ public class JiaoKa extends Handler implements RequestCallback{
 	}
 
 	public boolean setPhone_number(InMessage message) {
-		String error_msg = "请输入合法的手机号码。(●'◡'●)\n";
+		String error_msg = "请输入合法的手机号码。(●'◡'●)";
 		String txt = message.getContent();
 		if(Calculator.isNumeric(txt) && txt.length()==11){
 			this.phone_number = txt;
@@ -264,7 +295,7 @@ public class JiaoKa extends Handler implements RequestCallback{
 	}
 
 	public boolean setCard_number(InMessage message) {
-		String error_msg = "只允许输入数字哟。(●'◡'●)\n";
+		String error_msg = "只允许输入数字哟。(●'◡'●)";
 		String txt = message.getContent();
 		if(Calculator.isNumeric(txt)){
 			this.card_number = Integer.valueOf(txt);
@@ -282,13 +313,13 @@ public class JiaoKa extends Handler implements RequestCallback{
 	}
 
 	public boolean setLocation_give(InMessage message) {
-		String error_msg = "不要玩啦，只允许输入1到"+locations.length+"的数字哟。(●'◡'●)\n";
+		String error_msg = "不要玩啦，只允许输入1到"+locations.length+"的数字哟。(●'◡'●)";
 		if(errorCheck(message,error_msg)){
 			return false;
 		}
 		String txt = message.getContent();
 		int num  = Integer.valueOf(txt);
-		this.location_give = locations[num];
+		this.location_give = locations[num-1];
 		return true;
 	}
 
@@ -297,13 +328,13 @@ public class JiaoKa extends Handler implements RequestCallback{
 	}
 
 	public boolean setLocation_get(InMessage message) {
-		String error_msg = "不要玩啦，只允许输入1到"+locations.length+"的数字哟。(●'◡'●)\n";
+		String error_msg = "不要玩啦，只允许输入1到"+locations.length+"的数字哟。(●'◡'●)";
 		if(errorCheck(message,error_msg)){
 			return false;
 		}
 		String txt = message.getContent();
 		int num  = Integer.valueOf(txt);
-		this.location_get = locations[num];
+		this.location_get = locations[num-1];
 		return true;
 	}
 

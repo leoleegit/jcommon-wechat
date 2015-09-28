@@ -50,6 +50,7 @@ public class Calculator extends Handler implements RequestCallback{
 		if(event!=null){
 			EventType type = EventType.getType(event.getEvent());
 			if(type!=null && EventType.CLICK == type && Calculator.CalculatorKey.equals(event.getEventKey())){
+				setExpiry();
 				logger.info(event.getXml());
 				String msg = msgs[0] + msgs[1];
 				Text text  = new Text(msg);
@@ -68,24 +69,13 @@ public class Calculator extends Handler implements RequestCallback{
 		if(step==1){
 			return false;
 		}
-		if(event!=null){
-			EventType type = EventType.getType(event.getEvent());
-			if(type!=null && EventType.CLICK == type && Calculator.CalculatorKey.equals(event.getEventKey()) ){
-				logger.info(event.getXml());
-				String msg = msgs[0] + msgs[1];
-				Text text  = new Text(msg);
-				String touser = event.getFromUserName();
-				session.getMsg_manager().sendText(touser, text, this);
-				step = 1;
-				return true;
-			}
-		}
-		return false;
+		return mapJob(event,null);
 	}
 
 	@Override
 	public boolean hanlderMessage(InMessage message) {
 		// TODO Auto-generated method stub
+		setExpiry();
 		switch(step){
 			case 1:{
 				if(message.getMessageType() == MsgType.text){

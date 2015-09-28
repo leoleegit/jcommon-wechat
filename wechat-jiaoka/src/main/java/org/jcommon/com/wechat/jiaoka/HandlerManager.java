@@ -16,10 +16,15 @@ public class HandlerManager implements RequestCallback{
 	private Handler[] handlers;
 	private Handler on_duty;
 	private WechatSession session;
+	private long create_time;
+	private long update_time;
+	private String name;
 	
-	public HandlerManager(WechatSession session){
+	public HandlerManager(WechatSession session, String name){
 		handlers = new Handler[]{new Calculator(this, session),new JiaoKa(this, session)};
 		this.session = session;
+		this.name    = name;
+		setCreate_time(System.currentTimeMillis());
 	}
 	
 	public void dutyEnd(Handler handler){
@@ -35,8 +40,16 @@ public class HandlerManager implements RequestCallback{
 	public void onEvent(Event event) {
 		// TODO Auto-generated method stub
 		logger.info("IN:"+event.getXml());
+		setUpdate_time(System.currentTimeMillis());
 	    if(on_duty!=null){
-	    	on_duty.hanlderEvent(event);
+	    	if(!on_duty.hanlderEvent(event)){
+	    		for(Handler handler : handlers){
+		    		if(handler.mapJob(event, null)){
+		    			onDuty(handler);
+		    			break;
+		    		}
+		    	}
+	    	}
 	    }else{
 	    	for(Handler handler : handlers){
 	    		if(handler.mapJob(event, null)){
@@ -49,6 +62,7 @@ public class HandlerManager implements RequestCallback{
 
 	public void onMessage(InMessage message) {
 		logger.info("IN:"+message.getXml());
+		setUpdate_time(System.currentTimeMillis());
 		if(on_duty!=null){
 		    on_duty.hanlderMessage(message);
 		}else{
@@ -91,5 +105,29 @@ public class HandlerManager implements RequestCallback{
 	public void onException(HttpRequest reqeust, Exception e) {
 		// TODO Auto-generated method stub
 		logger.error("", e);
+	}
+
+	public void setCreate_time(long create_time) {
+		this.create_time = create_time;
+	}
+
+	public long getCreate_time() {
+		return create_time;
+	}
+
+	public void setUpdate_time(long update_time) {
+		this.update_time = update_time;
+	}
+
+	public long getUpdate_time() {
+		return update_time;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getName() {
+		return name;
 	}
 }
