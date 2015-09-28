@@ -68,12 +68,14 @@ public class WechatSession implements WechatSessionListener,
 	
 	public void startup(){
 		app_manager.startup();
+		user_manager.startup();
 		SessionCache.instance().addWechatSession(this);
 		logger.info(logStr(""));
 	}
 	
 	public void shutdown(){
 		app_manager.shutdown();
+		user_manager.shutdown();
 		SessionCache.instance().removeWechatSession(this);
 		logger.info(logStr(""));
 	}

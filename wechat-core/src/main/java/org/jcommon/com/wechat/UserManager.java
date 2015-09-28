@@ -1,8 +1,15 @@
 package org.jcommon.com.wechat;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import org.apache.log4j.Logger;
 import org.jcommon.com.util.http.HttpRequest;
@@ -19,6 +26,9 @@ public class UserManager  extends ResponseHandler{
 	private Logger logger = Logger.getLogger(getClass());
 	private WechatSession session;
 	private Map<String,User> user_cache = new HashMap<String,User>();
+	private static final String CHECKTIME = "0359";
+	private static final long   expires = 12;
+	private Timer  expires_timer;
 	
 	public UserManager(WechatSession session){
 		this.session = session;
@@ -242,4 +252,79 @@ public class UserManager  extends ResponseHandler{
 	/**
 	 * =========================== Group Manager End=============================
 	 */
+	
+	public void startup(){
+		super.startup();
+		expireCheck();
+	}
+	
+	public void shutdown(){
+		closeTimer();
+		super.shutdown();
+	}
+	
+	private void closeTimer(){
+		try{
+			if(expires_timer!=null){
+			expires_timer.cancel();
+			expires_timer = null;
+			logger.info("Login expire checker is stop");
+		}
+		}catch(Exception e){}
+	}
+	
+	public void expireCheck(){
+		logger.info("Login expire checker is start");
+		
+		final long expire = 24 * 60 * 60 * 1000;
+		long firstTime    = getFirstTime();
+		expires_timer = org.jcommon.com.util.thread.TimerTaskManger.instance().schedule("Login expire Checker", new TimerTask(){
+
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				logger.info("Login expire Checker Start...");
+				Set<User> expire_users = new HashSet<User>();
+				
+				long now    = System.currentTimeMillis();
+				long expire = expires * 60 * 60 * 1000;
+				for(User user : user_cache.values()){
+					if(now-user.getCreate_time() > expire)
+						expire_users.add(user);
+				}
+				for(User user : expire_users){
+					synchronized (user_cache) {
+						user_cache.remove(user.getOpenid());
+						logger.info("remove expire handler:"+user.getOpenid());
+					}
+				}
+				expire_users.clear();
+				expire_users = null;
+				logger.info("Login expire Checker End...");
+			}
+			
+		}, firstTime, expire);
+	}
+	
+	private long getFirstTime(){
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HHmm");
+		Date now = new Date();
+		String today      = sdf.format(now);
+		String check      = today.substring(0, 10)+" "+CHECKTIME;
+		logger.info(String.format("now:%s;check_time:%s", today,check));
+		try {
+			
+			Date check_date   = sdf.parse(check);
+			long first_time   = check_date.getTime();
+			logger.info(String.format("now:%s;check_time:%s;", sdf.format(now),sdf.format(check_date)));
+			if(first_time < now.getTime())
+				first_time = first_time + (24 * 60 * 60 * 1000);
+			return 	first_time - now.getTime();
+			
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			logger.error("", e);
+		}
+		return 0;
+	}
 }
