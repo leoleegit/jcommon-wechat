@@ -9,6 +9,7 @@ public class WechatAgent {
 	private String remark;
 	private Timestamp update_time;
 	private String presence;
+	private String chating;
 	private int isdelete;
 	
 	public int getId() {
@@ -52,5 +53,11 @@ public class WechatAgent {
 	}
 	public String getPresence() {
 		return presence;
+	}
+	public String getChating() {
+		return chating;
+	}
+	public void setChating(String chating) {
+		this.chating = chating;
 	}
 }

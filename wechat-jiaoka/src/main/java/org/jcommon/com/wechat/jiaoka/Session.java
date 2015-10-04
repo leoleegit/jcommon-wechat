@@ -50,6 +50,21 @@ public class Session extends WechatSession {
 			}
 		});
 		
+		if(event.getFrom()==null && event.getFromUserName()!=null){
+			
+	    	User user = new User(null);
+	    	user.setOpenid(event.getFromUserName());
+	    	
+	    	if(getUser_manager().getUserInfo(user)!=null){
+	    		event.setFrom(getUser_manager().getUserInfo(user));    		
+	    	}else{
+	    		HttpRequest request = getUser_manager().getUserInfo(user, this);
+		    	request.setAttribute(INMESSAGE, event);
+		    	return;
+	    	}
+	    }
+		
+		
 	    String from = event.getFromUserName();
 	    if(from!=null){
 	    	HandlerManager handler = null;

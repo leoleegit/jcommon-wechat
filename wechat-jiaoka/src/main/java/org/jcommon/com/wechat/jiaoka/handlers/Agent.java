@@ -5,14 +5,23 @@ import org.jcommon.com.util.http.HttpRequest;
 import org.jcommon.com.wechat.RequestCallback;
 import org.jcommon.com.wechat.WechatSession;
 import org.jcommon.com.wechat.data.Event;
+import org.jcommon.com.wechat.data.Image;
 import org.jcommon.com.wechat.data.InMessage;
+import org.jcommon.com.wechat.data.Text;
+import org.jcommon.com.wechat.data.User;
 import org.jcommon.com.wechat.jiaoka.Handler;
 import org.jcommon.com.wechat.jiaoka.HandlerManager;
+import org.jcommon.com.wechat.jiaoka.db.bean.WechatAgent;
+import org.jcommon.com.wechat.jiaoka.handlers.agent.AgentManager;
+import org.jcommon.com.wechat.utils.EventType;
+import org.jcommon.com.wechat.utils.MsgType;
 
 public class Agent extends Handler implements RequestCallback{
 	private Logger logger = Logger.getLogger(getClass());
 	
 	private static final String name = "Agent";
+	public static final String AgentKey1 = "Agent_001";
+	
 	public  static final String AgentLogin    = "---客服---";
 	public  static final String AgentRemark   = "---客服昵称---";
 	public  static final String AgentChatEnd  = "---会话结束---";
@@ -25,6 +34,13 @@ public class Agent extends Handler implements RequestCallback{
 	private static final String agent_msg01 = "请输入验证码:";	
 	private static final String agent_error01 = "验证码错误，请重新输入";
 	
+	private static final String greeting_to_agent    = " 正请求客服服务。";
+	private static final String greeting_to_customer = " 正在为您服务，请问有什么可以你帮到您？";
+	private static final String bust_to_customer     = " 非常抱歉告诉您，目前咨询用户过多，客服会尽快回复您。";
+	
+	private WechatAgent agent;
+	private String   customer;
+	
 	public Agent(HandlerManager manager, WechatSession session) {
 		super(manager, session);
 		// TODO Auto-generated constructor stub
@@ -34,47 +50,121 @@ public class Agent extends Handler implements RequestCallback{
 	@Override
 	public boolean mapJob(Event event, InMessage message) {
 		// TODO Auto-generated method stub
-		if(message!=null){
-			
+		if(event!=null){
+			EventType type = EventType.getType(event.getEvent());
+			if(type!=null && EventType.CLICK == type && AgentKey1.equals(event.getEventKey())){
+				setExpiry();
+				WechatAgent agent = AgentManager.instance().searchAgent(event.getFromUserName());
+				User user         = event.getFrom();
+				String reply      = null;
+				if(agent!=null){
+					this.setRole(AGENT);
+					if(agent.getChating()==null)
+						AgentManager.instance().releaseAgent(manager.getName());
+					else
+						this.customer = agent.getChating();
+				}else{ 
+					this.setRole(CUSTOMER);
+					this.agent = AgentManager.instance().getAvailableAgent(manager.getName());
+					if(this.agent!=null){
+						reply = this.agent.getRemark() +  greeting_to_customer;
+						Text text  = new Text( user.getNickname() + greeting_to_agent);
+						String touser = manager.getName();
+						session.getMsg_manager().sendText(touser, text, this);
+					}
+					else
+						reply = bust_to_customer;			
+				}
+				if(reply!=null){
+					Text text  = new Text(reply);
+					String touser = manager.getName();
+					session.getMsg_manager().sendText(touser, text, this);
+				}
+				return true;
+			}
 		}
 		return false;
 	}
 
+	public boolean isAgent(){
+		return AGENT.equals(this.getRole());
+	}
+	
 	@Override
 	public boolean hanlderEvent(Event event) {
 		// TODO Auto-generated method stub
-		return false;
+		return mapJob(event,null);
 	}
 	
 
 	@Override
 	public boolean hanlderMessage(InMessage message) {
 		// TODO Auto-generated method stub
+		String openid = null;
+		if(isAgent()){
+			if(customer!=null){
+				openid = customer;
+				if(message.getMessageType() == MsgType.text){
+					String txt = message.getContent();
+					if(AgentChatEnd.equalsIgnoreCase(txt)){
+						AgentManager.instance().releaseAgent(message.getFromUserName());
+						this.manager.dutyEnd(this);
+					}
+				}
+			}else{
+				this.manager.dutyEnd(this);
+			}
+		}else{
+			if(agent!=null){
+				openid = agent.getOpenid();
+			}else{
+				this.manager.dutyEnd(this);
+			}
+		}
+		if(openid!=null){
+			MsgType type = message.getMessageType();
+			switch(type){
+			    case text : {
+			    	Text text  = new Text(message.getContent());
+					session.getMsg_manager().sendText(openid, text, this);
+			    	break;
+			    }
+			    case image: 
+			    case music:  
+			    case news:  
+			    case voice:  
+			    case video:  {
+			    	Image image = new Image();
+			    	image.setMedia_id(message.getMediaId());
+					session.getMsg_manager().sendImage(openid, image, this);
+			    }
+			}
+		}
 		return false;
 	}
 	
 	@Override
-	public void onException(HttpRequest arg0, Exception arg1) {
+	public void onSuccessful(HttpRequest reqeust, StringBuilder sResult) {
 		// TODO Auto-generated method stub
-		
+		logger.info(sResult);
 	}
 
 	@Override
-	public void onFailure(HttpRequest arg0, StringBuilder arg1) {
+	public void onFailure(HttpRequest reqeust, StringBuilder sResult) {
 		// TODO Auto-generated method stub
-		
+		logger.info(sResult);
 	}
 
 	@Override
-	public void onSuccessful(HttpRequest arg0, StringBuilder arg1) {
+	public void onTimeout(HttpRequest reqeust) {
 		// TODO Auto-generated method stub
-		
+		logger.info("timeout");
 	}
 
 	@Override
-	public void onTimeout(HttpRequest arg0) {
+	public void onException(HttpRequest reqeust, Exception e) {
 		// TODO Auto-generated method stub
-		
+		logger.error("", e);
 	}
 
 	@Override
