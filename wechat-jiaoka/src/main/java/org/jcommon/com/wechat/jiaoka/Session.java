@@ -35,15 +35,20 @@ public class Session extends WechatSession {
 	}
 	
 	@Override
-	public void onEvent(Event event) {
+	public void onEvent(final Event event) {
 		// TODO Auto-generated method stub
 		logger.info("IN:"+event.getXml());
-		WeChatAuditLog bean = new WeChatAuditLog();
-		bean.setLogstr(event.getXml());
-		bean.setType(event.getEvent());
-		if(event.getCreateTime()!=0)
-			bean.setCreate_time(new Timestamp(event.getCreateTime()*1000));
-		new WeChatAuditLogDao().insert(bean);
+		org.jcommon.com.util.thread.ThreadManager.instance().execute(new Runnable(){
+			public void run(){
+				WeChatAuditLog bean = new WeChatAuditLog();
+				bean.setLogstr(event.getXml());
+				bean.setType(event.getEvent());
+				bean.setOpenid(event.getFromUserName());
+				if(event.getCreateTime()!=0)
+					bean.setCreate_time(new Timestamp(event.getCreateTime()*1000));
+				new WeChatAuditLogDao().insert(bean);
+			}
+		});
 		
 	    String from = event.getFromUserName();
 	    if(from!=null){
@@ -59,15 +64,20 @@ public class Session extends WechatSession {
 	}
 	
 	@Override
-	public void onMessage(InMessage message) {
+	public void onMessage(final InMessage message) {
 		logger.info("IN:"+message.getXml());
-		WeChatAuditLog bean = new WeChatAuditLog();
-		bean.setLogstr(message.getXml());
-		bean.setType(message.getMessageType().name());
-		if(message.getCreateTime()!=0)
-			bean.setCreate_time(new Timestamp(message.getCreateTime()*1000));
-		new WeChatAuditLogDao().insert(bean);
 		
+		org.jcommon.com.util.thread.ThreadManager.instance().execute(new Runnable(){
+			public void run(){
+				WeChatAuditLog bean = new WeChatAuditLog();
+				bean.setLogstr(message.getXml());
+				bean.setType(message.getMessageType().name());
+				bean.setOpenid(message.getFromUserName());
+				if(message.getCreateTime()!=0)
+					bean.setCreate_time(new Timestamp(message.getCreateTime()*1000));
+				new WeChatAuditLogDao().insert(bean);
+			}
+		});
 		
 		if(message.getFrom()==null && message.getFromUserName()!=null){
 			
@@ -84,8 +94,15 @@ public class Session extends WechatSession {
 	    }
 		
 		//insert user
-		WeChatUser wechat_user = new WeChatUser(message.getFrom());
-		new WeChatUserDao().insert(wechat_user);
+		if(message.getFrom()!=null && (System.currentTimeMillis()-message.getFrom().getCreate_time()<5000)){
+			org.jcommon.com.util.thread.ThreadManager.instance().execute(new Runnable(){
+				public void run(){
+					WeChatUser wechat_user = new WeChatUser(message.getFrom());
+					new WeChatUserDao().insert(wechat_user);
+					logger.info("insert user:"+message.getFrom().getNickname());
+				}
+			});
+		}
 		
 		String from = message.getFromUserName();
 	    if(from!=null){

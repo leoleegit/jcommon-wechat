@@ -9,22 +9,27 @@ import org.jcommon.com.wechat.data.InMessage;
 import org.jcommon.com.wechat.jiaoka.Handler;
 import org.jcommon.com.wechat.jiaoka.HandlerManager;
 
-public class AgentHandler extends Handler implements RequestCallback{
+public class Agent extends Handler implements RequestCallback{
 	private Logger logger = Logger.getLogger(getClass());
-	private static final String name = "Agent";
-
-	private static final String agent = "of-YetzJFYxGTltb4eCvgccHzHF0";
 	
-	public AgentHandler(HandlerManager manager, WechatSession session) {
+	private static final String name = "Agent";
+	public  static final String AgentLogin    = "---客服---";
+	public  static final String AgentRemark   = "---客服昵称---";
+	public  static final String AgentChatEnd  = "---会话结束---";
+	
+	private static final String AGENT    = "agent";
+	private static final String CUSTOMER = "customer";
+	
+	private String role = null;
+	
+	private static final String agent_msg01 = "请输入验证码:";	
+	private static final String agent_error01 = "验证码错误，请重新输入";
+	
+	public Agent(HandlerManager manager, WechatSession session) {
 		super(manager, session);
 		// TODO Auto-generated constructor stub
 	}
 
-	@Override
-	public String name() {
-		// TODO Auto-generated method stub
-		return name;
-	}
 
 	@Override
 	public boolean mapJob(Event event, InMessage message) {
@@ -40,6 +45,7 @@ public class AgentHandler extends Handler implements RequestCallback{
 		// TODO Auto-generated method stub
 		return false;
 	}
+	
 
 	@Override
 	public boolean hanlderMessage(InMessage message) {
@@ -48,27 +54,42 @@ public class AgentHandler extends Handler implements RequestCallback{
 	}
 	
 	@Override
-	public void onSuccessful(HttpRequest reqeust, StringBuilder sResult) {
+	public void onException(HttpRequest arg0, Exception arg1) {
 		// TODO Auto-generated method stub
-		logger.info(sResult);
+		
 	}
 
 	@Override
-	public void onFailure(HttpRequest reqeust, StringBuilder sResult) {
+	public void onFailure(HttpRequest arg0, StringBuilder arg1) {
 		// TODO Auto-generated method stub
-		logger.info(sResult);
+		
 	}
 
 	@Override
-	public void onTimeout(HttpRequest reqeust) {
+	public void onSuccessful(HttpRequest arg0, StringBuilder arg1) {
 		// TODO Auto-generated method stub
-		logger.info("timeout");
+		
 	}
 
 	@Override
-	public void onException(HttpRequest reqeust, Exception e) {
+	public void onTimeout(HttpRequest arg0) {
 		// TODO Auto-generated method stub
-		logger.error("", e);
+		
 	}
 
+	@Override
+	public String name() {
+		// TODO Auto-generated method stub
+		return name;
+	}
+
+
+	public void setRole(String role) {
+		this.role = role;
+	}
+
+
+	public String getRole() {
+		return role;
+	}
 }

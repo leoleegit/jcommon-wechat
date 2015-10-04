@@ -8,7 +8,7 @@ import org.jcommon.com.wechat.WechatSession;
 import org.jcommon.com.wechat.data.Error;
 import org.jcommon.com.wechat.data.Menus;
 
-public class Service implements MenusManagerListener,
+public class MenusService implements MenusManagerListener,
 	RequestCallback{
 	
 	private Logger logger = Logger.getLogger(getClass());

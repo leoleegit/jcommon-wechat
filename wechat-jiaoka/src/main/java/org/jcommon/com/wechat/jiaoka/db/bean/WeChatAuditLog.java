@@ -6,6 +6,7 @@ public class WeChatAuditLog {
 	private int id;
 	private String type;
 	private String logstr;
+	private String openid;
 	private Timestamp create_time;
 	private int isdelete;
 	
@@ -38,5 +39,11 @@ public class WeChatAuditLog {
 	}
 	public int getIsdelete() {
 		return isdelete;
+	}
+	public void setOpenid(String openid) {
+		this.openid = openid;
+	}
+	public String getOpenid() {
+		return openid;
 	}
 }

@@ -11,6 +11,9 @@ public class CalculatorTest {
 		// TODO Auto-generated method stub
 		System.out.println(Calculator.before(14.0f, 22));
 		System.out.println(Calculator.after(14.0f, 22));
+		
+		int step = 1;
+		System.out.println(step+1);
 	}
 
 }

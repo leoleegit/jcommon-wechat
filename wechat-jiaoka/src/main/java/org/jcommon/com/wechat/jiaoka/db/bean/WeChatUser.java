@@ -40,7 +40,7 @@ public class WeChatUser {
 		this.remark    = user.getRemark();
 		this.groupid   = user.getGroupid();
 		if(user.getCreate_time()!=0)
-			this.create_time = new Timestamp(user.getCreate_time()*1000);
+			this.create_time = new Timestamp(user.getCreate_time());
 	}
 	
 	public WeChatUser(){

@@ -1,5 +1,8 @@
 package org.jcommon.com.wechat.jiaoka.handlers;
 
+import java.sql.Timestamp;
+import java.util.Date;
+
 import org.apache.log4j.Logger;
 import org.jcommon.com.util.http.HttpRequest;
 import org.jcommon.com.wechat.RequestCallback;
@@ -7,11 +10,13 @@ import org.jcommon.com.wechat.WechatSession;
 import org.jcommon.com.wechat.data.Event;
 import org.jcommon.com.wechat.data.InMessage;
 import org.jcommon.com.wechat.data.Text;
-import org.jcommon.com.wechat.jiaoka.Handler;
 import org.jcommon.com.wechat.jiaoka.HandlerManager;
+import org.jcommon.com.wechat.jiaoka.db.bean.Case;
+import org.jcommon.com.wechat.jiaoka.db.dao.CaseDao;
 import org.jcommon.com.wechat.utils.EventType;
+import org.jcommon.com.wechat.utils.MsgType;
 
-public class JiaoKa extends Handler implements RequestCallback{
+public class JiaoKa extends Robot implements RequestCallback{
 	private Logger logger = Logger.getLogger(getClass());
 	
 	private static final String name = "JiaoKa";
@@ -27,18 +32,96 @@ public class JiaoKa extends Handler implements RequestCallback{
 	private int    card_number;
 	private String location_give;
 	private String location_get;
-	private String number;
 	
-	private int step;
+	private static final String msg01 = "请选择交卡地点：\n";
+	private static final String msg02 = "请选择领卡地点：\n";
+	private static final String msg03 = "请输入联系手机号码：";
+	private static final String msg04 = "请输入预定数量：";
+	
+	private static final String error03 = "请输入合法的手机号码。(●'◡'●)";
+	private static final String error04 = "只允许输入少于100数字哟。(●'◡'●)";
+	
 	public JiaoKa(HandlerManager manager, WechatSession session) {
 		super(manager, session);
 		// TODO Auto-generated constructor stub
+		String msg = "";
+		for(int i=0; i<locations.length;i++){
+			msg = msg + (i+1) + "."+ locations[i] + "\n";
+		}
+		String error_msg = "不要玩啦，只允许输入1到"+locations.length+"的数字哟。(●'◡'●)";
+		String[] questions  = new String[]{msg01+msg,msg02+msg,msg03,msg04};
+		String[] error_msgs = new String[]{error_msg,error_msg,error03,error04};
+		super.initMessage(questions, error_msgs);
 	}
-	
 	@Override
-	public String name() {
+	public boolean alertGreeting() {
 		// TODO Auto-generated method stub
-		return name;
+		return false;
+	}
+
+	@Override
+	public boolean errorCheck(InMessage message) {
+		// TODO Auto-generated method stub
+		int step = getStep();
+		if(message.getMessageType() == MsgType.text){
+			String txt = message.getContent();
+			switch(step){
+				case 0:
+				case 1:{
+					if(Calculator.isNumeric(txt)){
+						int num  = Integer.valueOf(txt);
+						if(num>0 && num<=locations.length){
+							return false;
+						}
+					}
+					break;
+				}
+				case 2:{
+					if(Calculator.isNumeric(txt) && txt.length()==11){
+						return false;
+					}
+					break;
+				}
+				case 3:{
+					if(Calculator.isNumeric(txt)){
+						int num  = Integer.valueOf(txt);
+						return num>100;
+					}
+					break;
+				}
+			}
+		}
+		return true;
+	}
+
+	@Override
+	public boolean addAnswer(InMessage message) {
+		// TODO Auto-generated method stub
+		int step = getStep();
+		if(message.getMessageType() == MsgType.text){
+			String txt = message.getContent();
+			switch(step){
+				case 0:{
+					int num  = Integer.valueOf(txt);
+					this.location_give = locations[num-1];
+					break;
+				}
+				case 1:{
+					int num  = Integer.valueOf(txt);
+					this.location_get = locations[num-1];
+					break;
+				}
+				case 2:{
+					this.phone_number = txt;
+					break;
+				}
+				case 3:{
+					this.card_number = Integer.valueOf(txt);
+					break;
+				}
+			}
+		}
+		return false;
 	}
 
 	@Override
@@ -52,24 +135,18 @@ public class JiaoKa extends Handler implements RequestCallback{
 						JiaoKaKey3.equals(event.getEventKey())){
 					setExpiry();
 					logger.info(event.getXml());
-					String msg = null;
 					if(JiaoKaKey1.equals(event.getEventKey())){
-						setJiaoka_type(jiaoka_types[0]);
-						msg = "请选择交卡地点：\n";
+						jiaoka_type = (jiaoka_types[0]);
+						super.setStep(0);
 					}else if(JiaoKaKey2.equals(event.getEventKey())){
-						setJiaoka_type(jiaoka_types[1]);
-						msg = "请选择领卡地点：\n";
+						jiaoka_type = (jiaoka_types[1]);
+						super.setStep(1);
 					}else{
-						setJiaoka_type(jiaoka_types[2]);
-						msg = "请选择领卡地点：\n";
+						jiaoka_type = (jiaoka_types[2]);
+						super.setStep(1);
 					}
-					for(int i=0; i<locations.length;i++){
-						msg = msg + (i+1) + "."+ locations[i] + "\n";
-					}
-					Text text  = new Text(msg);
-					String touser = event.getFromUserName();
-					session.getMsg_manager().sendText(touser, text, this);
-					step = 1;
+					super.setStatus(Robot.init);
+					goNext();
 					return true;
 				}
 			}
@@ -80,270 +157,90 @@ public class JiaoKa extends Handler implements RequestCallback{
 	@Override
 	public boolean hanlderEvent(Event event) {
 		// TODO Auto-generated method stub
-		if(step==1){
-			return false;
-		}
 		return mapJob(event,null);
 	}
 
-	private boolean errorCheck(InMessage message, String error){
-		String txt = message.getContent();
-		boolean isError = false;
-		if(Calculator.isNumeric(txt)){
-			int num  = Integer.valueOf(txt);
-			if(num>0&&num<=locations.length){
-				return false;
-			}else
-				isError = true;
-		}else{
-			isError = true;
-		}
-		if(isError){
-			Text text  = new Text(error);
-			String touser = message.getFromUserName();
-			session.getMsg_manager().sendText(touser, text, this);
-		}
-		return isError;
-	}
-	
 	@Override
 	public boolean hanlderMessage(InMessage message) {
 		// TODO Auto-generated method stub
 		setExpiry();
-		switch(step){
-			case 1:{
-				String msg = null;
-				if(jiaoka_types[0].equals(jiaoka_type)){
-					if(!setLocation_give(message)){
-						break;
-					}
-					msg = "请选择领卡地点：\n";
-					for(int i=0; i<locations.length;i++){
-						msg = msg + (i+1) + "."+ locations[i] + "\n";
-					}
-				}else if(jiaoka_types[1].equals(jiaoka_type)){
-					if(!setLocation_get(message)){
-						break;
-					}
-					msg = "请输入手机号码：";
-				}else if(jiaoka_types[2].equals(jiaoka_type)){
-					if(!setLocation_get(message)){
-						break;
-					}
-					msg = "请输入手机号码：";
-				}else{
-					manager.dutyEnd(this);
-					break;
-				}
-				Text text  = new Text(msg);
-				String touser = message.getFromUserName();
-				session.getMsg_manager().sendText(touser, text, this);
-				step = 2;
-				break;
-			}
-	     	case 2:{
-	     		String msg = null;
-				if(jiaoka_types[0].equals(jiaoka_type)){
-					if(!setLocation_get(message)){
-						break;
-					}
-					msg = "请输入联系手机号码：";
-				}else if(jiaoka_types[1].equals(jiaoka_type)){
-					if(!setPhone_number(message)){
-						break;
-					}
-					msg = "请输入预定数量：";
-				}else if(jiaoka_types[2].equals(jiaoka_type)){
-					if(!setPhone_number(message)){
-						break;
-					}
-					msg = "请输入预定数量：";
-				}else{
-					manager.dutyEnd(this);
-					break;
-				}
-				Text text  = new Text(msg);
-				String touser = message.getFromUserName();
-				session.getMsg_manager().sendText(touser, text, this);
-				step = 3;
-				break;
-			}
-	     	case 3:{
-	     		String msg = null;
-				if(jiaoka_types[0].equals(jiaoka_type)){
-					if(!setPhone_number(message)){
-						break;
-					}
-					msg = "请输入预定数量：";
-				}else if(jiaoka_types[1].equals(jiaoka_type)){
-					if(!setCard_number(message)){
-						break;
-					}
-					msg = OrderStr(message);
-					Text text  = new Text(msg);
-					String touser = message.getFromUserName();
-					session.getMsg_manager().sendText(touser, text, this);
-					step = 0;
-					manager.dutyEnd(this);
-					break;
-				}else if(jiaoka_types[2].equals(jiaoka_type)){
-					if(!setCard_number(message)){
-						break;
-					}
-					msg = OrderStr(message);
-					Text text  = new Text(msg);
-					String touser = message.getFromUserName();
-					session.getMsg_manager().sendText(touser, text, this);
-					step = 0;
-					manager.dutyEnd(this);
-					break;
-				}else{
-					manager.dutyEnd(this);
-					break;
-				}
-				Text text  = new Text(msg);
-				String touser = message.getFromUserName();
-				session.getMsg_manager().sendText(touser, text, this);
-				step = 4;
-				break;
-			}
-	     	case 4:{
-	     		String msg = null;
-				if(jiaoka_types[0].equals(jiaoka_type)){
-					if(!setCard_number(message)){
-						break;
-					}
-					msg = OrderStr(message);
-				}else{
-					manager.dutyEnd(this);
-					break;
-				}
-				Text text  = new Text(msg);
-				String touser = message.getFromUserName();
-				session.getMsg_manager().sendText(touser, text, this);
-				step = 0;
-				manager.dutyEnd(this);
-				break;
-			}
-		    default:{
-				break;
-			}
+		
+		goNext(message);
+		int step = getStep();
+		
+		if(step==4){
+			String result = OrderStr(message);
+			Text text  = new Text(result);
+			String touser = manager.getName();
+			session.getMsg_manager().sendText(touser, text, this);
+			manager.dutyEnd(this);
 		}
 		return false;
 	}
-
+	
 	public String OrderStr(InMessage message){	
 		StringBuilder sb = new StringBuilder();
-		//String title     = "订单 \r\t \r\t";
-		//sb.append(title);
+		long now   = System.currentTimeMillis();
+		final Case case_ = new Case();
+		case_.setCase_id(org.jcommon.com.util.BufferUtils.generateRandom(20));
+		case_.setCreate_time(new Timestamp(now));
+		case_.setJiaoka_type(jiaoka_type);
+		case_.setCard_number(card_number);
+		case_.setLocation_give(location_get);
+		case_.setPhone_number(phone_number);
+		case_.setStatus(Case.OPEN);
+		
 		if(message.getFrom()!=null){
 			String nickname = message.getFrom().getNickname();
-			//String openid   = message.getFrom().getOpenid();
-			sb.append("微信昵称:").append(nickname).append("\n");
+			String openid   = message.getFrom().getOpenid();
+			sb.append("微信昵称 : ").append(nickname).append("\n");
+			case_.setNickname(nickname);
+			case_.setOpenid(openid);
 		}
 		sb.append("----------------------------\n");
+		sb.append("类型 : ").append(jiaoka_type).append("\n");
+		
 		if(jiaoka_types[0].equals(jiaoka_type)){
-			sb.append("类型:").append(jiaoka_type).append("\n")
-			.append("交卡地点:").append(this.getLocation_give()).append("\n")
-			.append("领卡地点:").append(this.getLocation_get()).append("\n")
-			.append("联系手机:").append(this.getPhone_number()).append("\n")
-			.append("预定数量:").append(this.getCard_number()).append("\n");
-		}else if(jiaoka_types[1].equals(jiaoka_type)){
-			sb.append("类型:").append(jiaoka_type).append("\n")
-			.append("领卡地点:").append(this.getLocation_get()).append("\n")
-			.append("联系手机:").append(this.getPhone_number()).append("\n")
-			.append("预定数量:").append(this.getCard_number()).append("\n");
-		}else if(jiaoka_types[2].equals(jiaoka_type)){
-			sb.append("类型:").append(jiaoka_type).append("\n")
-			.append("领卡地点:").append(this.getLocation_get()).append("\n")
-			.append("联系手机:").append(this.getPhone_number()).append("\n")
-			.append("预定数量:").append(this.getCard_number()).append("\n");
+			sb.append("交卡地点 : ").append(this.location_give).append("\n");
+			case_.setLocation_give(location_give);
 		}
+		sb.append("领卡地点 : ").append(this.location_get).append("\n")
+			.append("联系手机 : ").append(this.phone_number).append("\n")
+			.append("预定数量 : ").append(this.card_number).append("\n");
 		sb.append("----------------------------\n");
-		sb.append("日期:").append(org.jcommon.com.util.DateUtils.getNowSinceYear());
+		sb.append("日期 : ").append(Calculator.formatDate(new Date(now)));
+		
+		org.jcommon.com.util.thread.ThreadManager.instance().execute(new Runnable(){
+			public void run(){
+				new CaseDao().insert(case_);
+			}
+		});
+		
 		return sb.toString();
 	}
 	
-	public String getJiaoka_type() {
-		return jiaoka_type;
+	@Override
+	public boolean askQuestion(String question) {
+		// TODO Auto-generated method stub
+		Text text  = new Text(question);
+		String touser = manager.getName();
+		session.getMsg_manager().sendText(touser, text, this);
+		return false;
 	}
 
-	public void setJiaoka_type(String jiaoka_type) {
-		this.jiaoka_type = jiaoka_type;
+	@Override
+	public boolean alertError(String error) {
+		// TODO Auto-generated method stub
+		Text text  = new Text(error);
+		String touser = manager.getName();
+		session.getMsg_manager().sendText(touser, text, this);
+		return false;
 	}
 
-	public String getPhone_number() {
-		return phone_number;
-	}
-
-	public boolean setPhone_number(InMessage message) {
-		String error_msg = "请输入合法的手机号码。(●'◡'●)";
-		String txt = message.getContent();
-		if(Calculator.isNumeric(txt) && txt.length()==11){
-			this.phone_number = txt;
-			return true;
-		}else{
-			Text text  = new Text(error_msg);
-			String touser = message.getFromUserName();
-			session.getMsg_manager().sendText(touser, text, this);
-			return false;
-		}
-	}
-
-	public int getCard_number() {
-		return card_number;
-	}
-
-	public boolean setCard_number(InMessage message) {
-		String error_msg = "只允许输入数字哟。(●'◡'●)";
-		String txt = message.getContent();
-		if(Calculator.isNumeric(txt)){
-			this.card_number = Integer.valueOf(txt);
-			return true;
-		}else{
-			Text text  = new Text(error_msg);
-			String touser = message.getFromUserName();
-			session.getMsg_manager().sendText(touser, text, this);
-			return false;
-		}
-	}
-
-	public String getLocation_give() {
-		return location_give;
-	}
-
-	public boolean setLocation_give(InMessage message) {
-		String error_msg = "不要玩啦，只允许输入1到"+locations.length+"的数字哟。(●'◡'●)";
-		if(errorCheck(message,error_msg)){
-			return false;
-		}
-		String txt = message.getContent();
-		int num  = Integer.valueOf(txt);
-		this.location_give = locations[num-1];
-		return true;
-	}
-
-	public String getLocation_get() {
-		return location_get;
-	}
-
-	public boolean setLocation_get(InMessage message) {
-		String error_msg = "不要玩啦，只允许输入1到"+locations.length+"的数字哟。(●'◡'●)";
-		if(errorCheck(message,error_msg)){
-			return false;
-		}
-		String txt = message.getContent();
-		int num  = Integer.valueOf(txt);
-		this.location_get = locations[num-1];
-		return true;
-	}
-
-	public String getNumber() {
-		return number;
-	}
-
-	public void setNumber(String number) {
-		this.number = number;
+	@Override
+	public String name() {
+		// TODO Auto-generated method stub
+		return name;
 	}
 
 	@Override
