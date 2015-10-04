@@ -274,9 +274,16 @@ public class WechatSession implements WechatSessionListener,
 	public void onUser(HttpRequest request, User user) {
 		// TODO Auto-generated method stub
 		if(request.getAttibute(INMESSAGE)!=null){
-			InMessage msg  = (InMessage) request.getAttibute(INMESSAGE);
-			msg.setFrom(user);
-			onMessage(msg);
+			if(request.getAttibute(INMESSAGE) instanceof InMessage){
+				InMessage msg  = (InMessage) request.getAttibute(INMESSAGE);
+				msg.setFrom(user);
+				onMessage(msg);
+			}
+			else if(request.getAttibute(INMESSAGE) instanceof Event){
+				Event event  = (Event) request.getAttibute(INMESSAGE);
+				event.setFrom(user);
+				onEvent(event);
+			}
 		}
 	}
 

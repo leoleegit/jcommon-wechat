@@ -13,7 +13,7 @@
 package org.jcommon.com.wechat.data;
 
 public class Event extends XmlObject{
-
+  private User from;
   private String ToUserName;
   private String FromUserName;
   private long CreateTime;
@@ -143,5 +143,13 @@ public class Event extends XmlObject{
 
 	public String getMsgID() {
 		return MsgID;
+	}
+
+	public User getFrom() {
+		return from;
+	}
+
+	public void setFrom(User from) {
+		this.from = from;
 	}
 }
