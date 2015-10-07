@@ -6,7 +6,7 @@
 	    <description>Callback</description>
 	    <display-name>Callback</display-name>
 	    <servlet-name>Callback</servlet-name>
-	    <servlet-class>org.jcommon.com.wechat.Callback</servlet-class>
+	    <servlet-class>org.jcommon.com.wechat.servlet.Callback</servlet-class>
 	    <load-on-startup>0</load-on-startup>
 	</servlet>
 	<servlet-mapping>
@@ -17,12 +17,23 @@
 	    <description>MediaServlet</description>
 	    <display-name>MediaServlet</display-name>
 	    <servlet-name>MediaServlet</servlet-name>
-	    <servlet-class>org.jcommon.com.wechat.MediaServlet</servlet-class>
+	    <servlet-class>org.jcommon.com.wechat.servlet.MediaServlet</servlet-class>
 	    <load-on-startup>0</load-on-startup>
 	</servlet>
 	<servlet-mapping>
 	    <servlet-name>MediaServlet</servlet-name>
 	    <url-pattern>/media/*</url-pattern>
+	</servlet-mapping> 
+	<servlet>
+	    <description>AccessToken</description>
+	    <display-name>AccessToken</display-name>
+	    <servlet-name>AccessToken</servlet-name>
+	    <servlet-class>org.jcommon.com.wechat.servlet.AccessToken</servlet-class>
+	    <load-on-startup>0</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+	    <servlet-name>AccessToken</servlet-name>
+	    <url-pattern>/token/*</url-pattern>
 	</servlet-mapping> 
 	<servlet>
   	<servlet-name>org.jcommon.com.wechat.jiaoka.service.Application</servlet-name>
