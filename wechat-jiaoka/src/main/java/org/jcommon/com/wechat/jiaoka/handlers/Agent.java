@@ -1,5 +1,7 @@
 package org.jcommon.com.wechat.jiaoka.handlers;
 
+import java.util.TimerTask;
+
 import org.apache.log4j.Logger;
 import org.jcommon.com.util.http.HttpRequest;
 import org.jcommon.com.wechat.RequestCallback;
@@ -31,10 +33,8 @@ public class Agent extends Handler implements RequestCallback{
 	
 	private String role = null;
 	
-	private static final String agent_msg01 = "请输入验证码:";	
-	private static final String agent_error01 = "验证码错误，请重新输入";
-	
-	private static final String greeting_to_agent    = " 正请求客服服务。";
+	private static final String greeting_to_agent    = " 正请求客服服务,请按人工客服连接对话";
+	private static final String login_to_agent       = " 客服登录成功。";
 	private static final String greeting_to_customer = " 正在为您服务，请问有什么可以你帮到您？";
 	private static final String bust_to_customer     = " 非常抱歉告诉您，目前咨询用户过多，客服会尽快回复您。";
 	
@@ -46,6 +46,31 @@ public class Agent extends Handler implements RequestCallback{
 		// TODO Auto-generated constructor stub
 	}
 
+	synchronized public void setExpiry(){
+		closeTimer();
+		task = new TimerTask(){
+
+			@Override
+			public void run() {
+				// TODO Auto-generated method stub
+				manager.dutyEnd(Agent.this);
+				if(isAgent()){
+					AgentManager.instance().releaseAgent(manager.getName());
+					String msg = "会话结束";
+					Text text  = new Text(msg);
+					String touser = manager.getName();
+					session.getMsg_manager().sendText(touser, text, Agent.this);
+				}else{
+					String msg = "由于较长时间没有收到你的信息，会话将自动结束。如有需要请再次点击人工服务。谢谢。";
+					Text text  = new Text(msg);
+					String touser = manager.getName();
+					session.getMsg_manager().sendText(touser, text, Agent.this);
+				}
+			}
+			
+		};
+		timer = org.jcommon.com.util.thread.TimerTaskManger.instance().schedule("Handler-"+name(), task, delay);
+	}
 
 	@Override
 	public boolean mapJob(Event event, InMessage message) {
@@ -54,23 +79,26 @@ public class Agent extends Handler implements RequestCallback{
 			EventType type = EventType.getType(event.getEvent());
 			if(type!=null && EventType.CLICK == type && AgentKey1.equals(event.getEventKey())){
 				setExpiry();
-				WechatAgent agent = AgentManager.instance().searchAgent(event.getFromUserName());
+				this.agent = AgentManager.instance().searchAgent(event.getFromUserName());
 				User user         = event.getFrom();
 				String reply      = null;
 				if(agent!=null){
 					this.setRole(AGENT);
-					if(agent.getChating()==null)
+					if(agent.getChating()==null || "".equals(agent.getChating().trim())){
 						AgentManager.instance().releaseAgent(manager.getName());
-					else
+						reply = login_to_agent;
+					}
+					else{
 						this.customer = agent.getChating();
+						reply = "会话连接成功，请直接输入进行客服服务。";
+					}
 				}else{ 
 					this.setRole(CUSTOMER);
 					this.agent = AgentManager.instance().getAvailableAgent(manager.getName());
 					if(this.agent!=null){
 						reply = this.agent.getRemark() +  greeting_to_customer;
 						Text text  = new Text( user.getNickname() + greeting_to_agent);
-						String touser = manager.getName();
-						session.getMsg_manager().sendText(touser, text, this);
+						session.getMsg_manager().sendText(this.agent.getOpenid(), text, this);
 					}
 					else
 						reply = bust_to_customer;			
@@ -100,13 +128,17 @@ public class Agent extends Handler implements RequestCallback{
 	@Override
 	public boolean hanlderMessage(InMessage message) {
 		// TODO Auto-generated method stub
+		setExpiry();
 		String openid = null;
+		String remark = "";
 		if(isAgent()){
 			if(customer!=null){
 				openid = customer;
+				remark = agent!=null?agent.getRemark():message.getFrom().getNickname();
 				if(message.getMessageType() == MsgType.text){
 					String txt = message.getContent();
 					if(AgentChatEnd.equalsIgnoreCase(txt)){
+						openid = null;
 						AgentManager.instance().releaseAgent(message.getFromUserName());
 						this.manager.dutyEnd(this);
 					}
@@ -117,6 +149,7 @@ public class Agent extends Handler implements RequestCallback{
 		}else{
 			if(agent!=null){
 				openid = agent.getOpenid();
+				remark = message.getFrom().getNickname();
 			}else{
 				this.manager.dutyEnd(this);
 			}
@@ -125,7 +158,7 @@ public class Agent extends Handler implements RequestCallback{
 			MsgType type = message.getMessageType();
 			switch(type){
 			    case text : {
-			    	Text text  = new Text(message.getContent());
+			    	Text text  = new Text(message.getContent()+"\n--------"+remark);
 					session.getMsg_manager().sendText(openid, text, this);
 			    	break;
 			    }

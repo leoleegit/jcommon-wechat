@@ -2,7 +2,11 @@ package org.jcommon.com.wechat.jiaoka.db.bean;
 
 import java.sql.Timestamp;
 
-public class Case {
+public class Case extends org.jcommon.com.wechat.data.JsonObject{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	public static final String OPEN     = "open";
 	public static final String CLOSE    = "close";
 	public static final String REOPEN   = "reopen";

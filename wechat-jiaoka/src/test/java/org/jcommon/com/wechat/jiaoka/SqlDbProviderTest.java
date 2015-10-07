@@ -6,6 +6,7 @@ import org.jcommon.com.wechat.jiaoka.db.bean.Case;
 import org.jcommon.com.wechat.jiaoka.db.bean.WeChatUser;
 import org.jcommon.com.wechat.jiaoka.db.dao.CaseDao;
 import org.jcommon.com.wechat.jiaoka.db.dao.WeChatUserDao;
+import org.jcommon.com.wechat.jiaoka.db.dao.WechatAgentDao;
 import org.jcommon.com.wechat.jiaoka.db.sql.SqlDbProvider;
 
 public class SqlDbProviderTest {
@@ -28,13 +29,17 @@ public class SqlDbProviderTest {
 //		for(String s : SqlDbProvider.getParameters(sql))
 //			System.out.println(s);
 		
-		CaseDaoTest();
+		WechatAgentDaoTest();
 	}
 	
 	public static  void CaseDaoTest(){
 		List<Case> cases = new CaseDao().searchAllCase(0, 0);
 		for(Case c : cases)
 			System.out.println(c);
+	}
+	
+	public static void WechatAgentDaoTest(){
+		System.out.println(new WechatAgentDao().searchAgentByOpenid("of-YetzJFYxGTltb4eCvgccHzHF0"));
 	}
 
 }

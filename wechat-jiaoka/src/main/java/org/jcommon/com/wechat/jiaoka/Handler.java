@@ -8,11 +8,11 @@ import org.jcommon.com.wechat.data.Event;
 import org.jcommon.com.wechat.data.InMessage;
 
 public abstract class Handler {
-	private static final long delay = 3 * 60 * 1000;
+	protected static final long delay = 3 * 60 * 1000;
 	protected WechatSession session;
 	protected HandlerManager manager;
-	private Timer timer;
-	private TimerTask task;
+	protected Timer timer;
+	protected TimerTask task;
 	
 	public Handler(HandlerManager manager, WechatSession session) {
 		this.manager = manager;
@@ -35,7 +35,7 @@ public abstract class Handler {
 		};
 		timer = org.jcommon.com.util.thread.TimerTaskManger.instance().schedule("Handler-"+name(), task, delay);
 	}
-	private void closeTimer(){
+	protected void closeTimer(){
 		try{
 			if(timer!=null){
 			timer.cancel();

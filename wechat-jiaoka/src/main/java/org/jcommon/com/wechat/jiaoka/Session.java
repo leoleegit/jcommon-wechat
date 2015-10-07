@@ -64,6 +64,16 @@ public class Session extends WechatSession {
 	    	}
 	    }
 		
+		//insert user
+		if(event.getFrom()!=null && (System.currentTimeMillis()-event.getFrom().getCreate_time()<5000)){
+			org.jcommon.com.util.thread.ThreadManager.instance().execute(new Runnable(){
+				public void run(){
+					WeChatUser wechat_user = new WeChatUser(event.getFrom());
+					new WeChatUserDao().insert(wechat_user);
+					logger.info("insert user:"+event.getFrom().getNickname());
+				}
+			});
+		}
 		
 	    String from = event.getFromUserName();
 	    if(from!=null){

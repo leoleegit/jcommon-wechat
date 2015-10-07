@@ -12,7 +12,7 @@ public class WechatAgentDao {
 	}
 	
 	public boolean updatePresence(String presence, Timestamp update_time, String openid){
-		String sql = "update wechat_agent set presence=?, update_time=? where openid=?";
+		String sql = "update wechat_agent set presence=?, chating=?, update_time=? where openid=?";
 		WechatAgent bean = new WechatAgent();
 		bean.setPresence(presence);
 		bean.setUpdate_time(update_time);
