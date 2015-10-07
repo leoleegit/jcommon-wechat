@@ -1,5 +1,6 @@
 package org.jcommon.com.wechat.jiaoka.service;
 
+import java.sql.Timestamp;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -8,19 +9,14 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 
-import org.apache.log4j.Logger;
 import org.jcommon.com.wechat.jiaoka.db.bean.Case;
 import org.jcommon.com.wechat.jiaoka.db.bean.ServiceResponse;
 import org.jcommon.com.wechat.jiaoka.db.dao.CaseDao;
 import org.jcommon.com.wechat.jiaoka.utils.JiaoKaUtils;
 
 @Path("case")
-public class CaseService {
-	private static final int MAX_NUMBER = 100;
-	private static final int DEFAULT_NUMBER = 20;
-	private Logger logger = Logger.getLogger(getClass());
+public class CaseService extends Service{
 	
-	private CaseDao dao = new CaseDao();
 	
 	@GET 
 	@Path("search")
@@ -40,6 +36,7 @@ public class CaseService {
 			number = DEFAULT_NUMBER;
 		
 		ServiceResponse resp = null;
+		CaseDao dao = new CaseDao();
 		if(status==null && openid==null){
 			List<Case> case_ = dao.searchAllCase(next, number);
 			if(case_==null)
@@ -65,6 +62,29 @@ public class CaseService {
 			else
 				resp = new ServiceResponse(case_);
 		}
+		return resp.toJson();
+	}
+	
+	@GET 
+	@Path("update")
+	@Produces("text/plain;charset=UTF-8")  
+	public String updateCase(@Context HttpServletRequest request){
+		String status = request.getParameter("status");	
+		String handle_agent = request.getParameter("handle_agent"); 
+		String note = request.getParameter("note");	
+		String case_id = request.getParameter("case_id");	
+		Timestamp update_time = new Timestamp(System.currentTimeMillis());
+		
+		
+		logger.info(String.format("status:%s;handle_agent:%s;note:%s;case_id:%s", status,handle_agent,note,case_id));
+		
+		ServiceResponse resp = null;
+		CaseDao dao = new CaseDao();
+		boolean succ = dao.updateCase(status, handle_agent, note, case_id, update_time);
+		if(succ)
+			resp = new ServiceResponse((Case)null);
+		else
+			resp = new ServiceResponse("system error.");
 		return resp.toJson();
 	}
 }

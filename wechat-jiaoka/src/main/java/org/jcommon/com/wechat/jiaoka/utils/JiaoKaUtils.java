@@ -17,7 +17,7 @@ public class JiaoKaUtils {
 	public static boolean isInteger(String str){
 		if(isNumeric(str)){
 			int length = String.valueOf(Integer.MAX_VALUE).length();
-			if(str.length()<=length)
+			if(str.length()<length)
 				return true;
 		}
 		return false;

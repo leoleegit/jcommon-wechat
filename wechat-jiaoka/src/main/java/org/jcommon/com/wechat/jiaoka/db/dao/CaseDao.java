@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,8 +23,18 @@ public class CaseDao {
 		return DbProviderFaceory.createDbProvider().insert(sql, bean);
 	}
 	
+	public boolean updateCase(String status, String handle_agent, String note, String case_id, Timestamp update_time){
+		String sql = "update wechat_case set status=?, handle_agent=?, note=?, update_time=? where case_id=?";
+		Case bean = new Case();
+		bean.setStatus(status);
+		bean.setHandle_agent(handle_agent);
+		bean.setNote(note);
+		bean.setUpdate_time(update_time);
+		return DbProviderFaceory.createDbProvider().insert(sql, bean);
+	}
+	
 	public List<Case> searchAllCase(String status, String openid, int next, int number){
-		String sql = "SELECT * FROM wechat_case where id>? and status=? and openid=? limit ?";
+		String sql = "SELECT * FROM wechat_case where id>? and status=? and openid=? and isdelete=? limit ?";
 		
 		Connection conn = null;
 		PreparedStatement ps = null;
@@ -40,7 +51,8 @@ public class CaseDao {
 			ps.setInt(1, next);
 			ps.setString(2, status);
 			ps.setString(3, openid);
-			ps.setInt(4, number);
+			ps.setInt(4, 0);
+			ps.setInt(5, number);
 			
 			rs = ps.executeQuery();
 			List<Object> results = DbProviderFaceory.createDbProvider().getResult(sql, Case.class, rs);
@@ -69,7 +81,7 @@ public class CaseDao {
 	
 	public List<Case> searchAllCaseByOpenid(String openid, int next, int number){
 		
-		String sql = "SELECT * FROM wechat_case where id>? and openid=? limit ?";
+		String sql = "SELECT * FROM wechat_case where id>? and openid=? and isdelete=? limit ?";
 		Connection conn = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -84,7 +96,8 @@ public class CaseDao {
 			
 			ps.setInt(1, next);
 			ps.setString(2, openid);
-			ps.setInt(3, number);
+			ps.setInt(3, 0);
+			ps.setInt(4, number);
 			
 			rs = ps.executeQuery();
 			List<Object> results = DbProviderFaceory.createDbProvider().getResult(sql, Case.class, rs);
