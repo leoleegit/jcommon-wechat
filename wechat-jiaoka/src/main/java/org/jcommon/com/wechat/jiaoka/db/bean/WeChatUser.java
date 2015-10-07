@@ -4,7 +4,11 @@ import java.sql.Timestamp;
 
 import org.jcommon.com.wechat.data.User;
 
-public class WeChatUser {
+public class WeChatUser extends org.jcommon.com.wechat.data.JsonObject{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private int wechat_user_id;
 	private int isdelete;
 	

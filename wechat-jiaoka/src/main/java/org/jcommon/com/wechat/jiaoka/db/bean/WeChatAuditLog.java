@@ -2,7 +2,11 @@ package org.jcommon.com.wechat.jiaoka.db.bean;
 
 import java.sql.Timestamp;
 
-public class WeChatAuditLog {
+public class WeChatAuditLog extends org.jcommon.com.wechat.data.JsonObject{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private int id;
 	private String type;
 	private String logstr;

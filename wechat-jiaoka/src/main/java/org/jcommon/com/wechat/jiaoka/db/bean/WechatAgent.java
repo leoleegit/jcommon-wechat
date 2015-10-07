@@ -2,7 +2,11 @@ package org.jcommon.com.wechat.jiaoka.db.bean;
 
 import java.sql.Timestamp;
 
-public class WechatAgent {
+public class WechatAgent extends org.jcommon.com.wechat.data.JsonObject{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private int id;
 	private String agent_id;
 	private String openid;

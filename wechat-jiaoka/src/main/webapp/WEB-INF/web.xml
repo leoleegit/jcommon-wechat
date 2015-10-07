@@ -24,6 +24,19 @@
 	    <servlet-name>MediaServlet</servlet-name>
 	    <url-pattern>/media/*</url-pattern>
 	</servlet-mapping> 
+	<servlet>
+  	<servlet-name>org.jcommon.com.wechat.jiaoka.service.Application</servlet-name>
+  	<servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
+        <init-param>
+            <param-name>javax.ws.rs.Application</param-name>
+            <param-value>org.jcommon.com.wechat.jiaoka.service.Application</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+      <servlet-name>org.jcommon.com.wechat.jiaoka.service.Application</servlet-name>
+      <url-pattern>/service/*</url-pattern>
+    </servlet-mapping>
 	<listener>
 	  <listener-class>org.jcommon.com.util.system.SystemManager</listener-class>
     </listener>
