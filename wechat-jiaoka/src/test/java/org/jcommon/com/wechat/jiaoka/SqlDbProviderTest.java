@@ -29,13 +29,13 @@ public class SqlDbProviderTest {
 //		for(String s : SqlDbProvider.getParameters(sql))
 //			System.out.println(s);
 		
-		WechatAgentDaoTest();
+		CaseDaoTest();
 	}
 	
 	public static  void CaseDaoTest(){
-		List<Case> cases = new CaseDao().searchAllCase(0, 0);
+		List<Case> cases = new CaseDao().searchAllCase(null,"leolee 噢噢","15919065160", 0, 20);
 		for(Case c : cases)
-			System.out.println(c);
+			System.out.println(c.toJson());
 	}
 	
 	public static void WechatAgentDaoTest(){

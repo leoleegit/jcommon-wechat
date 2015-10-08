@@ -33,9 +33,7 @@ public class CaseDao {
 		return DbProviderFaceory.createDbProvider().insert(sql, bean);
 	}
 	
-	public List<Case> searchAllCase(String status, String openid, int next, int number){
-		String sql = "SELECT * FROM wechat_case where id>? and status=? and openid=? and isdelete=? limit ?";
-		
+	public List<Case> searchAllCase(String status, String nickname, String phone_number, int next, int number){
 		Connection conn = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -46,145 +44,77 @@ public class CaseDao {
 		try {
 			conn = ConnectionManager.instance().getConnection();
 			conn.setAutoCommit(false);
-			ps = conn.prepareStatement(sql);
-			
-			ps.setInt(1, next);
-			ps.setString(2, status);
-			ps.setString(3, openid);
-			ps.setInt(4, 0);
-			ps.setInt(5, number);
-			
-			rs = ps.executeQuery();
-			List<Object> results = DbProviderFaceory.createDbProvider().getResult(sql, Case.class, rs);
-			List<Case> cases     = new ArrayList<Case>();
-			if(results!=null){
-				for(Object obj : results){
-					cases.add((Case)obj);
-				}
+			String sql = null;
+			if(status!=null && nickname!=null && phone_number!=null){
+				sql = "SELECT * FROM wechat_case where id>? and status=? and nickname=?  and phone_number=? and isdelete=? limit ?";		
+				ps = conn.prepareStatement(sql);
+				
+				ps.setInt(1, next);
+				ps.setString(2, status);
+				ps.setString(3, nickname);
+				ps.setString(4, phone_number);
+				ps.setInt(5, 0);
+				ps.setInt(6, number);
+			}else if(status!=null && nickname!=null){
+				sql = "SELECT * FROM wechat_case where id>? and status=? and nickname=? and isdelete=? limit ?";		
+				ps = conn.prepareStatement(sql);
+				
+				ps.setInt(1, next);
+				ps.setString(2, status);
+				ps.setString(3, nickname);
+				ps.setInt(4, 0);
+				ps.setInt(5, number);
+			}else if(status!=null && phone_number!=null){
+				sql = "SELECT * FROM wechat_case where id>? and status=? and phone_number=? and isdelete=? limit ?";		
+				ps = conn.prepareStatement(sql);
+				
+				ps.setInt(1, next);
+				ps.setString(2, status);
+				ps.setString(3, phone_number);
+				ps.setInt(4, 0);
+				ps.setInt(5, number);
+			}else if(nickname!=null && phone_number!=null){
+				sql = "SELECT * FROM wechat_case where id>? and nickname=?  and phone_number=? and isdelete=? limit ?";		
+				ps = conn.prepareStatement(sql);
+				
+				ps.setInt(1, next);
+				ps.setString(2, nickname);
+				ps.setString(3, phone_number);
+				ps.setInt(4, 0);
+				ps.setInt(5, number);
+			}else if(status!=null){
+				sql = "SELECT * FROM wechat_case where id>? and status=? and isdelete=? limit ?";		
+				ps = conn.prepareStatement(sql);
+				
+				ps.setInt(1, next);
+				ps.setString(2, status);
+				ps.setInt(3, 0);
+				ps.setInt(4, number);
+			}else if(nickname!=null){
+				sql = "SELECT * FROM wechat_case where id>? and nickname=? and isdelete=? limit ?";		
+				ps = conn.prepareStatement(sql);
+				
+				ps.setInt(1, next);
+				ps.setString(2, nickname);
+				ps.setInt(3, 0);
+				ps.setInt(4, number);
+			}else if(phone_number!=null){
+				sql = "SELECT * FROM wechat_case where id>? and phone_number=? and isdelete=? limit ?";		
+				ps = conn.prepareStatement(sql);
+				
+				ps.setInt(1, next);
+				ps.setString(2, phone_number);
+				ps.setInt(3, 0);
+				ps.setInt(4, number);
+			}else{
+				sql = "SELECT * FROM wechat_case where id>? and isdelete=? limit ?";		
+				ps = conn.prepareStatement(sql);
+				
+				ps.setInt(1, next);
+				ps.setInt(2, 0);
+				ps.setInt(3, number);
 			}
-			return cases;
-		} catch (Exception e) {
-			try {
-				logger.info("Exception and rollback.");
-				if (conn != null)
-					conn.rollback();
-			} catch (SQLException e1) {
-				// TODO Auto-generated catch block
-				logger.error("", e1);
-			}
-			logger.error("", e);
-		} finally {
-			ConnectionManager.release(conn, ps, rs);
-		}
-		return null;
-	}
-	
-	public List<Case> searchAllCaseByOpenid(String openid, int next, int number){
-		
-		String sql = "SELECT * FROM wechat_case where id>? and openid=? and isdelete=? limit ?";
-		Connection conn = null;
-		PreparedStatement ps = null;
-		ResultSet rs = null;
-		
-		if(number==0)
-			number = 20;
-		
-		try {
-			conn = ConnectionManager.instance().getConnection();
-			conn.setAutoCommit(false);
-			ps = conn.prepareStatement(sql);
 			
-			ps.setInt(1, next);
-			ps.setString(2, openid);
-			ps.setInt(3, 0);
-			ps.setInt(4, number);
-			
-			rs = ps.executeQuery();
-			List<Object> results = DbProviderFaceory.createDbProvider().getResult(sql, Case.class, rs);
-			List<Case> cases     = new ArrayList<Case>();
-			if(results!=null){
-				for(Object obj : results){
-					cases.add((Case)obj);
-				}
-			}
-			return cases;
-		} catch (Exception e) {
-			try {
-				logger.info("Exception and rollback.");
-				if (conn != null)
-					conn.rollback();
-			} catch (SQLException e1) {
-				// TODO Auto-generated catch block
-				logger.error("", e1);
-			}
-			logger.error("", e);
-		} finally {
-			ConnectionManager.release(conn, ps, rs);
-		}
-		return null;
-	}
-
-	public List<Case> searchAllCaseByStatus(String status, int next, int number){
-		
-		String sql = "SELECT * FROM wechat_case where id>? and status=? limit ?";
-		Connection conn = null;
-		PreparedStatement ps = null;
-		ResultSet rs = null;
-		
-		if(number==0)
-			number = 20;
-		
-		try {
-			conn = ConnectionManager.instance().getConnection();
-			conn.setAutoCommit(false);
-			ps = conn.prepareStatement(sql);
-			
-			ps.setInt(1, next);
-			ps.setString(2, status);
-			ps.setInt(3, number);
-			
-			rs = ps.executeQuery();
-			List<Object> results = DbProviderFaceory.createDbProvider().getResult(sql, Case.class, rs);
-			List<Case> cases     = new ArrayList<Case>();
-			if(results!=null){
-				for(Object obj : results){
-					cases.add((Case)obj);
-				}
-			}
-			return cases;
-		} catch (Exception e) {
-			try {
-				logger.info("Exception and rollback.");
-				if (conn != null)
-					conn.rollback();
-			} catch (SQLException e1) {
-				// TODO Auto-generated catch block
-				logger.error("", e1);
-			}
-			logger.error("", e);
-		} finally {
-			ConnectionManager.release(conn, ps, rs);
-		}
-		return null;
-	}
-
-	public List<Case> searchAllCase(int next, int number){
-		
-		String sql = "SELECT * FROM wechat_case where id>? limit ?";
-		Connection conn = null;
-		PreparedStatement ps = null;
-		ResultSet rs = null;
-		
-		if(number==0)
-			number = 20;
-		
-		try {
-			conn = ConnectionManager.instance().getConnection();
-			conn.setAutoCommit(false);
-			ps = conn.prepareStatement(sql);
-			
-			ps.setInt(1, next);
-			ps.setInt(2, number);
 			
 			rs = ps.executeQuery();
 			List<Object> results = DbProviderFaceory.createDbProvider().getResult(sql, Case.class, rs);

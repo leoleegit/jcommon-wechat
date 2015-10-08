@@ -22,46 +22,29 @@ public class CaseService extends Service{
 	@Path("search")
 	@Produces("text/plain;charset=UTF-8")  
 	public String searchCase(@Context HttpServletRequest request){
-		String status = request.getParameter("status"); 
-		String openid = request.getParameter("openid");	
+		String status       = request.getParameter("status"); 
+		String phone_number = request.getParameter("phone_number");	
+		String nickname     = request.getParameter("nickname");	
 		
 		int next      = JiaoKaUtils.isInteger(request.getParameter("next"))?Integer.valueOf(request.getParameter("next")):0;
 		int number    = JiaoKaUtils.isInteger(request.getParameter("number"))?Integer.valueOf(request.getParameter("number")):0;
 		
-		logger.info(String.format("status:%s;openid:%s;next:%s;number:%s", status,openid,next,number));
+		logger.info(String.format("status:%s;phone_number:%s;nickname:%s;next:%s;number:%s", status,phone_number,nickname,next,number));
 		
 		if(number > MAX_NUMBER)
 			number = MAX_NUMBER;
 		if(number==0)
 			number = DEFAULT_NUMBER;
+		if("all".equals(status))
+			status = null;
 		
 		ServiceResponse resp = null;
 		CaseDao dao = new CaseDao();
-		if(status==null && openid==null){
-			List<Case> case_ = dao.searchAllCase(next, number);
-			if(case_==null)
-				resp = new ServiceResponse("system error.");
-			else
-				resp = new ServiceResponse(case_);
-		}else if(status!=null && openid!=null){
-			List<Case> case_ = dao.searchAllCase(status,openid, next, number);
-			if(case_==null)
-				resp = new ServiceResponse("system error.");
-			else
-				resp = new ServiceResponse(case_);
-		}else if(openid!=null){
-			List<Case> case_ = dao.searchAllCaseByOpenid(openid, next, number);
-			if(case_==null)
-				resp = new ServiceResponse("system error.");
-			else
-				resp = new ServiceResponse(case_);
-		}else if(status!=null){
-			List<Case> case_ = dao.searchAllCaseByStatus(status, next, number);
-			if(case_==null)
-				resp = new ServiceResponse("system error.");
-			else
-				resp = new ServiceResponse(case_);
-		}
+		List<Case> case_ = dao.searchAllCase(status,nickname, phone_number, next, number);
+		if(case_==null)
+			resp = new ServiceResponse("system error.");
+		else
+			resp = new ServiceResponse(case_);
 		return resp.toJson();
 	}
 	

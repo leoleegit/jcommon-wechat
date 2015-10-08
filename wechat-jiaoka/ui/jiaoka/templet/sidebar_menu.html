@@ -1,0 +1,19 @@
+<div class="panel panel-default" name="cc_memu">
+	<div class="panel-heading" role="tab" id="heading{{heading_id}}">
+		<h4 class="panel-title">
+			<a data-toggle="collapse" view="{{view_url}}" data-parent="#cc_memu" href="#collapse{{collapse_id}}"
+				aria-expanded="false"  class="collapsed">
+				<i class="glyphicon glyphicon-tasks"></i>
+				<span>{{menu}}</span>
+				<span dependency="second_menu" class="pull-right glyphicon glyphicon-chevron-down"></span>
+			</a>
+		</h4>
+	</div>
+
+	<div dependency="second_menu" id="collapse{{collapse_id}}" class="panel-collapse collapse" role="tabpane{{collapse_id}}"
+		aria-labelledby="heading{{heading_id}}" aria-expanded="false" style="height: 0px;">
+		<div>
+			<a group="menus" href="#" view="{{view_url}}" class="list-group-item">{{menu}}</a>
+		</div>
+	</div>
+</div>

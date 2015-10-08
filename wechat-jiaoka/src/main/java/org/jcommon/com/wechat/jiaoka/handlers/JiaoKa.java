@@ -186,7 +186,8 @@ public class JiaoKa extends Robot implements RequestCallback{
 		case_.setCreate_time(new Timestamp(now));
 		case_.setJiaoka_type(jiaoka_type);
 		case_.setCard_number(card_number);
-		case_.setLocation_give(location_get);
+		case_.setLocation_give(location_give);
+		case_.setLocation_get(location_get);
 		case_.setPhone_number(phone_number);
 		case_.setStatus(Case.OPEN);
 		
@@ -202,7 +203,6 @@ public class JiaoKa extends Robot implements RequestCallback{
 		
 		if(jiaoka_types[0].equals(jiaoka_type)){
 			sb.append("交卡地点 : ").append(this.location_give).append("\n");
-			case_.setLocation_give(location_give);
 		}
 		sb.append("领卡地点 : ").append(this.location_get).append("\n")
 			.append("联系手机 : ").append(this.phone_number).append("\n")
