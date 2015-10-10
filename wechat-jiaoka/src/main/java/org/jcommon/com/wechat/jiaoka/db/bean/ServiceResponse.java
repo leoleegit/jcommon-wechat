@@ -13,12 +13,19 @@ public class ServiceResponse extends org.jcommon.com.wechat.data.JsonObject{
 
 	private int code;
 	private String error;
+	private long count;
 	private org.jcommon.com.wechat.data.JsonObject data;
 	private List<? extends org.jcommon.com.wechat.data.JsonObject> datas;
 	
 	public ServiceResponse(String error){
 		this.error = error;
 		setCode(FAIL);
+	}
+	
+	public ServiceResponse(SearchResponse resp){
+		this.datas = resp.getDatas();
+		this.count = resp.getCount();
+		setCode(SUCCESS);
 	}
 	
 	public ServiceResponse(org.jcommon.com.wechat.data.JsonObject data){
@@ -56,5 +63,13 @@ public class ServiceResponse extends org.jcommon.com.wechat.data.JsonObject{
 
 	public void setDatas(List<org.jcommon.com.wechat.data.JsonObject> datas) {
 		this.datas = datas;
+	}
+
+	public void setCount(long count) {
+		this.count = count;
+	}
+
+	public long getCount() {
+		return count;
 	}
 }

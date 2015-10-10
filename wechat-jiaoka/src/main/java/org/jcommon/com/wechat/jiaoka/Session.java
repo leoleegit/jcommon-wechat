@@ -17,11 +17,14 @@ import org.jcommon.com.wechat.WechatSessionListener;
 import org.jcommon.com.wechat.data.App;
 import org.jcommon.com.wechat.data.Event;
 import org.jcommon.com.wechat.data.InMessage;
+import org.jcommon.com.wechat.data.Media;
 import org.jcommon.com.wechat.data.User;
 import org.jcommon.com.wechat.jiaoka.db.bean.WeChatAuditLog;
 import org.jcommon.com.wechat.jiaoka.db.bean.WeChatUser;
 import org.jcommon.com.wechat.jiaoka.db.dao.WeChatAuditLogDao;
 import org.jcommon.com.wechat.jiaoka.db.dao.WeChatUserDao;
+import org.jcommon.com.wechat.utils.MediaType;
+import org.jcommon.com.wechat.utils.MsgType;
 
 public class Session extends WechatSession {
 	private Map<String,HandlerManager> handlers = new HashMap<String,HandlerManager>();
@@ -38,17 +41,6 @@ public class Session extends WechatSession {
 	public void onEvent(final Event event) {
 		// TODO Auto-generated method stub
 		logger.info("IN:"+event.getXml());
-		org.jcommon.com.util.thread.ThreadManager.instance().execute(new Runnable(){
-			public void run(){
-				WeChatAuditLog bean = new WeChatAuditLog();
-				bean.setLogstr(event.getXml());
-				bean.setType(event.getEvent());
-				bean.setOpenid(event.getFromUserName());
-				if(event.getCreateTime()!=0)
-					bean.setCreate_time(new Timestamp(event.getCreateTime()*1000));
-				new WeChatAuditLogDao().insert(bean);
-			}
-		});
 		
 		if(event.getFrom()==null && event.getFromUserName()!=null){
 			
@@ -75,6 +67,18 @@ public class Session extends WechatSession {
 			});
 		}
 		
+		org.jcommon.com.util.thread.ThreadManager.instance().execute(new Runnable(){
+			public void run(){
+				WeChatAuditLog bean = new WeChatAuditLog();
+				bean.setLogstr(event.getXml());
+				bean.setType(event.getEvent());
+				bean.setOpenid(event.getFromUserName());
+				if(event.getCreateTime()!=0)
+					bean.setCreate_time(new Timestamp(event.getCreateTime()*1000));
+				new WeChatAuditLogDao().insert(bean);
+			}
+		});
+		
 	    String from = event.getFromUserName();
 	    if(from!=null){
 	    	HandlerManager handler = null;
@@ -92,18 +96,17 @@ public class Session extends WechatSession {
 	public void onMessage(final InMessage message) {
 		logger.info("IN:"+message.getXml());
 		
-		org.jcommon.com.util.thread.ThreadManager.instance().execute(new Runnable(){
-			public void run(){
-				WeChatAuditLog bean = new WeChatAuditLog();
-				bean.setLogstr(message.getXml());
-				bean.setType(message.getMessageType().name());
-				bean.setOpenid(message.getFromUserName());
-				if(message.getCreateTime()!=0)
-					bean.setCreate_time(new Timestamp(message.getCreateTime()*1000));
-				new WeChatAuditLogDao().insert(bean);
-			}
-		});
-		
+		MsgType type = message.getMessageType();
+	    if (MediaType.isMediaType(type)){
+	        if ((message.getMediaId() != null) && (message.getMedia() == null)) {
+	        	Media media          = new Media();
+	        	media.setMedia_id(message.getMediaId());
+	        	HttpRequest request = getMedia_manager().downloadMedia(media, this);
+	        	request.setAttribute(INMESSAGE, message);
+	        	return;
+	        }
+	    }
+	    
 		if(message.getFrom()==null && message.getFromUserName()!=null){
 			
 	    	User user = new User(null);
@@ -128,6 +131,18 @@ public class Session extends WechatSession {
 				}
 			});
 		}
+		
+		org.jcommon.com.util.thread.ThreadManager.instance().execute(new Runnable(){
+			public void run(){
+				WeChatAuditLog bean = new WeChatAuditLog();
+				bean.setLogstr(message.getXml());
+				bean.setType(message.getMessageType().name());
+				bean.setOpenid(message.getFromUserName());
+				if(message.getCreateTime()!=0)
+					bean.setCreate_time(new Timestamp(message.getCreateTime()*1000));
+				new WeChatAuditLogDao().insert(bean);
+			}
+		});
 		
 		String from = message.getFromUserName();
 	    if(from!=null){

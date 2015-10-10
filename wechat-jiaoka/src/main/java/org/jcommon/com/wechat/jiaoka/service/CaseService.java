@@ -1,7 +1,6 @@
 package org.jcommon.com.wechat.jiaoka.service;
 
 import java.sql.Timestamp;
-import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
@@ -10,6 +9,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 
 import org.jcommon.com.wechat.jiaoka.db.bean.Case;
+import org.jcommon.com.wechat.jiaoka.db.bean.SearchResponse;
 import org.jcommon.com.wechat.jiaoka.db.bean.ServiceResponse;
 import org.jcommon.com.wechat.jiaoka.db.dao.CaseDao;
 import org.jcommon.com.wechat.jiaoka.utils.JiaoKaUtils;
@@ -40,8 +40,8 @@ public class CaseService extends Service{
 		
 		ServiceResponse resp = null;
 		CaseDao dao = new CaseDao();
-		List<Case> case_ = dao.searchAllCase(status,nickname, phone_number, next, number);
-		if(case_==null)
+		SearchResponse case_ = dao.searchCase(status,nickname, phone_number, next, number);
+		if(case_==null || case_.getDatas()==null)
 			resp = new ServiceResponse("system error.");
 		else
 			resp = new ServiceResponse(case_);

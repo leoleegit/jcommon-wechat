@@ -1,21 +1,14 @@
 package org.jcommon.com.wechat.jiaoka.db.dao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.jcommon.com.wechat.jiaoka.db.DbProviderFaceory;
 import org.jcommon.com.wechat.jiaoka.db.bean.Case;
-import org.jcommon.com.wechat.jiaoka.db.sql.ConnectionManager;
-import org.jcommon.com.wechat.jiaoka.db.sql.SqlDbProvider;
+import org.jcommon.com.wechat.jiaoka.db.bean.SearchResponse;
 
 public class CaseDao {
-	private static Logger logger = Logger.getLogger(SqlDbProvider.class);
 	
 	public boolean insert(Case bean){
 		String sql = "INSERT INTO wechat_case (case_id,status,note,handle_agent,jiaoka_type,phone_number,card_number" +
@@ -33,111 +26,131 @@ public class CaseDao {
 		return DbProviderFaceory.createDbProvider().insert(sql, bean);
 	}
 	
-	public List<Case> searchAllCase(String status, String nickname, String phone_number, int next, int number){
-		Connection conn = null;
-		PreparedStatement ps = null;
-		ResultSet rs = null;
-		
+	public SearchResponse searchCase(String status, String nickname, String phone_number, int index, int number){
 		if(number==0)
 			number = 20;
 		
-		try {
-			conn = ConnectionManager.instance().getConnection();
-			conn.setAutoCommit(false);
-			String sql = null;
-			if(status!=null && nickname!=null && phone_number!=null){
-				sql = "SELECT * FROM wechat_case where id>? and status=? and nickname=?  and phone_number=? and isdelete=? limit ?";		
-				ps = conn.prepareStatement(sql);
-				
-				ps.setInt(1, next);
-				ps.setString(2, status);
-				ps.setString(3, nickname);
-				ps.setString(4, phone_number);
-				ps.setInt(5, 0);
-				ps.setInt(6, number);
-			}else if(status!=null && nickname!=null){
-				sql = "SELECT * FROM wechat_case where id>? and status=? and nickname=? and isdelete=? limit ?";		
-				ps = conn.prepareStatement(sql);
-				
-				ps.setInt(1, next);
-				ps.setString(2, status);
-				ps.setString(3, nickname);
-				ps.setInt(4, 0);
-				ps.setInt(5, number);
-			}else if(status!=null && phone_number!=null){
-				sql = "SELECT * FROM wechat_case where id>? and status=? and phone_number=? and isdelete=? limit ?";		
-				ps = conn.prepareStatement(sql);
-				
-				ps.setInt(1, next);
-				ps.setString(2, status);
-				ps.setString(3, phone_number);
-				ps.setInt(4, 0);
-				ps.setInt(5, number);
-			}else if(nickname!=null && phone_number!=null){
-				sql = "SELECT * FROM wechat_case where id>? and nickname=?  and phone_number=? and isdelete=? limit ?";		
-				ps = conn.prepareStatement(sql);
-				
-				ps.setInt(1, next);
-				ps.setString(2, nickname);
-				ps.setString(3, phone_number);
-				ps.setInt(4, 0);
-				ps.setInt(5, number);
-			}else if(status!=null){
-				sql = "SELECT * FROM wechat_case where id>? and status=? and isdelete=? limit ?";		
-				ps = conn.prepareStatement(sql);
-				
-				ps.setInt(1, next);
-				ps.setString(2, status);
-				ps.setInt(3, 0);
-				ps.setInt(4, number);
-			}else if(nickname!=null){
-				sql = "SELECT * FROM wechat_case where id>? and nickname=? and isdelete=? limit ?";		
-				ps = conn.prepareStatement(sql);
-				
-				ps.setInt(1, next);
-				ps.setString(2, nickname);
-				ps.setInt(3, 0);
-				ps.setInt(4, number);
-			}else if(phone_number!=null){
-				sql = "SELECT * FROM wechat_case where id>? and phone_number=? and isdelete=? limit ?";		
-				ps = conn.prepareStatement(sql);
-				
-				ps.setInt(1, next);
-				ps.setString(2, phone_number);
-				ps.setInt(3, 0);
-				ps.setInt(4, number);
-			}else{
-				sql = "SELECT * FROM wechat_case where id>? and isdelete=? limit ?";		
-				ps = conn.prepareStatement(sql);
-				
-				ps.setInt(1, next);
-				ps.setInt(2, 0);
-				ps.setInt(3, number);
+		long start = index * number;
+		if(status!=null && nickname!=null && phone_number!=null){
+			String sql = "SELECT count(*) FROM wechat_case where status=? and nickname=? and phone_number=? and isdelete=?";
+			long count = DbProviderFaceory.createDbProvider().selectCount(sql, status,nickname,phone_number,0);
+			if(count==-1){
+				return null;
 			}
-			
-			
-			rs = ps.executeQuery();
-			List<Object> results = DbProviderFaceory.createDbProvider().getResult(sql, Case.class, rs);
+			sql = "SELECT * FROM wechat_case where status=? and nickname=? and phone_number=? and isdelete=? limit ?,?";		
+			List<Object> results = DbProviderFaceory.createDbProvider().selectArray(sql, Case.class, status,nickname,phone_number,0,start,number);
 			List<Case> cases     = new ArrayList<Case>();
 			if(results!=null){
 				for(Object obj : results){
 					cases.add((Case)obj);
 				}
 			}
-			return cases;
-		} catch (Exception e) {
-			try {
-				logger.info("Exception and rollback.");
-				if (conn != null)
-					conn.rollback();
-			} catch (SQLException e1) {
-				// TODO Auto-generated catch block
-				logger.error("", e1);
+			return new SearchResponse(count, cases);
+		}else if(status!=null && nickname!=null){
+			String sql = "SELECT count(*) FROM wechat_case where status=? and nickname=? and isdelete=?";
+			long count = DbProviderFaceory.createDbProvider().selectCount(sql, status,nickname,0);
+			if(count==-1){
+				return null;
 			}
-			logger.error("", e);
-		} finally {
-			ConnectionManager.release(conn, ps, rs);
+			sql = "SELECT * FROM wechat_case where status=? and nickname=? and isdelete=? limit ?,?";		
+			List<Object> results = DbProviderFaceory.createDbProvider().selectArray(sql, Case.class, status,nickname,0,start,number);
+			List<Case> cases     = new ArrayList<Case>();
+			if(results!=null){
+				for(Object obj : results){
+					cases.add((Case)obj);
+				}
+			}
+			return new SearchResponse(count, cases);
+		}else if(status!=null && phone_number!=null){
+			String sql = "SELECT count(*) FROM wechat_case where status=? and phone_number=? and isdelete=?";
+			long count = DbProviderFaceory.createDbProvider().selectCount(sql, status,phone_number,0);
+			if(count==-1){
+				return null;
+			}
+			sql = "SELECT * FROM wechat_case where status=? and phone_number=? and isdelete=? limit ?,?";		
+			List<Object> results = DbProviderFaceory.createDbProvider().selectArray(sql, Case.class, status,phone_number,0,start,number);
+			List<Case> cases     = new ArrayList<Case>();
+			if(results!=null){
+				for(Object obj : results){
+					cases.add((Case)obj);
+				}
+			}
+			return new SearchResponse(count, cases);
+		}else if(nickname!=null && phone_number!=null){
+			String sql = "SELECT count(*) FROM wechat_case where nickname=? and phone_number=? and isdelete=?";
+			long count = DbProviderFaceory.createDbProvider().selectCount(sql,nickname,phone_number,0);
+			if(count==-1){
+				return null;
+			}
+			sql = "SELECT * FROM wechat_case where nickname=? and phone_number=? and isdelete=? limit ?,?";		
+			List<Object> results = DbProviderFaceory.createDbProvider().selectArray(sql, Case.class,nickname,phone_number,0,start,number);
+			List<Case> cases     = new ArrayList<Case>();
+			if(results!=null){
+				for(Object obj : results){
+					cases.add((Case)obj);
+				}
+			}
+			return new SearchResponse(count, cases);
+		}else if(status!=null){
+			String sql = "SELECT count(*) FROM wechat_case where status=? and isdelete=?";
+			long count = DbProviderFaceory.createDbProvider().selectCount(sql, status,0);
+			if(count==-1){
+				return null;
+			}
+			sql = "SELECT * FROM wechat_case where status=? and isdelete=? limit ?,?";		
+			List<Object> results = DbProviderFaceory.createDbProvider().selectArray(sql, Case.class, status,0,start,number);
+			List<Case> cases     = new ArrayList<Case>();
+			if(results!=null){
+				for(Object obj : results){
+					cases.add((Case)obj);
+				}
+			}
+			return new SearchResponse(count, cases);
+		}else if(nickname!=null){
+			String sql = "SELECT count(*) FROM wechat_case where nickname=? and isdelete=?";
+			long count = DbProviderFaceory.createDbProvider().selectCount(sql,nickname,0);
+			if(count==-1){
+				return null;
+			}
+			sql = "SELECT * FROM wechat_case where nickname=? and isdelete=? limit ?,?";		
+			List<Object> results = DbProviderFaceory.createDbProvider().selectArray(sql, Case.class,nickname,0,start,number);
+			List<Case> cases     = new ArrayList<Case>();
+			if(results!=null){
+				for(Object obj : results){
+					cases.add((Case)obj);
+				}
+			}
+			return new SearchResponse(count, cases);
+		}else if(phone_number!=null){
+			String sql = "SELECT count(*) FROM wechat_case where phone_number=? and isdelete=?";
+			long count = DbProviderFaceory.createDbProvider().selectCount(sql,phone_number,0);
+			if(count==-1){
+				return null;
+			}
+			sql = "SELECT * FROM wechat_case where phone_number=? and isdelete=? limit ?,?";		
+			List<Object> results = DbProviderFaceory.createDbProvider().selectArray(sql, Case.class,phone_number,0,start,number);
+			List<Case> cases     = new ArrayList<Case>();
+			if(results!=null){
+				for(Object obj : results){
+					cases.add((Case)obj);
+				}
+			}
+			return new SearchResponse(count, cases);
+		}else{
+			String sql = "SELECT count(*) FROM wechat_case where isdelete=?";
+			long count = DbProviderFaceory.createDbProvider().selectCount(sql,0);
+			if(count==-1){
+				return null;
+			}
+			sql = "SELECT * FROM wechat_case where isdelete=? limit ?,?";		
+			List<Object> results = DbProviderFaceory.createDbProvider().selectArray(sql, Case.class,0,start,number);
+			List<Case> cases     = new ArrayList<Case>();
+			if(results!=null){
+				for(Object obj : results){
+					cases.add((Case)obj);
+				}
+			}
+			return new SearchResponse(count, cases);
 		}
-		return null;
 	}
 }

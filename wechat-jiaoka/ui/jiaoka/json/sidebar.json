@@ -2,7 +2,29 @@
       {
         heading_id:'1',
         collapse_id:'2',
-        menu:'用户订单',
+        menu:'订单管理',
         view_url:'case.html'
+      },{
+        heading_id:'2',
+        collapse_id:'3',
+        menu:'用户管理',
+        view_url:'user.html'
+      },{
+        heading_id:'3',
+        collapse_id:'4',
+        menu:'系统管理',
+        second_menu:{
+          heading_id:'3',
+          collapse_id:'4',
+          menus:[
+              {
+                menu:'地址管理',
+                view_url:'sys/location.html'
+              },{
+                menu:'微信日志管理',
+                view_url:'sys/wechat_log.html'
+              }
+            ]
+        }
       }
 ]

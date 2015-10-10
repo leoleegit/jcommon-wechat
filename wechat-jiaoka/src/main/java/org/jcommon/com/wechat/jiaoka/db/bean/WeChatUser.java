@@ -25,6 +25,7 @@ public class WeChatUser extends org.jcommon.com.wechat.data.JsonObject{
 	private String unionid;
 	private String remark;
 	private String groupid;
+	private String phone_number;
 	
 	private Timestamp create_time;
 	
@@ -177,5 +178,13 @@ public class WeChatUser extends org.jcommon.com.wechat.data.JsonObject{
 
 	public int getIsdelete() {
 		return isdelete;
+	}
+
+	public void setPhone_number(String phone_number) {
+		this.phone_number = phone_number;
+	}
+
+	public String getPhone_number() {
+		return phone_number;
 	}
 }

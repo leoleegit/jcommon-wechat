@@ -1,0 +1,56 @@
+<script type="text/javascript">
+<!--
+	$( "#user-search-submit").on( "click", function(){
+		var nickname = $('#jiaoka-user-wechat').val();
+		var phone_number = $('#jiaoka-user-phone').val();
+		jiaoka_user_search(phone_number,nickname);
+		return false;
+	});
+//-->
+</script>
+
+<form class="form-inline">
+  <div class="form-group">
+    <label for="jiaoka-phone">联系电话:</label>
+    <input type="text" class="form-control" id="jiaoka-user-phone" placeholder="15919065160">
+  </div>
+  <div class="form-group">
+    <label for="jiaoka-wechat">微信称昵:</label>
+    <input type="text" class="form-control" id="jiaoka-user-wechat" placeholder="leolee">
+  </div>
+  <button class="btn btn-default" id="user-search-submit"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+</form>
+
+<nav class="page-nav" id="wechat-user-page-nav">
+  <ul class="pagination pagination-sm">
+    <li>
+      <a href="#" aria-label="Previous" class="hidden">
+        <span aria-hidden="flase" class="glyphicon glyphicon-menu-left"></span>
+      </a>
+    </li>
+    <li>
+      <a href="#" aria-label="Next" class="hidden">
+        <span aria-hidden="flase" class="glyphicon glyphicon-menu-right"></span>
+      </a>
+    </li>
+  </ul>
+</nav>
+<hr/>
+<table class="table table-condensed" id="user-data-table">
+   <thead>
+      <tr>
+        <th>#</th>
+        <th>头像</th>
+        <th>微信称昵</th>
+        <th>性别</th>
+        <th>城市</th>
+        <th>省份</th>
+        <th>联系人电话</th>
+        <th>备注</th>
+        <th>订阅时间</th>
+        <th>更新时间</th>
+        <td class="hidden">openid</td>
+        <td class="hidden">wechat_user_id</td>
+      </tr>
+   </thead>
+</table>

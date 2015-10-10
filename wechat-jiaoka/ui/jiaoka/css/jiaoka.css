@@ -19,10 +19,15 @@ body,button, input, select, textarea,h1 ,h2, h3, h4, h5, h6 { font-family: Micro
 }
 
 body{
-	background-color:#FEEDCF;
-	color:#6f5a40;
+
+	
 	height:100%;
     margin:0;
+}
+
+hr {
+	margin-bottom: 0px;
+	margin-top: 0px; 
 }
 
 html{

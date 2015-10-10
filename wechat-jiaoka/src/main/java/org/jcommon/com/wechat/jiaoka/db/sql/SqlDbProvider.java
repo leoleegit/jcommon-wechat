@@ -106,7 +106,112 @@ public class SqlDbProvider implements DbProvider {
 		}
 		return null;
 	}
+	
+	@Override
+	public long selectCount(String sql, Object ...args){
+		Connection conn = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		
+		try {
+			conn = ConnectionManager.instance().getConnection();
+			conn.setAutoCommit(false);
+			ps = conn.prepareStatement(sql);
+			for(int i=0;args!=null && i< args.length;i++){
+				Class<?> type = args[i].getClass();
+				
+				if (String.class == type) {
+	                String value = (String)args[i];
+	                ps.setString(i+1, value);
+	            } else if (Timestamp.class == type) {
+	            	Timestamp value = (Timestamp)args[i];
+	                ps.setTimestamp(i+1, value);
+	            } else if ((Integer.class == type) || (Integer.TYPE == type)) {
+	                int value = (Integer)args[i];
+	                ps.setInt(i+1, value);
+	            } else if ((Boolean.class == type) || (Boolean.TYPE == type)) {
+	                boolean value = (Boolean)args[i];
+	                ps.setBoolean(i+1, value);
+	            } else if ((Long.class == type) || (Long.TYPE == type)) {
+	                long value = (Long)args[i];
+	                ps.setLong(i+1, value);
+	            } else if ((Float.class == type) || (Float.TYPE == type)) {
+	                float value = (Float)args[i];
+	                ps.setFloat(i+1, value);
+	            }
+			}
+			rs = ps.executeQuery();
+			
+			if(rs.next()){
+                return rs.getInt(1); 
+            }
+		} catch (Exception e) {
+			try {
+				logger.info("Exception and rollback.");
+				if (conn != null)
+					conn.rollback();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				logger.error("", e1);
+			}
+			logger.error("", e);
+		} finally {
+			ConnectionManager.release(conn, ps, rs);
+		}
+		return -1;
+	}
 
+
+	public List<Object> selectArray(String sql, Class<?> clazz_, Object ...args){
+		Connection conn = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
+		try {
+			conn = ConnectionManager.instance().getConnection();
+			conn.setAutoCommit(false);
+			ps = conn.prepareStatement(sql);
+
+			for(int i=0; args!=null && i<args.length;i++){
+				Class<?> type = args[i].getClass();
+				
+				if (String.class == type) {
+	                String value = (String)args[i];
+	                ps.setString(i+1, value);
+	            } else if (Timestamp.class == type) {
+	            	Timestamp value = (Timestamp)args[i];
+	                ps.setTimestamp(i+1, value);
+	            } else if ((Integer.class == type) || (Integer.TYPE == type)) {
+	                int value = (Integer)args[i];
+	                ps.setInt(i+1, value);
+	            } else if ((Boolean.class == type) || (Boolean.TYPE == type)) {
+	                boolean value = (Boolean)args[i];
+	                ps.setBoolean(i+1, value);
+	            } else if ((Long.class == type) || (Long.TYPE == type)) {
+	                long value = (Long)args[i];
+	                ps.setLong(i+1, value);
+	            } else if ((Float.class == type) || (Float.TYPE == type)) {
+	                float value = (Float)args[i];
+	                ps.setFloat(i+1, value);
+	            }
+			}
+			rs = ps.executeQuery();
+			return getResult(sql, clazz_, rs);
+		} catch (Exception e) {
+			try {
+				logger.info("Exception and rollback.");
+				if (conn != null)
+					conn.rollback();
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				logger.error("", e1);
+			}
+			logger.error("", e);
+		} finally {
+			ConnectionManager.release(conn, ps, rs);
+		}
+		return null;
+	}
+	
 	@Override
 	public List<Object> selectArray(String sql, Class<?> clazz_, Object bean){
 		// TODO Auto-generated method stub
@@ -285,8 +390,13 @@ public class SqlDbProvider implements DbProvider {
 					}
 				}else{
 					str = str.trim();
-					if(!"".equals(str))
-						pars.add(str);
+					if(!"".equals(str)){
+						if(str.indexOf("=")>0){
+							String name = str.split("=")[0];
+							name        = name.indexOf(".")>0?name.substring(name.lastIndexOf(".")+1):name;
+							pars.add(name.trim());
+						}
+					}
 				}
 				str = sql.substring(sql.indexOf(" where ")+7);
 				if(str.indexOf(" ")>=0){

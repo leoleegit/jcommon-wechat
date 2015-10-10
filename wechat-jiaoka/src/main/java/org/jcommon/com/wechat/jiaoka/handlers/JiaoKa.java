@@ -13,6 +13,7 @@ import org.jcommon.com.wechat.data.Text;
 import org.jcommon.com.wechat.jiaoka.HandlerManager;
 import org.jcommon.com.wechat.jiaoka.db.bean.Case;
 import org.jcommon.com.wechat.jiaoka.db.dao.CaseDao;
+import org.jcommon.com.wechat.jiaoka.db.dao.WeChatUserDao;
 import org.jcommon.com.wechat.utils.EventType;
 import org.jcommon.com.wechat.utils.MsgType;
 
@@ -213,6 +214,7 @@ public class JiaoKa extends Robot implements RequestCallback{
 		org.jcommon.com.util.thread.ThreadManager.instance().execute(new Runnable(){
 			public void run(){
 				new CaseDao().insert(case_);
+				new WeChatUserDao().updatePhoneNumber(phone_number, manager.getName());
 			}
 		});
 		

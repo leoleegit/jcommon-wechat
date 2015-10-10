@@ -1,20 +1,13 @@
 package org.jcommon.com.wechat.jiaoka.db.dao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.jcommon.com.wechat.jiaoka.db.DbProviderFaceory;
+import org.jcommon.com.wechat.jiaoka.db.bean.SearchResponse;
 import org.jcommon.com.wechat.jiaoka.db.bean.WeChatUser;
-import org.jcommon.com.wechat.jiaoka.db.sql.ConnectionManager;
-import org.jcommon.com.wechat.jiaoka.db.sql.SqlDbProvider;
 
 public class WeChatUserDao {
-	private static Logger logger = Logger.getLogger(SqlDbProvider.class);
 	
 	public boolean insert(WeChatUser bean){
 		String sql = "insert into wechat_user (subscribe,openid,nickname,sex,language,city," +
@@ -33,6 +26,14 @@ public class WeChatUserDao {
 		return DbProviderFaceory.createDbProvider().insert(sql, bean);
 	}
 	
+	public boolean updatePhoneNumber(String phone_number,String openid){
+		String sql = "update wechat_user set phone_number=? where openid=?";
+		WeChatUser bean = new WeChatUser();
+		bean.setOpenid(openid);
+		bean.setPhone_number(phone_number);
+		return DbProviderFaceory.createDbProvider().insert(sql, bean);
+	}
+	
 	public WeChatUser searchUserByOpenid(String openid){
 		String sql = "select * from wechat_user where openid=? and isdelete=?";
 		WeChatUser bean = new WeChatUser();
@@ -43,47 +44,72 @@ public class WeChatUserDao {
 		return null;
 	}
 	
-	public List<WeChatUser> searchAllUser(int next, int number){
-		String sql = "select * from wechat_user where id>? and isdelete=? limit ?";
-		Connection conn = null;
-		PreparedStatement ps = null;
-		ResultSet rs = null;
-		
+	public SearchResponse searchAllUser(String phone_number, String nickname, int index, int number){
 		if(number==0)
 			number = 20;
 		
-		try {
-			conn = ConnectionManager.instance().getConnection();
-			conn.setAutoCommit(false);
-			ps = conn.prepareStatement(sql);
-			
-			ps.setInt(1, next);
-			ps.setInt(2, 0);
-			ps.setInt(3, number);
-			
-			rs = ps.executeQuery();
-			List<Object> results       = DbProviderFaceory.createDbProvider().getResult(sql, WeChatUser.class, rs);
-			List<WeChatUser> users     = new ArrayList<WeChatUser>();
+		long start = index * number;
+		if(phone_number!=null && nickname!=null){
+			String sql = "SELECT count(*) from wechat_user where nickname=? and phone_number=? and isdelete=?";
+			long count = DbProviderFaceory.createDbProvider().selectCount(sql,nickname,phone_number,0);
+			if(count==-1){
+				return null;
+			}
+			sql = "SELECT * from wechat_user where nickname=? and phone_number=? and isdelete=? limit ?,?";		
+			List<Object> results = DbProviderFaceory.createDbProvider().selectArray(sql, WeChatUser.class,nickname,phone_number,0,start,number);
+			List<WeChatUser> cases     = new ArrayList<WeChatUser>();
 			if(results!=null){
 				for(Object obj : results){
-					users.add((WeChatUser)obj);
+					cases.add((WeChatUser)obj);
 				}
 			}
-			return users;
-		} catch (Exception e) {
-			try {
-				logger.info("Exception and rollback.");
-				if (conn != null)
-					conn.rollback();
-			} catch (SQLException e1) {
-				// TODO Auto-generated catch block
-				logger.error("", e1);
+			return new SearchResponse(count, cases);	
+		}else if(phone_number!=null){
+			String sql = "SELECT count(*) from wechat_user where phone_number=? and isdelete=?";
+			long count = DbProviderFaceory.createDbProvider().selectCount(sql,phone_number,0);
+			if(count==-1){
+				return null;
 			}
-			logger.error("", e);
-		} finally {
-			ConnectionManager.release(conn, ps, rs);
+			sql = "SELECT * from wechat_user where phone_number=? and isdelete=? limit ?,?";		
+			List<Object> results = DbProviderFaceory.createDbProvider().selectArray(sql, WeChatUser.class,phone_number,0,start,number);
+			List<WeChatUser> cases     = new ArrayList<WeChatUser>();
+			if(results!=null){
+				for(Object obj : results){
+					cases.add((WeChatUser)obj);
+				}
+			}
+			return new SearchResponse(count, cases);
+		}else if(nickname!=null){
+			String sql = "SELECT count(*) from wechat_user where nickname=? and isdelete=?";
+			long count = DbProviderFaceory.createDbProvider().selectCount(sql,nickname,0);
+			if(count==-1){
+				return null;
+			}
+			sql = "SELECT * from wechat_user where nickname=? and isdelete=? limit ?,?";		
+			List<Object> results = DbProviderFaceory.createDbProvider().selectArray(sql, WeChatUser.class,nickname,0,start,number);
+			List<WeChatUser> cases     = new ArrayList<WeChatUser>();
+			if(results!=null){
+				for(Object obj : results){
+					cases.add((WeChatUser)obj);
+				}
+			}
+			return new SearchResponse(count, cases);
+		}else{
+			String sql = "SELECT count(*) from wechat_user where isdelete=?";
+			long count = DbProviderFaceory.createDbProvider().selectCount(sql,0);
+			if(count==-1){
+				return null;
+			}
+			sql = "SELECT * from wechat_user where isdelete=? limit ?,?";		
+			List<Object> results = DbProviderFaceory.createDbProvider().selectArray(sql, WeChatUser.class,0,start,number);
+			List<WeChatUser> cases     = new ArrayList<WeChatUser>();
+			if(results!=null){
+				for(Object obj : results){
+					cases.add((WeChatUser)obj);
+				}
+			}
+			return new SearchResponse(count, cases);
 		}
-		return null;
 	}
 	
 	public int searchUserIDByOpenid(String openid){

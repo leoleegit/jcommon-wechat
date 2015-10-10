@@ -5,13 +5,14 @@
 		var nickname = $('#jiaoka-wechat').val();
 		var phone_number = $('#jiaoka-phone').val();
 		jiaoka_case_search(status,phone_number,nickname);
+		return false;
 	});
 //-->
 </script>
 
 <form class="form-inline">
   <div class="form-group">
-  <label for="jiaoka-status">订单状态</label>
+  <label for="jiaoka-status">订单状态:</label>
     <select id="jiaoka-status" class="form-control">
       <option value="all">全部</option>
 	  <option value="open">打开</option>
@@ -21,15 +22,43 @@
 	</select>
   </div>
   <div class="form-group">
-    <label for="jiaoka-phone">联系电话</label>
+    <label for="jiaoka-phone">联系电话:</label>
     <input type="text" class="form-control" id="jiaoka-phone" placeholder="15919065160">
   </div>
   <div class="form-group">
-    <label for="jiaoka-wechat">微信称昵</label>
+    <label for="jiaoka-wechat">微信称昵:</label>
     <input type="text" class="form-control" id="jiaoka-wechat" placeholder="leolee">
   </div>
   <button class="btn btn-default" id="case-search-submit"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
 </form>
+
+<div class="row">
+  <div class="col-md-10">
+   <select id="jiaoka-status" class="page-nav form-control">
+      <option value="all">全部</option>
+	  <option value="open">打开</option>
+	  <option value="close">关闭</option>
+	  <option value="reopen">重开</option>
+	  <option value="following">跟进中</option>
+	 </select>
+  </div>
+  <div class="col-md-2">
+   <nav class="page-nav" id="wechat-case-page-nav">
+	  <ul class="pagination pagination-sm">
+	    <li>
+	      <a href="#" aria-label="Previous" class="hidden1">
+	        <span aria-hidden="flase" class="glyphicon glyphicon-menu-left"></span>
+	      </a>
+	    </li>
+	    <li>
+	      <a href="#" aria-label="Next" class="hidden1">
+	        <span aria-hidden="flase" class="glyphicon glyphicon-menu-right"></span>
+	      </a>
+	    </li>
+	  </ul>
+	</nav>
+ </div>
+</div>
 <hr/>
 <table class="table table-condensed" id="case-data-table">
    <thead>

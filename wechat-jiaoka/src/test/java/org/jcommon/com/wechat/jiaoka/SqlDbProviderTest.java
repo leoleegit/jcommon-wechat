@@ -2,9 +2,13 @@ package org.jcommon.com.wechat.jiaoka;
 
 import java.util.List;
 
+import org.jcommon.com.wechat.data.JsonObject;
+import org.jcommon.com.wechat.jiaoka.db.DbProviderFaceory;
 import org.jcommon.com.wechat.jiaoka.db.bean.Case;
+import org.jcommon.com.wechat.jiaoka.db.bean.SearchResponse;
 import org.jcommon.com.wechat.jiaoka.db.bean.WeChatUser;
 import org.jcommon.com.wechat.jiaoka.db.dao.CaseDao;
+import org.jcommon.com.wechat.jiaoka.db.dao.WeChatAuditLogDao;
 import org.jcommon.com.wechat.jiaoka.db.dao.WeChatUserDao;
 import org.jcommon.com.wechat.jiaoka.db.dao.WechatAgentDao;
 import org.jcommon.com.wechat.jiaoka.db.sql.SqlDbProvider;
@@ -29,17 +33,33 @@ public class SqlDbProviderTest {
 //		for(String s : SqlDbProvider.getParameters(sql))
 //			System.out.println(s);
 		
-		CaseDaoTest();
+		//CaseDaoTest();
+		//WeChatAuditLogDaoTest();
+		WeChatUserDaoTest();
+		//new WeChatUserDao().updatePhoneNumber("15919065160", "of-YetzJFYxGTltb4eCvgccHzHF0");
+		//System.out.println(DbProviderFaceory.createDbProvider().selectCount("SELECT * FROM wechat_case"));
 	}
 	
 	public static  void CaseDaoTest(){
-		List<Case> cases = new CaseDao().searchAllCase(null,"leolee 噢噢","15919065160", 0, 20);
-		for(Case c : cases)
+		SearchResponse cases = new CaseDao().searchCase(null,"leolee 噢噢","15919065160", 0, 20);
+		for(JsonObject c : cases.getDatas())
+			System.out.println(c.toJson());
+	}
+	
+	public static void WeChatAuditLogDaoTest(){
+		SearchResponse cases = new WeChatAuditLogDao().search(null,2, 30);
+		for(JsonObject c : cases.getDatas())
 			System.out.println(c.toJson());
 	}
 	
 	public static void WechatAgentDaoTest(){
 		System.out.println(new WechatAgentDao().searchAgentByOpenid("of-YetzJFYxGTltb4eCvgccHzHF0"));
+	}
+	
+	public static void WeChatUserDaoTest(){
+		SearchResponse cases = new WeChatUserDao().searchAllUser(null,"leolee 噢噢", 0, 20);
+		for(JsonObject c : cases.getDatas())
+			System.out.println(c.toJson());
 	}
 
 }

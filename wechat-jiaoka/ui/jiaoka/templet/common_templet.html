@@ -18,6 +18,34 @@
    </tr>
 </tbody>
 
+<tbody name="users-table">
+   <tr group="datas">
+       <th scope="row">{{number}}</th>
+       <td><img src="{{headimgurl}}" width="50" height="50" /></td>
+       <td>{{nickname}}</td>
+       <td>{{sex}}</td>
+       <td>{{city}}</td>
+       <td>{{province}}</td>
+       <td>{{phone_number}}</td>
+       <td>{{remark}}</td>
+       <td>{{subscribe_time}}</td>
+       <td>{{create_time}}</td>
+       <td class="hidden">{{openid}}</td>
+       <td class="hidden">{{wechat_user_id}}</td>
+   </tr>
+</tbody>
+
+<tbody name="wechat-log-table-data">
+   <tr group="datas">
+      <th scope="row">{{number}}</th>
+      <td>{{id}}</td>
+      <td>{{openid}}</td>
+      <td>{{type}}</td>
+      <td>{{logstr}}</td>
+      <td>{{create_time}}</td>
+   </tr>
+</tbody>
+
 <nav name="case-page">
   <ul class="pagination">
     <li>
@@ -25,11 +53,6 @@
         <span aria-hidden="true">&laquo;</span>
       </a>
     </li>
-    <li><a href="#">1</a></li>
-    <li><a href="#">2</a></li>
-    <li><a href="#">3</a></li>
-    <li><a href="#">4</a></li>
-    <li><a href="#">5</a></li>
     <li>
       <a href="#" aria-label="Next">
         <span aria-hidden="true">&raquo;</span>

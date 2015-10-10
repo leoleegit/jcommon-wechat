@@ -1,0 +1,73 @@
+<script type="text/javascript">
+<!--
+	jiaoka.wechat_log={};
+	jiaoka.wechat_log.page_index=0;
+	jiaoka.wechat_log.page_num = 20;
+	jiaoka.wechat_log.data_num = 0;
+	$( "#wechat-log-search-submit").on( "click", function(){
+		var nickname = $('#wechat-log-wechat').val();
+		jiaoka_wechat_log_search(nickname,jiaoka.wechat_log.page_index,jiaoka.wechat_log.page_num);
+		return false;
+	});
+	$( "#wechat-log-page-nav a").on( "click", function(){
+		if($(this).attr('aria-label')=='Previous'){
+			jiaoka.wechat_log.page_index = jiaoka.wechat_log.page_index-1;
+		}else{
+			jiaoka.wechat_log.page_index = jiaoka.wechat_log.page_index+1;
+		}
+		var nickname = $('#wechat-log-wechat').val();
+		jiaoka_wechat_log_search(nickname,jiaoka.wechat_log.page_index,jiaoka.wechat_log.page_num);
+		return false;
+	});
+	jiaoka.wechat_log.show_page_nav = function(){
+		if((jiaoka.wechat_log.page_index+1) * jiaoka.wechat_log.page_num < jiaoka.wechat_log.data_num){
+			$("#wechat-log-page-nav a:last").removeClass('hidden');
+		}else{
+			$("#wechat-log-page-nav a:last").addClass('hidden');
+		}
+		if(jiaoka.wechat_log.page_index>0){
+			$("#wechat-log-page-nav a:first").removeClass('hidden');
+		}else{
+			$("#wechat-log-page-nav a:first").addClass('hidden');
+		}
+	}
+//-->
+</script>
+
+<form class="form-inline">
+  <div class="form-group">
+    <label for="jiaoka-wechat">Openid:</label>
+    <input type="text" class="form-control" id="wechat-log-wechat" placeholder="leolee">
+  </div>
+  <button class="btn btn-default" id="wechat-log-search-submit"><span class="glyphicon glyphicon-search" aria-hidden="true"></span></button>
+</form>
+
+<nav class="page-nav" id="wechat-log-page-nav">
+  <ul class="pagination pagination-sm">
+    <li>
+      <a href="#" aria-label="Previous" class="hidden">
+        <span aria-hidden="flase" class="glyphicon glyphicon-menu-left"></span>
+      </a>
+    </li>
+    <li>
+      <a href="#" aria-label="Next" class="hidden">
+        <span aria-hidden="flase" class="glyphicon glyphicon-menu-right"></span>
+      </a>
+    </li>
+  </ul>
+</nav>
+<hr/>
+
+<table class="table table-condensed" id="wechat-log-table">
+   <thead>
+      <tr>
+        <th>#</th>
+        <th>id</th>
+        <th>openid</th>
+        <th>type</th>
+        <th>logs</th>
+        <th>create_time</th>
+      </tr>
+   </thead>
+</table>
+
