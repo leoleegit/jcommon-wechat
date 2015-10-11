@@ -167,6 +167,11 @@
 			}
 
 			var load = function(url,id,fun){
+				    if(url.indexOf('?')!=-1){
+				    	url = url + "&random="+Math.random();
+				    }else{
+				    	url = url + "?random="+Math.random();
+				    }
 					var div = cc.tool.createElement('div',{'id':id,'class':'cc-contect-body'});
 					$("#"+contect_id)[0].appendChild(div);
 					$(div).load(url,fun);

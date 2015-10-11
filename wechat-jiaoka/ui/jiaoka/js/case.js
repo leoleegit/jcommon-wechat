@@ -7,7 +7,7 @@ function jiaoka_wechat_log_search(openid,next,number){
 			'next':next,
 			'number':number
 	}
-	$.get('http://127.0.0.1:8080/wechat-jiaoka/service/auditlog/wechat/search',option,function(msg,statusTxt,xhr){
+	$.get('http://127.0.0.1:80/wechat-jiaoka/service/auditlog/wechat/search',option,function(msg,statusTxt,xhr){
 		if(statusTxt=="success"){
 			if(msg){
 				if(msg.startWith('{'))
@@ -47,7 +47,7 @@ function jiaoka_user_search(phone_number,nickname,next,number){
 			'next':next,
 			'number':number
 	}
-	$.get('http://127.0.0.1:8080/wechat-jiaoka/service/user/search',option,function(msg,statusTxt,xhr){
+	$.get('http://127.0.0.1:80/wechat-jiaoka/service/user/search',option,function(msg,statusTxt,xhr){
 		if(statusTxt=="success"){
 			if(msg){
 				if(msg.startWith('{'))
@@ -87,7 +87,7 @@ function jiaoka_case_search(status,phone_number,nickname,next,number){
 			'next':next,
 			'number':number
 	}
-	$.get('http://127.0.0.1:8080/wechat-jiaoka/service/case/search',option,function(msg,statusTxt,xhr){
+	$.get('http://127.0.0.1:80/wechat-jiaoka/service/case/search',option,function(msg,statusTxt,xhr){
 		if(statusTxt=="success"){
 			if(msg){
 				if(msg.startWith('{'))
