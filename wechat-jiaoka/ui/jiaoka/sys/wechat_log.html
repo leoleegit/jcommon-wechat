@@ -6,17 +6,17 @@
 	jiaoka.wechat_log.data_num = 0;
 	$( "#wechat-log-search-submit").on( "click", function(){
 		var nickname = $('#wechat-log-wechat').val();
-		jiaoka_wechat_log_search(nickname,jiaoka.wechat_log.page_index,jiaoka.wechat_log.page_num);
+		jiaoka.wechat_log.search(nickname);
 		return false;
 	});
-	$( "#wechat-log-page-nav a").on( "click", function(){
-		if($(this).attr('aria-label')=='Previous'){
+	$( "#wechat-log-page-nav button").on( "click", function(){
+		if($(this).hasClass('glyphicon-menu-left')){
 			jiaoka.wechat_log.page_index = jiaoka.wechat_log.page_index-1;
 		}else{
 			jiaoka.wechat_log.page_index = jiaoka.wechat_log.page_index+1;
 		}
 		var nickname = $('#wechat-log-wechat').val();
-		jiaoka_wechat_log_search(nickname,jiaoka.wechat_log.page_index,jiaoka.wechat_log.page_num);
+		jiaoka.wechat_log.search(nickname);
 		return false;
 	});
 	$( "#wechat-log-page-index-nav a").on( "click", function(){
@@ -25,15 +25,32 @@
 	});
 	jiaoka.wechat_log.show_page_nav = function(){
 		if((jiaoka.wechat_log.page_index+1) * jiaoka.wechat_log.page_num < jiaoka.wechat_log.data_num){
-			$("#wechat-log-page-nav a:last").removeClass('hidden');
+			$("#wechat-log-page-nav button:last").removeClass('invisible');
 		}else{
-			$("#wechat-log-page-nav a:last").addClass('hidden');
+			$("#wechat-log-page-nav button:last").addClass('invisible');
 		}
 		if(jiaoka.wechat_log.page_index>0){
-			$("#wechat-log-page-nav a:first").removeClass('hidden');
+			$("#wechat-log-page-nav button:first").removeClass('invisible');
 		}else{
-			$("#wechat-log-page-nav a:first").addClass('hidden');
+			$("#wechat-log-page-nav button:first").addClass('invisible');
 		}
+		$("#wechat-log-table tbody input").on('click', function(){
+			//$("#wechat-log-table thead input").attr("checked",'true');
+			$("#wechat-log-table thead input").removeClass('hidden');
+		})
+		$("#wechat-log-table thead input").on('click', function(){
+			if($(this).attr("checked")=='checked'){
+				$("#wechat-log-table input").removeAttr("checked");
+				alert('2');
+			}
+			else{
+				alert('1');
+				$("#wechat-log-table input").attr("checked",'true');
+			}
+		})
+	};
+	jiaoka.wechat_log.search = function(nickname){
+		jiaoka_wechat_log_search(nickname,jiaoka.wechat_log.page_index,jiaoka.wechat_log.page_num);
 	}
 //-->
 </script>
@@ -48,30 +65,30 @@
 
 <div class="row page-row">
   <div class="col-xs-6">
-  <nav id="wechat-log-page-index-nav">
-	  <ul class="pagination pagination-sm">
-	      <li><a href="#">20</a></li>
-   	      <li><a href="#">50</a></li>
-          <li><a href="#">100</a></li>
-          <li><a href="#">200</a></li>
-	  </ul>
-	</nav>
+	<div class="btn-group">
+         <button type="button" data-toggle="dropdown" class="btn btn-default glyphicon glyphicon-menu-hamburger" data-target="#">
+         </button>
+         <ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
+             <li class="dropdown-submenu">
+                 <a tabindex="-1" href="#">页面设置</a>
+                 <ul id="wechat-log-page-index-nav" class="dropdown-menu">
+                     <li><a tabindex="-1" href="#">20</a></li>
+                     <li><a tabindex="-1" href="#">50</a></li>
+                     <li><a tabindex="-1" href="#">100</a></li>
+                     <li><a tabindex="-1" href="#">200</a></li>
+                 </ul>
+             </li>
+         </ul>
+         <button type="button" class="btn btn-default glyphicon glyphicon-export" 
+         	title="导出excel">
+         </button>
+     </div>
   </div>
   <div class="col-xs-6">
-  <nav class="page-nav" id="wechat-log-page-nav">
-	  <ul class="pagination pagination-sm">
-	    <li>
-	      <a href="#" aria-label="Previous" class="hidden">
-	        <span aria-hidden="flase" class="glyphicon glyphicon-menu-left"></span>
-	      </a>
-	    </li>
-	    <li>
-	      <a href="#" aria-label="Next" class="hidden">
-	        <span aria-hidden="flase" class="glyphicon glyphicon-menu-right"></span>
-	      </a>
-	    </li>
-	  </ul>
-	</nav>
+	  <div id="wechat-log-page-nav" class="btn-group page-nav" role="group" aria-label="...">
+		  <button type="button" title="上一页" class="btn btn-default glyphicon glyphicon-menu-left invisible"></button>
+		  <button type="button" title="下一页" class="btn btn-default glyphicon glyphicon-menu-right invisible"></button>
+	  </div>
  </div>
 </div>
 
@@ -80,7 +97,7 @@
 <table class="table table-condensed" id="wechat-log-table">
    <thead>
       <tr>
-        <th>#</th>
+        <th><input type="checkbox" class="hidden"></th>
         <th>id</th>
         <th>openid</th>
         <th>type</th>
