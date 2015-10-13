@@ -23,6 +23,9 @@
 		jiaoka.wechat_log.page_num = parseInt($(this).html());
 		return false;
 	});
+	$( "#wechat-log-export").on( "click", function(){
+		jiaoka.export_excel('name',$("#wechat-log-table thead tr"),$("#wechat-log-table tbody tr"));
+	});
 	jiaoka.wechat_log.show_page_nav = function(){
 		if((jiaoka.wechat_log.page_index+1) * jiaoka.wechat_log.page_num < jiaoka.wechat_log.data_num){
 			$("#wechat-log-page-nav button:last").removeClass('invisible');
@@ -50,7 +53,7 @@
 		})
 	};
 	jiaoka.wechat_log.search = function(nickname){
-		jiaoka_wechat_log_search(nickname,jiaoka.wechat_log.page_index,jiaoka.wechat_log.page_num);
+		jiaoka.wechat_log_search(nickname,jiaoka.wechat_log.page_index,jiaoka.wechat_log.page_num);
 	}
 //-->
 </script>
@@ -79,7 +82,7 @@
                  </ul>
              </li>
          </ul>
-         <button type="button" class="btn btn-default glyphicon glyphicon-export" 
+         <button id="wechat-log-export" type="button" class="btn btn-default glyphicon glyphicon-export" 
          	title="导出excel">
          </button>
      </div>

@@ -1,6 +1,6 @@
 var jiaoka={};
 jiaoka.conf={};
-jiaoka.conf.serice="http://192.168.2.104:8080";
+jiaoka.conf.serice="http://192.168.3.102:80";
 $(document).ready(function(){
 	jiaoka.ui = new cc.ui();
 	jiaoka.ui.templet_.load(new Array('sidebar_menu.html','tabs_menu.html','common_templet.html'),

@@ -10,7 +10,7 @@ import java.util.List;
 import jxl.write.WriteException;
 
 import org.jcommon.com.wechat.jiaoka.db.bean.Case;
-import org.jcommon.com.wechat.jiaoka.service.Export;
+import org.jcommon.com.wechat.jiaoka.service.ExportService;
 import org.jcommon.com.wechat.jiaoka.service.excel.Excel;
 import org.json.JSONException;
 
@@ -26,7 +26,7 @@ public class ExportTest {
 	public static void main(String[] args) throws WriteException, FileNotFoundException, IOException, JSONException {
 		// TODO Auto-generated method stub
 		File file = new File(System.getProperty("user.dir"),"test.xls");
-		Export ex = new Export();
+		ExportService ex = new ExportService();
 		
 		String name = "testname";
 		Case title  = new Case();

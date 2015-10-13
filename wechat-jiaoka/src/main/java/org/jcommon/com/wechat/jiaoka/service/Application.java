@@ -10,6 +10,7 @@ public class Application extends javax.ws.rs.core.Application {
         classes.add(CaseService.class);
         classes.add(UserService.class);
         classes.add(AuditLogService.class);
+        classes.add(ExportService.class);
 		return classes;
 	  }
 }

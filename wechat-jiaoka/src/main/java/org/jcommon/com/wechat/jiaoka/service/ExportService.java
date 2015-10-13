@@ -2,15 +2,19 @@ package org.jcommon.com.wechat.jiaoka.service;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.Iterator;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.GET;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 
 import jxl.Workbook;
 import jxl.write.Label;
@@ -26,17 +30,17 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 @Path("export")
-public class Export extends Service{
+public class ExportService extends Service{
 	
-	@GET 
+	@POST 
 	@Path("excel")
 	@Produces("text/plain;charset=UTF-8")  
-	public String exportExcel(@Context HttpServletRequest request, @Context HttpServletResponse response){
+	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+	public String exportExcel(InputStream is, @Context HttpServletResponse response){
 		try {
-			request.setCharacterEncoding("utf-8");
 			response.setCharacterEncoding("UTF-8");
 		    StringBuilder xml = new StringBuilder();
-		    BufferedReader reader = request.getReader();
+		    BufferedReader reader = new BufferedReader(new InputStreamReader(is));
 		    String line;
 		    while ((line = reader.readLine()) != null) {
 		        xml.append(line);
