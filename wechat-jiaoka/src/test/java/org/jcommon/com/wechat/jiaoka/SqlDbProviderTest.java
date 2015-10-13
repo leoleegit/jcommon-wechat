@@ -35,13 +35,19 @@ public class SqlDbProviderTest {
 		
 		//CaseDaoTest();
 		//WeChatAuditLogDaoTest();
-		WeChatUserDaoTest();
+		//WeChatUserDaoTest();
 		//new WeChatUserDao().updatePhoneNumber("15919065160", "of-YetzJFYxGTltb4eCvgccHzHF0");
 		//System.out.println(DbProviderFaceory.createDbProvider().selectCount("SELECT * FROM wechat_case"));
+		
+		int i=0,j=0;
+		i++;
+		++j;
+		System.out.println(i);
+		System.out.println(j);
 	}
 	
 	public static  void CaseDaoTest(){
-		SearchResponse cases = new CaseDao().searchCase(null,"leolee 噢噢","15919065160", 0, 20);
+		SearchResponse cases = new CaseDao().searchCase(null,null,"15919065", 0, 20);
 		for(JsonObject c : cases.getDatas())
 			System.out.println(c.toJson());
 	}

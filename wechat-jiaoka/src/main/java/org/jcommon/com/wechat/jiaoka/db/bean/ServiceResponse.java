@@ -22,6 +22,11 @@ public class ServiceResponse extends org.jcommon.com.wechat.data.JsonObject{
 		setCode(FAIL);
 	}
 	
+	public ServiceResponse(int code, String error){
+		this.error = error;
+		setCode(code);
+	}
+	
 	public ServiceResponse(SearchResponse resp){
 		this.datas = resp.getDatas();
 		this.count = resp.getCount();

@@ -31,126 +31,42 @@ public class CaseDao {
 			number = 20;
 		
 		long start = index * number;
-		if(status!=null && nickname!=null && phone_number!=null){
-			String sql = "SELECT count(*) FROM wechat_case where status=? and nickname=? and phone_number=? and isdelete=?";
-			long count = DbProviderFaceory.createDbProvider().selectCount(sql, status,nickname,phone_number,0);
-			if(count==-1){
-				return null;
-			}
-			sql = "SELECT * FROM wechat_case where status=? and nickname=? and phone_number=? and isdelete=? limit ?,?";		
-			List<Object> results = DbProviderFaceory.createDbProvider().selectArray(sql, Case.class, status,nickname,phone_number,0,start,number);
-			List<Case> cases     = new ArrayList<Case>();
-			if(results!=null){
-				for(Object obj : results){
-					cases.add((Case)obj);
-				}
-			}
-			return new SearchResponse(count, cases);
-		}else if(status!=null && nickname!=null){
-			String sql = "SELECT count(*) FROM wechat_case where status=? and nickname=? and isdelete=?";
-			long count = DbProviderFaceory.createDbProvider().selectCount(sql, status,nickname,0);
-			if(count==-1){
-				return null;
-			}
-			sql = "SELECT * FROM wechat_case where status=? and nickname=? and isdelete=? limit ?,?";		
-			List<Object> results = DbProviderFaceory.createDbProvider().selectArray(sql, Case.class, status,nickname,0,start,number);
-			List<Case> cases     = new ArrayList<Case>();
-			if(results!=null){
-				for(Object obj : results){
-					cases.add((Case)obj);
-				}
-			}
-			return new SearchResponse(count, cases);
-		}else if(status!=null && phone_number!=null){
-			String sql = "SELECT count(*) FROM wechat_case where status=? and phone_number=? and isdelete=?";
-			long count = DbProviderFaceory.createDbProvider().selectCount(sql, status,phone_number,0);
-			if(count==-1){
-				return null;
-			}
-			sql = "SELECT * FROM wechat_case where status=? and phone_number=? and isdelete=? limit ?,?";		
-			List<Object> results = DbProviderFaceory.createDbProvider().selectArray(sql, Case.class, status,phone_number,0,start,number);
-			List<Case> cases     = new ArrayList<Case>();
-			if(results!=null){
-				for(Object obj : results){
-					cases.add((Case)obj);
-				}
-			}
-			return new SearchResponse(count, cases);
-		}else if(nickname!=null && phone_number!=null){
-			String sql = "SELECT count(*) FROM wechat_case where nickname=? and phone_number=? and isdelete=?";
-			long count = DbProviderFaceory.createDbProvider().selectCount(sql,nickname,phone_number,0);
-			if(count==-1){
-				return null;
-			}
-			sql = "SELECT * FROM wechat_case where nickname=? and phone_number=? and isdelete=? limit ?,?";		
-			List<Object> results = DbProviderFaceory.createDbProvider().selectArray(sql, Case.class,nickname,phone_number,0,start,number);
-			List<Case> cases     = new ArrayList<Case>();
-			if(results!=null){
-				for(Object obj : results){
-					cases.add((Case)obj);
-				}
-			}
-			return new SearchResponse(count, cases);
-		}else if(status!=null){
-			String sql = "SELECT count(*) FROM wechat_case where status=? and isdelete=?";
-			long count = DbProviderFaceory.createDbProvider().selectCount(sql, status,0);
-			if(count==-1){
-				return null;
-			}
-			sql = "SELECT * FROM wechat_case where status=? and isdelete=? limit ?,?";		
-			List<Object> results = DbProviderFaceory.createDbProvider().selectArray(sql, Case.class, status,0,start,number);
-			List<Case> cases     = new ArrayList<Case>();
-			if(results!=null){
-				for(Object obj : results){
-					cases.add((Case)obj);
-				}
-			}
-			return new SearchResponse(count, cases);
-		}else if(nickname!=null){
-			String sql = "SELECT count(*) FROM wechat_case where nickname=? and isdelete=?";
-			long count = DbProviderFaceory.createDbProvider().selectCount(sql,nickname,0);
-			if(count==-1){
-				return null;
-			}
-			sql = "SELECT * FROM wechat_case where nickname=? and isdelete=? limit ?,?";		
-			List<Object> results = DbProviderFaceory.createDbProvider().selectArray(sql, Case.class,nickname,0,start,number);
-			List<Case> cases     = new ArrayList<Case>();
-			if(results!=null){
-				for(Object obj : results){
-					cases.add((Case)obj);
-				}
-			}
-			return new SearchResponse(count, cases);
-		}else if(phone_number!=null){
-			String sql = "SELECT count(*) FROM wechat_case where phone_number=? and isdelete=?";
-			long count = DbProviderFaceory.createDbProvider().selectCount(sql,phone_number,0);
-			if(count==-1){
-				return null;
-			}
-			sql = "SELECT * FROM wechat_case where phone_number=? and isdelete=? limit ?,?";		
-			List<Object> results = DbProviderFaceory.createDbProvider().selectArray(sql, Case.class,phone_number,0,start,number);
-			List<Case> cases     = new ArrayList<Case>();
-			if(results!=null){
-				for(Object obj : results){
-					cases.add((Case)obj);
-				}
-			}
-			return new SearchResponse(count, cases);
-		}else{
-			String sql = "SELECT count(*) FROM wechat_case where isdelete=?";
-			long count = DbProviderFaceory.createDbProvider().selectCount(sql,0);
-			if(count==-1){
-				return null;
-			}
-			sql = "SELECT * FROM wechat_case where isdelete=? limit ?,?";		
-			List<Object> results = DbProviderFaceory.createDbProvider().selectArray(sql, Case.class,0,start,number);
-			List<Case> cases     = new ArrayList<Case>();
-			if(results!=null){
-				for(Object obj : results){
-					cases.add((Case)obj);
-				}
-			}
-			return new SearchResponse(count, cases);
+		StringBuilder sql  = new StringBuilder("FROM wechat_case where 1=1");
+		List<Object>   pars = new ArrayList<Object>();
+		
+		if(status!=null){
+			sql.append(" and status=?");
+			pars.add(status);
 		}
+		if(nickname!=null){
+			sql.append(" and nickname like ?");
+			pars.add("%"+nickname+"%");
+		}
+		if(phone_number!=null){
+			sql.append(" and phone_number like ?");
+			pars.add("%"+phone_number+"%");
+		}
+		sql.append(" and isdelete=?");
+		pars.add(0);
+		
+		String sql_count = "SELECT count(*) "+sql.toString();
+	    long count = DbProviderFaceory.createDbProvider().selectCount(sql_count, pars.toArray());
+		if(count==-1){
+			return null;
+		}
+		
+		sql.append("  limit ?,?");
+		pars.add(start);
+		pars.add(number);
+		
+		String sql_result = "SELECT * "+sql.toString();
+		List<Object> results = DbProviderFaceory.createDbProvider().selectArray(sql_result, Case.class, pars.toArray());
+		List<Case> cases     = new ArrayList<Case>();
+		if(results!=null){
+			for(Object obj : results){
+				cases.add((Case)obj);
+			}
+		}
+		return new SearchResponse(count, cases);
 	}
 }
