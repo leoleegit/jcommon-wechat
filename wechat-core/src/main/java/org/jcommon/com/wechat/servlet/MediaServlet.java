@@ -165,6 +165,15 @@ public class MediaServlet extends HttpServlet {
 			  errormsg = "file not found";
 		  }else{
 			  try{
+				    String user_agent = request.getHeader("User-Agent");
+				    if(user_agent.toLowerCase().indexOf("msie")!=-1){
+						file_name = org.jcommon.com.util.CoderUtils.encode(file_name); 
+					}
+					else{
+						file_name = file_name.replaceAll(" ", "");
+						file_name = new String(file_name.getBytes("utf-8"),"iso-8859-1");
+					}
+		            logger.info(file_name);
 					response.reset();  
 					response.setContentType( content_type ); 
 		            response.addHeader( "Content-Disposition" ,  "attachment;filename=\""   +   file_name+"\"");  
