@@ -1,16 +1,4 @@
 
-jiaoka.excelObj = {
-		name:'',
-		title:{
-			
-		},
-		data:[
-		      {
-		    	  
-		      }
-		]	
-}
-
 jiaoka.export_excel = function(name,$tr_title,$tr){
 	var title = {};
 	if($tr_title && $tr_title.length>0){
@@ -56,9 +44,10 @@ jiaoka.export_excel = function(name,$tr_title,$tr){
 	}
 	var excelObj = {};
 	excelObj.name  = name;
-	excelObj.title = encodeURIComponent(cc.tool.json_to_str(title));
-	excelObj.data  = encodeURIComponent(cc.tool.json_to_str(datas));
-	$.post(jiaoka.conf.serice+'/wechat-jiaoka/service/export/excel',cc.tool.json_to_str(excelObj),function(msg,statusTxt,xhr){
+	excelObj.title = title;
+	excelObj.data  = datas;
+	var json       = new cc.tool.json(excelObj).toString();
+	$.post(jiaoka.conf.serice+'/wechat-jiaoka/service/export/excel',json,function(msg,statusTxt,xhr){
 		if(statusTxt=="success"){
 			if(msg){
 				if(msg.startWith('{'))
@@ -66,7 +55,11 @@ jiaoka.export_excel = function(name,$tr_title,$tr){
 				else if(msg.startWith('['))
 					json = eval(msg);
 				if(json.code==0){
-					jiao.ui.alert_.info("下载完毕");
+					jiaoka.ui.alert_.succ("开始下载","导出日志");
+					if(json.data){
+						var url = jiaoka.conf.serice+'/wechat-jiaoka/media'+json.data.url;
+						cc.tool.downloadURL(url);
+					}
 				}else{
 					jiaoka.ui.alert_.warn(json.error);
 				}

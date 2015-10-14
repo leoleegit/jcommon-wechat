@@ -5,6 +5,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import jxl.write.WriteException;
@@ -25,6 +27,10 @@ public class ExportTest {
 	 */
 	public static void main(String[] args) throws WriteException, FileNotFoundException, IOException, JSONException {
 		// TODO Auto-generated method stub
+		test2();
+	}
+	
+	public static void test2() throws WriteException, FileNotFoundException, IOException, JSONException{
 		File file = new File(System.getProperty("user.dir"),"test.xls");
 		ExportService ex = new ExportService();
 		
@@ -48,6 +54,28 @@ public class ExportTest {
 		cel.setTitle(title.toJson());
 		System.out.println(org.jcommon.com.wechat.data.JsonObject.list2Json(data));
 		ex.exportExcel(cel, new FileOutputStream(file));
+	}
+	
+	public static void test1(){
+		List<String> keys = new ArrayList<String>();
+		keys.add("4");
+		keys.add("2");
+		keys.add("3");
+		keys.add("1");
+		Collections.sort(keys, new Comparator<String>(){
+
+			@Override
+			public int compare(String o1, String o2) {
+				// TODO Auto-generated method stub
+				Integer i1 = Integer.valueOf(o1);
+				Integer i2 = Integer.valueOf(o2);
+				return i1.compareTo(i2);
+			}
+			
+		});
+		for(int j=0;j<keys.size();j++){
+			System.out.println(keys.get(j));
+		}
 	}
 
 }

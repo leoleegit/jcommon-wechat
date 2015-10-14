@@ -156,6 +156,51 @@ if('$' in this) $.cc = this.cc;
 			json_format : function(json){
 				return this.json_to_str(json,'</br>','&nbsp;&nbsp;&nbsp;&nbsp;');
 			},
+			json : function(obj){
+				if(typeof obj == 'string'){
+					if(obj.startWith('{'))
+						obj = eval('('+obj+')');
+					else if(obj.startWith('['))
+						obj = eval(obj);
+		        }
+				this.obj = obj;
+				this.toString = function(){
+					var msg = '';
+					var obj = this.obj;
+					if(obj && cc.tool.is_option_object(obj)){
+						msg = msg + '{';
+						for(var key in obj){
+							var value = obj[key];
+							var is_option = cc.tool.is_option_object(value);
+							if(is_option || (value instanceof Array)){
+								value = new cc.tool.json(value).toString();
+							}else{
+								value = '"'+ encodeURIComponent(value) + '"';
+							}
+							key = '"'+ key + '"';
+							msg = msg + key + ':' + value + ',';
+						}
+						if(msg.lastWith((",")))
+							msg = msg.substring(0,msg.length-1);
+						msg = msg + '}';
+					}else if(obj && (typeof obj === "object") && (obj instanceof Array)){
+						if(cc.tool.has_prop(obj)){
+							msg = msg +'[';
+							for(var key=0;key<obj.length; key++){
+								var value = obj[key];
+								if(cc.tool.is_option_object(value)){
+									value = new cc.tool.json(value).toString();
+									msg = msg + value + ',';
+								}
+							}
+							if(msg.lastWith((",")))
+								msg = msg.substring(0,msg.length-1);
+							msg = msg + ']';
+						}
+					}
+					return msg;
+				}
+			},
 			json_to_str : function(obj,spirt,tab,base_tab){
 				if(typeof obj == 'string'){
 					if(obj.startWith('{'))
@@ -417,6 +462,17 @@ if('$' in this) $.cc = this.cc;
 				}
 				if(name)return theRequest[name];
 				return theRequest;
+			},
+			downloadURL : function(url) {
+			    var hiddenIFrameID = 'hiddenDownloader',
+			        iframe = document.getElementById(hiddenIFrameID);
+			    if (iframe == null) {
+			        iframe = document.createElement('iframe');
+			        iframe.id = hiddenIFrameID;
+			        iframe.style.display = 'none';
+			        document.body.appendChild(iframe);
+			    }
+			    iframe.src = url;
 			}
 	}
 	

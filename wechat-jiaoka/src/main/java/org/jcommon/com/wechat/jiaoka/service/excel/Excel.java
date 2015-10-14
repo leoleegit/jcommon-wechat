@@ -29,18 +29,18 @@ public class Excel extends JsonObject{
 		return title;
 	}
 	public void setTitle(String title) {
-		this.title = title;
+		this.title = org.jcommon.com.util.CoderUtils.decode(title);
 	}
 	public String getName() {
 		return name;
 	}
 	public void setName(String name) {
-		this.name = name;
+		this.name = org.jcommon.com.util.CoderUtils.decode(name);
 	}
 	public String getData() {
 		return data;
 	}
 	public void setData(String data) {
-		this.data = data;
+		this.data = org.jcommon.com.util.CoderUtils.decode(data);
 	}
 }
