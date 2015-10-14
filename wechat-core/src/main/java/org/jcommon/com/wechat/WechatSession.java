@@ -163,7 +163,7 @@ public class WechatSession implements WechatSessionListener,
 	
 	public void execute(HttpRequest request) {
 		// TODO Auto-generated method stub
-	   logger.info(logStr("out:"+ request.getUrl()));
+	   logger.info("out:"+ request.getUrl());
 	   logger.info(logStr("out:"+(request.getContent()==null?"":request.getContent())));
 	   ThreadManager.instance().execute(request);
     }

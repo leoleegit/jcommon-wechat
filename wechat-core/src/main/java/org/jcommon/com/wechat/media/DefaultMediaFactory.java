@@ -86,7 +86,7 @@ public class DefaultMediaFactory extends MediaFactory{
 				return media;
 			File file        = new File(type_dir.getAbsolutePath(),file_name);
 			media.setMedia(file);
-			media.setMedia_name(file_name+type.name);
+			media.setMedia_name(file_name.indexOf(".")!=-1?file_name:file_name+type.name);
 			media.setContent_type(type.type);
 		}
 		

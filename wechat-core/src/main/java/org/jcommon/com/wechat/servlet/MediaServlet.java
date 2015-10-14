@@ -92,7 +92,7 @@ public class MediaServlet extends HttpServlet {
 				
 				FileOutputStream out_file = null;
 				java.io.File file  = MediaManager.getMedia_factory().createEmptyFile(media);
-				
+				media.setMedia(file);
 				out_file = new FileOutputStream(file);
 				InputStream is = item.getInputStream();
 				logger.info("uploading...........");

@@ -152,7 +152,7 @@ public class JsonObject implements Serializable{
     return toJson(this);
   }
 
-  protected static String list2Json(List<?> list) {
+  public static String list2Json(List<?> list) {
     if (list == null) return null;
     StringBuilder sb = new StringBuilder();
     sb.append("[");
@@ -201,12 +201,16 @@ public class JsonObject implements Serializable{
                 value = String.valueOf((Long)m.invoke(o, new Object[0]));
               } else if ((Float.class == type) || (Float.TYPE == type)) {
                 value = String.valueOf((Float)m.invoke(o, new Object[0]));
-              } else if (JsonObject.class.isAssignableFrom(type)) {
+              } else if (java.util.Date.class.isAssignableFrom(type)) {
                 Object o1 = m.invoke(o, new Object[0]);
-                JsonObject jsonObj = o1 != null ? (JsonObject)o1 : null;
-                value = jsonObj!=null?jsonObj.toJson():null;
-                json = true;
-              } else if (Collection.class.isAssignableFrom(type)) {
+                java.util.Date jsonObj = o1 != null ? (java.util.Date)o1 : null;
+                value = jsonObj!=null?String.valueOf(jsonObj.getTime()):null;
+              } else if (JsonObject.class.isAssignableFrom(type)) {
+                  Object o1 = m.invoke(o, new Object[0]);
+                  JsonObject jsonObj = o1 != null ? (JsonObject)o1 : null;
+                  value = jsonObj!=null?jsonObj.toJson():null;
+                  json = true;
+                } else if (Collection.class.isAssignableFrom(type)) {
             	  List<Object> jsonObj = (List<Object>) m.invoke(o, new Object[0]);
                   value = list2Json(jsonObj);
                   json = true;
