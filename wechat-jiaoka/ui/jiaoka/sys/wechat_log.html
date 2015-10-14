@@ -9,6 +9,7 @@
 		jiaoka.wechat_log.search(nickname);
 		return false;
 	});
+	
 	$( "#wechat-log-page-nav button").on( "click", function(){
 		if($(this).hasClass('glyphicon-menu-left')){
 			jiaoka.wechat_log.page_index = jiaoka.wechat_log.page_index-1;
@@ -19,15 +20,19 @@
 		jiaoka.wechat_log.search(nickname);
 		return false;
 	});
+	
 	$( "#wechat-log-page-index-nav a").on( "click", function(){
 		jiaoka.wechat_log.page_num = parseInt($(this).html());
+		jiaoka.wechat_log.page_index=0;
 		$("#wechat-log-page-index-nav small").addClass('hidden');
 		$(this).parent().find("small").removeClass('hidden');
 		return false;
 	});
+	
 	$( "#wechat-log-export").on( "click", function(){
-		jiaoka.export_excel('wechat-log-report',$("#wechat-log-table thead tr"),$("#wechat-log-table tbody tr"));
+		jiaoka.export_excel('wechat-log-'+new Date().Format("yyyy_MM_dd-hh_mm"),$("#wechat-log-table thead tr"),$("#wechat-log-table tbody tr"));
 	});
+	
 	jiaoka.wechat_log.show_page_nav = function(){
 		if((jiaoka.wechat_log.page_index+1) * jiaoka.wechat_log.page_num < jiaoka.wechat_log.data_num){
 			$("#wechat-log-page-nav button:last").removeClass('invisible');
@@ -39,24 +44,36 @@
 		}else{
 			$("#wechat-log-page-nav button:first").addClass('invisible');
 		}
-		$("#wechat-log-table tbody input").on('click', function(){
-			//$("#wechat-log-table thead input").attr("checked",'true');
-			$("#wechat-log-table thead input").removeClass('hidden');
-		})
-		$("#wechat-log-table thead input").on('click', function(){
-			if($(this).attr("checked")=='checked'){
-				$("#wechat-log-table input").removeAttr("checked");
-				alert('2');
+		
+		//
+		var $ckeckhead = $("#wechat-log-table thead").find("INPUT[type='checkbox']");
+		$ckeckhead.prop('checked',false);
+		$ckeckhead.removeClass('checked');
+		
+		$("#wechat-log-table tbody").find("INPUT[type='checkbox']").on('click', function(){
+			$("#wechat-log-table thead").find("INPUT[type='checkbox']").removeClass('hidden');
+			$(this).attr('checked', true);
+		    $(this).addClass('checked');
+		});
+		
+		$("#wechat-log-table thead").find("INPUT[type='checkbox']").on('click', function(){
+			if(!$(this).prop("checked")){
+				var $checkbox = $("#wechat-log-table").find("INPUT[type='checkbox']");
+				$checkbox.prop('checked',false);
+				$checkbox.removeClass('checked');
 			}
 			else{
-				alert('1');
-				$("#wechat-log-table input").attr("checked",'true');
+				var $checkbox = $("#wechat-log-table").find("INPUT[type='checkbox']");
+				$checkbox.prop('checked',true);
+				$checkbox.addClass('checked');
 			}
-		})
+			return true;
+		});
 	};
 	jiaoka.wechat_log.search = function(nickname){
 		jiaoka.wechat_log_search(nickname,jiaoka.wechat_log.page_index,jiaoka.wechat_log.page_num);
 	}
+	$(function () { $("[data-toggle='tooltip']").tooltip(); });
 //-->
 </script>
 
@@ -85,14 +102,14 @@
              </li>
          </ul>
          <button id="wechat-log-export" type="button" class="btn btn-default glyphicon glyphicon-export" 
-         	title="导出excel">
+         	data-toggle="tooltip" data-placement="bottom" data-original-title="导出excel">
          </button>
      </div>
   </div>
   <div class="col-xs-6">
 	  <div id="wechat-log-page-nav" class="btn-group page-nav" role="group" aria-label="...">
-		  <button type="button" title="上一页" class="btn btn-default glyphicon glyphicon-menu-left invisible"></button>
-		  <button type="button" title="下一页" class="btn btn-default glyphicon glyphicon-menu-right invisible"></button>
+		  <button type="button" data-toggle="tooltip" data-placement="bottom" data-original-title="上一页" class="btn btn-default glyphicon glyphicon-menu-left invisible"></button>
+		  <button type="button" data-toggle="tooltip" data-placement="bottom" data-original-title="下一页" class="btn btn-default glyphicon glyphicon-menu-right invisible"></button>
 	  </div>
  </div>
 </div>

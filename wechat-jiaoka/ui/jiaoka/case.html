@@ -1,12 +1,83 @@
 <script type="text/javascript">
 <!--
+	jiaoka.case_={};
+	jiaoka.case_.page_index=0;
+	jiaoka.case_.page_num = 20;
+	jiaoka.case_.data_num = 0;
 	$( "#case-search-submit").on( "click", function(){
 		var status = $('#jiaoka-status').val();
 		var nickname = $('#jiaoka-wechat').val();
 		var phone_number = $('#jiaoka-phone').val();
-		jiaoka.case_search(status,phone_number,nickname);
+		jiaoka.case_.search(status,phone_number,nickname);
 		return false;
 	});
+	
+	$( "#case-search-page-nav button").on( "click", function(){
+		if($(this).hasClass('glyphicon-menu-left')){
+			jiaoka.case_.page_index = jiaoka.case_.page_index-1;
+		}else{
+			jiaoka.case_.page_index = jiaoka.case_.page_index+1;
+		}
+		var status = $('#jiaoka-status').val();
+		var nickname = $('#jiaoka-wechat').val();
+		var phone_number = $('#jiaoka-phone').val();
+		jiaoka.case_.search(status,phone_number,nickname);
+		return false;
+	});
+	
+	$( "#case-search-page-index-nav a").on( "click", function(){
+		jiaoka.case_.page_num = parseInt($(this).html());
+		jiaoka.case_.page_index=0;
+		$("#case-search-page-index-nav small").addClass('hidden');
+		$(this).parent().find("small").removeClass('hidden');
+		return false;
+	});
+	
+	$( "#case-search-export").on( "click", function(){
+		jiaoka.export_excel('订单-'+new Date().Format("yyyy_MM_dd-hh_mm"),$("#case-search-table thead tr"),$("#case-search-table tbody tr"));
+	});
+	
+	jiaoka.case_.show_page_nav = function(){
+		if((jiaoka.case_.page_index+1) * jiaoka.case_.page_num < jiaoka.case_.data_num){
+			$("#case-search-page-nav button:last").removeClass('invisible');
+		}else{
+			$("#case-search-page-nav button:last").addClass('invisible');
+		}
+		if(jiaoka.case_.page_index>0){
+			$("#case-search-page-nav button:first").removeClass('invisible');
+		}else{
+			$("#case-search-page-nav button:first").addClass('invisible');
+		}
+		
+		//
+		var $ckeckhead = $("#case-search-table thead").find("INPUT[type='checkbox']");
+		$ckeckhead.prop('checked',false);
+		$ckeckhead.removeClass('checked');
+		
+		$("#case-search-table tbody").find("INPUT[type='checkbox']").on('click', function(){
+			$("#case-search-table thead").find("INPUT[type='checkbox']").removeClass('hidden');
+			$(this).attr('checked', true);
+		    $(this).addClass('checked');
+		});
+		
+		$("#case-search-table thead").find("INPUT[type='checkbox']").on('click', function(){
+			if(!$(this).prop("checked")){
+				var $checkbox = $("#case-search-table").find("INPUT[type='checkbox']");
+				$checkbox.prop('checked',false);
+				$checkbox.removeClass('checked');
+			}
+			else{
+				var $checkbox = $("#case-search-table").find("INPUT[type='checkbox']");
+				$checkbox.prop('checked',true);
+				$checkbox.addClass('checked');
+			}
+			return true;
+		});
+	};
+	jiaoka.case_.search = function(status,phone_number,nickname){
+		jiaoka.case_search(status,phone_number,nickname,jiaoka.case_.page_index,jiaoka.case_.page_num);
+	}
+	$(function () { $("[data-toggle='tooltip']").tooltip(); });
 //-->
 </script>
 
@@ -34,37 +105,38 @@
 
 <div class="row page-row">
   <div class="col-xs-6">
-  <nav id="wechat-case-page-nav">
-	  <ul class="pagination pagination-sm">
-	      <li><a href="#">20</a></li>
-   	      <li><a href="#">50</a></li>
-          <li><a href="#">100</a></li>
-          <li><a href="#">200</a></li>
-	  </ul>
-	</nav>
+	<div class="btn-group">
+         <button type="button" data-toggle="dropdown" class="btn btn-default glyphicon glyphicon-menu-hamburger" data-target="#">
+         </button>
+         <ul class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
+             <li class="dropdown-submenu">
+                 <a tabindex="-1" href="#">页面设置</a>
+                 <ul id="case-search-page-index-nav" class="dropdown-menu">
+                     <li><a tabindex="-1" href="#">20</a><small class="glyphicon glyphicon-ok"></small></li>
+                     <li><a tabindex="-1" href="#">50</a><small class="glyphicon glyphicon-ok hidden"></small></li>
+                     <li><a tabindex="-1" href="#">100</a><small class="glyphicon glyphicon-ok hidden"></small></li>
+                     <li><a tabindex="-1" href="#">200</a><small class="glyphicon glyphicon-ok hidden"></small></li>
+                 </ul>
+             </li>
+         </ul>
+         <button id="case-search-export" type="button" class="btn btn-default glyphicon glyphicon-export" 
+         	data-toggle="tooltip" data-placement="bottom" title="" data-original-title="导出excel">
+         </button>
+     </div>
   </div>
   <div class="col-xs-6">
-   <nav class="page-nav" id="wechat-case-page-nav">
-	  <ul class="pagination pagination-sm">
-	    <li>
-	      <a href="#" aria-label="Previous" class="hidden1">
-	        <span aria-hidden="flase" class="glyphicon glyphicon-menu-left"></span>
-	      </a>
-	    </li>
-	    <li>
-	      <a href="#" aria-label="Next" class="hidden1">
-	        <span aria-hidden="flase" class="glyphicon glyphicon-menu-right"></span>
-	      </a>
-	    </li>
-	  </ul>
-	</nav>
+	  <div id="case-search-page-nav" class="btn-group page-nav" role="group" aria-label="...">
+		  <button type="button" data-toggle="tooltip" data-placement="bottom" data-original-title="上一页" class="btn btn-default glyphicon glyphicon-menu-left invisible"></button>
+		  <button type="button" data-toggle="tooltip" data-placement="bottom" data-original-title="下一页" class="btn btn-default glyphicon glyphicon-menu-right invisible"></button>
+	  </div>
  </div>
 </div>
+
 <hr/>
-<table class="table table-condensed" id="case-data-table">
+<table class="table table-condensed" id="case-search-table">
    <thead>
      <tr>
-       <th>#</th>
+       <th><input type="checkbox" class="hidden"></th>
        <th>订单号</th>
        <th>状态</th>
        <th>类型</th>

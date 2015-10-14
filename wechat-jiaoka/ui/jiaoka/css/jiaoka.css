@@ -217,7 +217,7 @@ a.list-group-item:hover {
 .footer-alert{
   position: fixed;
   margin-top: -40px;
-  /* width: 80%; */
+  width: 79%;
   padding-top: 12px;
   margin-bottom: 5px;
   bottom: 0px;

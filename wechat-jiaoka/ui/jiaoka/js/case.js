@@ -19,11 +19,11 @@ jiaoka.export_excel = function(name,$tr_title,$tr){
 	var datas = new Array();
 	if($tr && $tr.length>0){
 		for(i=0;i<$tr.length;i++){
-			var data = null;
-			var check = $($tr).first().find('input');
-			if($(check).attr("checked")=='checked'){
+			var data  = null;
+			var tr    = $tr[i];
+			var $check = $(tr).first().find('input');
+			if($check.prop("checked")){
 				data = {};
-				var tr = $tr[i];
 				var $td= $(tr).find('td');
 				for(j=0;j<$td.length;j++){
 					var td = $td[j];
@@ -55,7 +55,7 @@ jiaoka.export_excel = function(name,$tr_title,$tr){
 				else if(msg.startWith('['))
 					json = eval(msg);
 				if(json.code==0){
-					jiaoka.ui.alert_.succ("开始下载","导出日志");
+					jiaoka.ui.alert.info("开始下载","导出日志");
 					if(json.data){
 						var url = jiaoka.conf.serice+'/wechat-jiaoka/media'+json.data.url;
 						cc.tool.downloadURL(url);
@@ -110,8 +110,8 @@ jiaoka.wechat_log_search = function(openid,next,number){
 }
 
 jiaoka.user_search = function(phone_number,nickname,next,number){
-	if($("#user-data-table tbody").length>0)
-		$("#user-data-table tbody").remove();
+	if($("#user-search-table tbody").length>0)
+		$("#user-search-table tbody").remove();
 	var option = {
 			'nickname':nickname && ""!=nickname?nickname:undefined,
 			'phone_number':phone_number && ""!=phone_number?phone_number:undefined,
@@ -127,7 +127,7 @@ jiaoka.user_search = function(phone_number,nickname,next,number){
 					json = eval(msg);
 				if(json.code==0){
 					var templet = jiaoka.ui.templet().get('users-table');
-					var parent  = $('#user-data-table')[0];
+					var parent  = $('#user-search-table')[0];
 					if(json.datas){
 						for(i=0;i<json.datas.length;i++){
 							json.datas[i].create_time = json.datas[i].create_time?new Date(parseInt(json.datas[i].create_time)).Format("yyyy-MM-dd hh:mm"):'';
@@ -137,6 +137,9 @@ jiaoka.user_search = function(phone_number,nickname,next,number){
 						}
 					}
 					cc.tool.add_child_with_json(parent,json,templet);
+					if(json.count)
+						jiaoka.user_.data_num = json.count;
+					jiaoka.user_.show_page_nav();
 				}else{
 					jiaoka.ui.alert_.warn(json.error);
 				}
@@ -149,8 +152,8 @@ jiaoka.user_search = function(phone_number,nickname,next,number){
 }
 
 jiaoka.case_search = function(status,phone_number,nickname,next,number){
-	if($("#case-data-table tbody").length>0)
-		$("#case-data-table tbody").remove();
+	if($("#case-search-table tbody").length>0)
+		$("#case-search-table tbody").remove();
 	var option = {
 			'status':status,
 			'nickname':nickname && ""!=nickname?nickname:undefined,
@@ -167,7 +170,7 @@ jiaoka.case_search = function(status,phone_number,nickname,next,number){
 					json = eval(msg);
 				if(json.code==0){
 					var templet = jiaoka.ui.templet().get('case-table');
-					var parent  = $('#case-data-table')[0];
+					var parent  = $('#case-search-table')[0];
 					if(json.datas){
 						for(i=0;i<json.datas.length;i++){
 							json.datas[i].create_time = json.datas[i].create_time?new Date(parseInt(json.datas[i].create_time)).Format("yyyy-MM-dd hh:mm"):'';
@@ -176,6 +179,9 @@ jiaoka.case_search = function(status,phone_number,nickname,next,number){
 						}
 					}
 					cc.tool.add_child_with_json(parent,json,templet);
+					if(json.count)
+						jiaoka.case_.data_num = json.count;
+					jiaoka.case_.show_page_nav();
 				}else{
 					jiaoka.ui.alert_.warn(json.error);
 				}

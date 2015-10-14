@@ -29,7 +29,7 @@ public class Excel extends JsonObject{
 		return title;
 	}
 	public void setTitle(String title) {
-		this.title = org.jcommon.com.util.CoderUtils.decode(title);
+		this.title = title;
 	}
 	public String getName() {
 		return name;
@@ -41,6 +41,6 @@ public class Excel extends JsonObject{
 		return data;
 	}
 	public void setData(String data) {
-		this.data = org.jcommon.com.util.CoderUtils.decode(data);
+		this.data = data;
 	}
 }

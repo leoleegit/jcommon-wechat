@@ -1,6 +1,6 @@
 var jiaoka={};
 jiaoka.conf={};
-jiaoka.conf.serice="http://192.168.2.104:8080";
+jiaoka.conf.serice="http://192.168.3.102:80";
 $(document).ready(function(){
 	jiaoka.ui = new cc.ui();
 	jiaoka.ui.templet_.load(new Array('sidebar_menu.html','tabs_menu.html','common_templet.html'),
@@ -9,9 +9,10 @@ $(document).ready(function(){
 		jiaoka.ui.tab_.set_home_tab();
 		jiaoka.ui.menu_.load();
 	    
-//	    setTimeout(function(){
-//	    	ui.alert_.succ(cc.succ[2001],cc.error[4001]);
-//	    },5000);
+	    setTimeout(function(){
+	    	jiaoka.ui.alert_.succ(cc.succ[2001],cc.error[4001]);
+	    },5000);
 	
 	});
+	
 });

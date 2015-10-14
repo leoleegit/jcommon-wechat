@@ -47,7 +47,7 @@ public class ExportService extends Service{
 		    StringBuilder xml = new StringBuilder();
 		    
 		    BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-		    char[] cbuf = new char[1024];
+		    char[] cbuf = new char[64];
 		    int nRead;
 		    while ((nRead=reader.read(cbuf))!=-1) {
 		        xml.append(cbuf, 0, nRead);
@@ -115,7 +115,7 @@ public class ExportService extends Service{
 			for(j=0;j<keys.size();j++){
 				String key = keys.get(j);
 				String value = title.getString(key);
-				Label lable  = new Label(j,i,value);
+				Label lable  = new Label(j,i,org.jcommon.com.util.CoderUtils.decode(value));
 		        sheet.addCell(lable);
 			}
 			++i;
@@ -130,7 +130,7 @@ public class ExportService extends Service{
 				for(j=0;j<keys.size();j++){
 					String key = keys.get(j);
 					String value = json.getString(key);
-					Label lable  = new Label(j,i,value);
+					Label lable  = new Label(j,i,org.jcommon.com.util.CoderUtils.decode(value));
 			        sheet.addCell(lable);
 				}
 				++i;
