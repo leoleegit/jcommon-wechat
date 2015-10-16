@@ -18,13 +18,13 @@ public class UserService extends Service{
 	@Path("search")
 	@Produces("text/plain;charset=UTF-8")  
 	public String searchUser(@Context HttpServletRequest request){
+		pritelnParameter(request);
 		String phone_number = request.getParameter("phone_number");	
 		String nickname     = request.getParameter("nickname");	
 		
 		int next      = JiaoKaUtils.isInteger(request.getParameter("next"))?Integer.valueOf(request.getParameter("next")):0;
 		int number    = JiaoKaUtils.isInteger(request.getParameter("number"))?Integer.valueOf(request.getParameter("number")):0;
 		
-		logger.info(String.format("phone_number:%s;nickname:%s;next:%s;number:%s", phone_number,nickname,next,number));
 		if(number > MAX_NUMBER)
 			number = MAX_NUMBER;
 		if(number==0)

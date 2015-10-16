@@ -29,7 +29,7 @@ public class JiaoKaTest extends TestBase{
 		String wechatID = "gh_f49bb9a333b3";
 		String Token    = "spotlight-wechat";
 		
-		NoIOClient client = new NoIOClient("192.168.1.37",5010);
+		NoIOClient client = new NoIOClient("mg.protel.com.hk",5010);
 		client.addCRouter(wechatID, Token,null,null);
 		
 		client.startup();

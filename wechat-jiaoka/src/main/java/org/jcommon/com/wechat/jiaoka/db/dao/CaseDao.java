@@ -26,13 +26,13 @@ public class CaseDao {
 		return DbProviderFaceory.createDbProvider().insert(sql, bean);
 	}
 	
-	public SearchResponse searchCase(String status, String nickname, String phone_number, int index, int number){
+	public SearchResponse searchCase(String status, String nickname, String phone_number, String addr, Timestamp from, Timestamp to, int index, int number){
 		if(number==0)
 			number = 20;
 		
 		long start = index * number;
 		StringBuilder sql  = new StringBuilder("FROM wechat_case where 1=1");
-		List<Object>   pars = new ArrayList<Object>();
+		List<Object>  pars = new ArrayList<Object>();
 		
 		if(status!=null){
 			sql.append(" and status=?");
@@ -46,6 +46,19 @@ public class CaseDao {
 			sql.append(" and phone_number like ?");
 			pars.add("%"+phone_number+"%");
 		}
+		
+		if(addr!=null){
+			sql.append(" and (location_give like ? or location_get like ?)");
+			pars.add("%"+addr+"%");
+			pars.add("%"+addr+"%");
+		}
+		
+		if(from!=null && to!=null){
+			sql.append(" and (create_time between ? and ?)");
+			pars.add(from);
+			pars.add(to);
+		}
+		
 		sql.append(" and isdelete=?");
 		pars.add(0);
 		
@@ -54,10 +67,11 @@ public class CaseDao {
 		if(count==-1){
 			return null;
 		}
-		
+		sql.append(" Order By create_time Desc");
 		sql.append("  limit ?,?");
 		pars.add(start);
 		pars.add(number);
+		
 		
 		String sql_result = "SELECT * "+sql.toString();
 		List<Object> results = DbProviderFaceory.createDbProvider().selectArray(sql_result, Case.class, pars.toArray());

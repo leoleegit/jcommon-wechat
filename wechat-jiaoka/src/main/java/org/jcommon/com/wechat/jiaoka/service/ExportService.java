@@ -47,7 +47,7 @@ public class ExportService extends Service{
 		    StringBuilder xml = new StringBuilder();
 		    
 		    BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-		    char[] cbuf = new char[64];
+		    char[] cbuf = new char[1024];
 		    int nRead;
 		    while ((nRead=reader.read(cbuf))!=-1) {
 		        xml.append(cbuf, 0, nRead);

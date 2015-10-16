@@ -68,10 +68,11 @@ public class WeChatUserDao {
 		if(count==-1){
 			return null;
 		}
-		
+		sql.append(" Order By subscribe_time Desc");
 		sql.append("  limit ?,?");
 		pars.add(start);
 		pars.add(number);
+		
 		
 		String sql_result = "SELECT * "+sql.toString();
 		List<Object> results = DbProviderFaceory.createDbProvider().selectArray(sql_result, WeChatUser.class, pars.toArray());

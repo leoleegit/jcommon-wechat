@@ -1,5 +1,6 @@
 package org.jcommon.com.wechat.jiaoka.db.dao;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,38 +14,47 @@ public class WeChatAuditLogDao {
 		return DbProviderFaceory.createDbProvider().insert(sql, bean);
 	}
 	
-	public SearchResponse search(String openid, int index, int number){
+	public SearchResponse search(String openid, String type, Timestamp from, Timestamp to, int index, int number){
 		long start = index * number;
+		StringBuilder sql  = new StringBuilder("FROM wechat_auditlog where 1=1");
+		List<Object>  pars = new ArrayList<Object>();
 		if(openid!=null){
-			String sql = "SELECT count(*) FROM wechat_auditlog where openid=? and isdelete=?";
-			long count = DbProviderFaceory.createDbProvider().selectCount(sql,openid,0);
-			if(count==-1){
-				return null;
-			}
-			sql = "SELECT * FROM wechat_auditlog where openid=? and isdelete=? limit ?,?";		
-			List<Object> results = DbProviderFaceory.createDbProvider().selectArray(sql, WeChatAuditLog.class,openid,0,start,number);
-			List<WeChatAuditLog> cases     = new ArrayList<WeChatAuditLog>();
-			if(results!=null){
-				for(Object obj : results){
-					cases.add((WeChatAuditLog)obj);
-				}
-			}
-			return new SearchResponse(count, cases);
-		}else{
-			String sql = "SELECT count(*) FROM wechat_auditlog where isdelete=?";
-			long count = DbProviderFaceory.createDbProvider().selectCount(sql,0);
-			if(count==-1){
-				return null;
-			}
-			sql = "SELECT * FROM wechat_auditlog where isdelete=? limit ?,?";		
-			List<Object> results = DbProviderFaceory.createDbProvider().selectArray(sql, WeChatAuditLog.class,0,start,number);
-			List<WeChatAuditLog> cases     = new ArrayList<WeChatAuditLog>();
-			if(results!=null){
-				for(Object obj : results){
-					cases.add((WeChatAuditLog)obj);
-				}
-			}
-			return new SearchResponse(count, cases);
+			sql.append(" and openid=?");
+			pars.add(openid);
 		}
+		if(type!=null){
+			sql.append(" and type like ?");
+			pars.add("%"+type+"%");
+		}
+		
+		if(from!=null && to!=null){
+			sql.append(" and (create_time between ? and ?)");
+			pars.add(from);
+			pars.add(to);
+		}
+		
+		sql.append(" and isdelete=?");
+		pars.add(0);
+		
+		String sql_count = "SELECT count(*) "+sql.toString();
+	    long count = DbProviderFaceory.createDbProvider().selectCount(sql_count, pars.toArray());
+		if(count==-1){
+			return null;
+		}
+		sql.append(" Order By create_time Desc");
+		sql.append("  limit ?,?");
+		pars.add(start);
+		pars.add(number);
+		
+		
+		String sql_result = "SELECT * "+sql.toString();
+		List<Object> results = DbProviderFaceory.createDbProvider().selectArray(sql_result, WeChatAuditLog.class, pars.toArray());
+		List<WeChatAuditLog> cases     = new ArrayList<WeChatAuditLog>();
+		if(results!=null){
+			for(Object obj : results){
+				cases.add((WeChatAuditLog)obj);
+			}
+		}
+		return new SearchResponse(count, cases);
 	}
 }

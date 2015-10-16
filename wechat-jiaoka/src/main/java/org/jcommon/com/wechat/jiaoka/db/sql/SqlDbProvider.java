@@ -109,6 +109,7 @@ public class SqlDbProvider implements DbProvider {
 	
 	@Override
 	public long selectCount(String sql, Object ...args){
+		logger.info(sql);
 		Connection conn = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -163,6 +164,7 @@ public class SqlDbProvider implements DbProvider {
 
 
 	public List<Object> selectArray(String sql, Class<?> clazz_, Object ...args){
+		logger.info(sql);
 		Connection conn = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;
@@ -215,6 +217,7 @@ public class SqlDbProvider implements DbProvider {
 	@Override
 	public List<Object> selectArray(String sql, Class<?> clazz_, Object bean){
 		// TODO Auto-generated method stub
+		logger.info(sql);
 		Connection conn = null;
 		PreparedStatement ps = null;
 		ResultSet rs = null;

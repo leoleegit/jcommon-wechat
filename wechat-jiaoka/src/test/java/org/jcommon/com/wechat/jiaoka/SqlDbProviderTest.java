@@ -1,5 +1,8 @@
 package org.jcommon.com.wechat.jiaoka;
 
+import java.sql.Timestamp;
+import java.text.ParseException;
+import java.util.Date;
 import java.util.List;
 
 import org.jcommon.com.wechat.data.JsonObject;
@@ -33,29 +36,39 @@ public class SqlDbProviderTest {
 //		for(String s : SqlDbProvider.getParameters(sql))
 //			System.out.println(s);
 		
-		//CaseDaoTest();
+		CaseDaoTest();
 		//WeChatAuditLogDaoTest();
 		//WeChatUserDaoTest();
 		//new WeChatUserDao().updatePhoneNumber("15919065160", "of-YetzJFYxGTltb4eCvgccHzHF0");
 		//System.out.println(DbProviderFaceory.createDbProvider().selectCount("SELECT * FROM wechat_case"));
 		
-		int i=0,j=0;
-		i++;
-		++j;
-		System.out.println(i);
-		System.out.println(j);
 	}
 	
 	public static  void CaseDaoTest(){
-		SearchResponse cases = new CaseDao().searchCase(null,null,"15919065", 0, 20);
+		Timestamp from_t = null;
+		Timestamp to_t   = null;
+		
+		try {
+			Date from_d = org.jcommon.com.util.DateUtils.getDate(null, "yyyy-MM-dd HH:mm");
+			Date to_d   = org.jcommon.com.util.DateUtils.getDate("2015-10-09 11:43", "yyyy-MM-dd HH:mm");
+			if(from_d!=null && to_d!=null){
+				from_t      = new Timestamp(from_d.getTime());
+				to_t        = new Timestamp(to_d.getTime());
+			}
+			
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		SearchResponse cases = new CaseDao().searchCase(null,null,null,null,from_t,to_t, 0, 20);
 		for(JsonObject c : cases.getDatas())
 			System.out.println(c.toJson());
 	}
 	
 	public static void WeChatAuditLogDaoTest(){
-		SearchResponse cases = new WeChatAuditLogDao().search(null,2, 30);
-		for(JsonObject c : cases.getDatas())
-			System.out.println(c.toJson());
+//		SearchResponse cases = new WeChatAuditLogDao().search(null,2, 30);
+//		for(JsonObject c : cases.getDatas())
+//			System.out.println(c.toJson());
 	}
 	
 	public static void WechatAgentDaoTest(){
