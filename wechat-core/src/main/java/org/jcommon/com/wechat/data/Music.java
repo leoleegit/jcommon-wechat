@@ -14,72 +14,70 @@ package org.jcommon.com.wechat.data;
 
 import org.jcommon.com.wechat.utils.MediaType;
 
-public class Music extends Media{
+public class Music extends Media {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-  private String title;
-  private String description;
-  private String musicurl;
-  private String hqmusicurl;
-  private String thumb_media_id;
+	private String title;
+	private String description;
+	private String musicurl;
+	private String hqmusicurl;
+	private String thumb_media_id;
 
-  public Music(String data)
-  {
-    super(data);
-    setMedia_id(this.thumb_media_id);
-  }
-  
-  public Music(String title,String description)
-  {
-    super();
-    setMedia_id(this.thumb_media_id);
-    setTitle(title);
-    setDescription(description);
-  }
+	public Music(String data) {
+		super(data);
+		setMedia_id(this.thumb_media_id);
+	}
 
-  public String getTitle() {
-    return this.title;
-  }
+	public Music(String title, String description) {
+		super();
+		setMedia_id(this.thumb_media_id);
+		setTitle(title);
+		setDescription(description);
+	}
 
-  public void setTitle(String title) {
-    this.title = title;
-  }
+	public String getTitle() {
+		return this.title;
+	}
 
-  public String getDescription() {
-    return this.description;
-  }
+	public void setTitle(String title) {
+		this.title = title;
+	}
 
-  public void setDescription(String description) {
-    this.description = description;
-  }
+	public String getDescription() {
+		return this.description;
+	}
 
-  public String getMusicurl() {
-    return this.musicurl;
-  }
+	public void setDescription(String description) {
+		this.description = description;
+	}
 
-  public void setMusicurl(String musicurl) {
-    this.musicurl = musicurl;
-  }
+	public String getMusicurl() {
+		return this.musicurl;
+	}
 
-  public String getHqmusicurl() {
-    return this.hqmusicurl;
-  }
+	public void setMusicurl(String musicurl) {
+		this.musicurl = musicurl;
+	}
 
-  public void setHqmusicurl(String hqmusicurl) {
-    this.hqmusicurl = hqmusicurl;
-  }
+	public String getHqmusicurl() {
+		return this.hqmusicurl;
+	}
 
-  public String getThumb_media_id() {
-    return this.thumb_media_id;
-  }
+	public void setHqmusicurl(String hqmusicurl) {
+		this.hqmusicurl = hqmusicurl;
+	}
 
-  public void setThumb_media_id(String thumb_media_id) {
-    this.thumb_media_id = thumb_media_id;
-  }
-  
-  public String getType() {
-	return MediaType.music.name();
-  }
+	public String getThumb_media_id() {
+		return this.thumb_media_id;
+	}
+
+	public void setThumb_media_id(String thumb_media_id) {
+		this.thumb_media_id = thumb_media_id;
+	}
+
+	public String getType() {
+		return MediaType.music.name();
+	}
 }

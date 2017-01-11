@@ -67,7 +67,7 @@ public class FunctionTest extends TestBase implements AppManagerListener,
 	public static void main(String[] args) throws NoSuchAlgorithmException {
 		// TODO Auto-generated method stub
 		test = new FunctionTest();
-		String access_token = "j2uBLa7hGOcpWlgwYD9JYJoGYAYFGUW6I0Vjm7XVIhzLnChd9YJSh56hisPGIpbkqOntLKw-cFbJQI65w13fVaUxc1ykLeVhh2x8__FGkjg";
+		String access_token = "pwJwv9twF1pSgO-GfdHbmsVswtRTeDJZfjmaPneHxmsfp5jwGe89ddRdmks-ahiBz4rCwmnf2jiffESIbTfSEx0LHPxc0VhZx1Po5DxwZRnsoZhtI6a9HmZX40Z0vhdFOKNcAFASOR";
 		App app = new App(access_token,"wx742941360129cd17", "37492ad273076440c0f123716865e1da", "spotlight-wechat");
 	    WechatSession session = new WechatSession("gh_f49bb9a333b3", app, null);
 	  
@@ -105,7 +105,14 @@ public class FunctionTest extends TestBase implements AppManagerListener,
 //	    manager.updateRemark(user, test);
 	    
 	    //MediaManager manager = new MediaManager(session);
-	    //Media media          = new Media();
+	   
+	   // Media media          = new Media();
+	   // media.setMedia(new File("D:\\projects\\github\\jcommon-wechat\\New Folder\\branches\\wechat-baili\\wechat-baili\\1.png"));
+	    //media.setType(MediaType.image.name());
+	   // manager.uploadMedia(media, null);
+	    
+	    
+	    
 	   // media.setMedia_id("QJB2K1gqwHLYZILw2kU2c8RbQ1X44GE8x4OeCRpFILk");
 	   //manager.downloadMedia(media, test);
 	    //MediaManager.getMedia_factory().getMediaFromUrl("/634546cf1fbb14c2a8abc986dba3da6e/MN2qp-B2wYMUbdJyovde-Ey1HRLb179J--KQ_0VXrKTH_sTLB6lixkF8pCmqvYsH");
@@ -120,8 +127,8 @@ public class FunctionTest extends TestBase implements AppManagerListener,
 	    //manager.delMaterial(media, test);
 	    
 	    //manager.uploadMedia(media, test);
-	    Video video = new Video("VIDEO_TITLE","INTRODUCTION");
-	    video.setUrl("/634546cf1fbb14c2a8abc986dba3da6e/d22acda6f7a24ec85f80ba2caa3c3f9d.mp4");
+	    //Video video = new Video("VIDEO_TITLE","INTRODUCTION");
+	    //video.setUrl("/634546cf1fbb14c2a8abc986dba3da6e/d22acda6f7a24ec85f80ba2caa3c3f9d.mp4");
 	    //video.setMedia(new File(System.getProperty("user.dir"),"d22acda6f7a24ec85f80ba2caa3c3f9d.mp4"));
 	    // manager.uploadMaterialMedia(video,test);
 //	    List<Articles> articles = new ArrayList<Articles>();
@@ -143,15 +150,20 @@ public class FunctionTest extends TestBase implements AppManagerListener,
 	    //manager.updateMaterial(art, 2, test);
 	    
 //	    MenusManager manager = new MenusManager(session);
-//	    //manager.getMenus(test);
-//	    //manager.delMenus(test);
-//	    
+//	    manager.getMenus(test);
+//	    manager.delMenus(test);
+////	    
 //	    List<Button> button = new ArrayList<Button>();
-//	    Button button1 = new Button("Button1",null);
-//	    button1.addSubButton(new Button("赞一下",ButtonType.click,"V1001_GOOD"));
-//	    button1.addSubButton(new Button("视频",ButtonType.view,"http://v.qq.com/"));
-//	    button1.addSubButton(new Button("扫码带提示",ButtonType.scancode_push,"rselfmenu_0_0"));
-//	    button1.addSubButton(new Button("扫码推事件",ButtonType.scancode_waitmsg,"rselfmenu_0_1"));
+//	    Button button1 = new Button("运动",null);
+//	    button1.addSubButton(new Button("轨迹",ButtonType.view,"https://demo.protel.com.hk/baili/token.html"));
+//	    button1.addSubButton(new Button("开始",ButtonType.click,"sport_s"));
+//	    button1.addSubButton(new Button("结束",ButtonType.click,"sport_e"));
+//	    
+//	    
+//	   //button1.addSubButton(new Button("赞一下",ButtonType.click,"V1001_GOOD"));
+//	    //button1.addSubButton(new Button("位置",ButtonType.view,"http://demo.protel.com.hk:8080/wechat-manage/wechat.html"));
+//	   //button1.addSubButton(new Button("扫码带提示",ButtonType.scancode_push,"rselfmenu_0_0"));
+//	    //button1.addSubButton(new Button("扫码推事件",ButtonType.scancode_waitmsg,"rselfmenu_0_1"));
 //	    
 //	    Button button2 = new Button("Button2",null);
 //	    button2.addSubButton(new Button("系统拍照发图",ButtonType.pic_sysphoto,"rselfmenu_1_0"));
@@ -175,7 +187,7 @@ public class FunctionTest extends TestBase implements AppManagerListener,
 //	    
 //	    manager.createQrcode(info, test);
 	    
-//	    String touser = "of-YetzJFYxGTltb4eCvgccHzHF0";//"of-Yet8X2VaQmqxFKyXE0lniG7pc";
+	    String touser = "of-YetzJFYxGTltb4eCvgccHzHF0";//"of-Yet8X2VaQmqxFKyXE0lniG7pc";
 	    MsgManager manager = new MsgManager(session);
 	    //manager.sendText(touser, new Text("hello world"), test);
 //	    Image image = new Image();
@@ -186,23 +198,23 @@ public class FunctionTest extends TestBase implements AppManagerListener,
 //	    video.setUrl("/634546cf1fbb14c2a8abc986dba3da6e/d22acda6f7a24ec85f80ba2caa3c3f9d.mp4");
 //	    manager.sendVideo(touser, video, test);
 //	    
-//	    List<Articles> articles = new ArrayList<Articles>();
-//	    Articles art = new Articles("李宝玲1","content","http://image.baidu.com/","http://pic1.win4000.com/wallpaper/2/5412ab2e52ab8.jpg");
-//	    articles.add(art);
+	    List<Articles> articles = new ArrayList<Articles>();
+	    Articles art = new Articles("李宝玲1","content","http://image.baidu.com/","http://pic1.win4000.com/wallpaper/2/5412ab2e52ab8.jpg");
+	    articles.add(art);
 //	    art = new Articles("李宝玲2","content","http://image.baidu.com/","http://bizhi.zhuoku.com/2009/08/09/xuefolan/gt217.jpg");
 //	    articles.add(art);
 //	    art = new Articles("李宝玲3","content","http://image.baidu.com/","http://img.pconline.com.cn/images/upload/upc/tx/wallpaper/1210/26/c0/14684002_1351232233166_800x600.jpg");
 //	    articles.add(art);
-//	    News mpnews = new News(articles);
-//	    manager.sendNews(touser, mpnews, test);
+	    News mpnews = new News(articles);
+	    manager.sendNews(touser, mpnews, test);
 	    
-	    List<OpenID> touser = new ArrayList<OpenID>();
-	    //touser.add(new OpenID("of-Yet8X2VaQmqxFKyXE0lniG7pc"));
-	    touser.add(new OpenID("of-YetzJFYxGTltb4eCvgccHzHF0"));
-	    //manager.broadcastVideo(new UserFilter(touser), video, test);
-	    Mpnews news = new Mpnews();
-	    news.setMedia_id("ksZGzGa8qmgIMzd34UlE3D2nRm8wh7ztKk-Us-E6JEw");
-	    manager.broadcastMpnews(new UserFilter(touser), news, test);
+//	    List<OpenID> touser = new ArrayList<OpenID>();
+//	    //touser.add(new OpenID("of-Yet8X2VaQmqxFKyXE0lniG7pc"));
+//	    touser.add(new OpenID("of-YetzJFYxGTltb4eCvgccHzHF0"));
+//	    //manager.broadcastVideo(new UserFilter(touser), video, test);
+//	    Mpnews news = new Mpnews();
+//	    news.setMedia_id("ksZGzGa8qmgIMzd34UlE3D2nRm8wh7ztKk-Us-E6JEw");
+//	    manager.broadcastMpnews(new UserFilter(touser), news, test);
 	}
 
 	@Override

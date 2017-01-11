@@ -4,7 +4,7 @@ import java.security.NoSuchAlgorithmException;
 
 import org.jcommon.com.wechat.utils.MD5;
 
-public class CustomService extends JsonObject{
+public class CustomService extends JsonObject {
 	/**
 	 * 
 	 */
@@ -12,21 +12,21 @@ public class CustomService extends JsonObject{
 	private String kfaccount;
 	private String nickname;
 	private String passwd;
-	
+
 	private String kf_nick;
 	private String kf_id;
 	private String kf_headimg;
 
-	public CustomService(String kfaccount){
+	public CustomService(String kfaccount) {
 		this.kfaccount = kfaccount;
 	}
-	
-	public CustomService(String kfaccount, String nickname, String passwd){
+
+	public CustomService(String kfaccount, String nickname, String passwd) {
 		setNickname(nickname);
 		setKfaccount(kfaccount);
 		setPasswd(passwd);
 	}
-	
+
 	public String getKf_nick() {
 		return kf_nick;
 	}
@@ -51,7 +51,7 @@ public class CustomService extends JsonObject{
 	public void setKf_headimg(String kf_headimg) {
 		this.kf_headimg = kf_headimg;
 	}
-	
+
 	public void setKfaccount(String kfaccount) {
 		this.kfaccount = kfaccount;
 	}
@@ -61,7 +61,7 @@ public class CustomService extends JsonObject{
 	}
 
 	public void setPasswd(String passwd) {
-		if(passwd!=null)
+		if (passwd != null)
 			try {
 				passwd = MD5.getMD5(passwd.getBytes());
 			} catch (NoSuchAlgorithmException e) {

@@ -19,55 +19,53 @@ import org.jcommon.com.util.JsonUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class News extends JsonObject
-{
+public class News extends JsonObject {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-  private List<Articles> articles;
-  public final static int max_size = 10;
-  
-  public News(String data)
-  {
-    super(data);
+	private List<Articles> articles;
+	public final static int max_size = 10;
 
-    JSONObject jsonO = JsonUtils.getJSONObject(data);
-    if (jsonO != null)
-      try {
-        if (jsonO.has("articles")) {
-          List<Object> list = json2Objects(Articles.class, jsonO.getString("articles"));
-          resetArticles(list);
-        }
-      }
-      catch (JSONException e) {
-        logger.error("", e);
-      }
-  }
-  
-  public News(List<Articles> articles)
-  {
-    super();
-    setArticles(articles);
-  }
+	public News(String data) {
+		super(data);
 
-  private void resetArticles(List<Object> list)
-  {
-    if (list == null) return;
-    if (this.articles == null) this.articles = new ArrayList<Articles>();
-    for (Iterator<?> i$ = list.iterator(); i$.hasNext(); ) {
-      Object o = i$.next();
-      this.articles.add((Articles)o);
-    }
-    list.clear();
-    list = null;
-  }
+		JSONObject jsonO = JsonUtils.getJSONObject(data);
+		if (jsonO != null)
+			try {
+				if (jsonO.has("articles")) {
+					List<Object> list = json2Objects(Articles.class,
+							jsonO.getString("articles"));
+					resetArticles(list);
+				}
+			} catch (JSONException e) {
+				logger.error("", e);
+			}
+	}
 
-  public List<Articles> getArticles() {
-    return this.articles;
-  }
+	public News(List<Articles> articles) {
+		super();
+		setArticles(articles);
+	}
 
-  public void setArticles(List<Articles> articles) {
-    this.articles = articles;
-  }
+	private void resetArticles(List<Object> list) {
+		if (list == null)
+			return;
+		if (this.articles == null)
+			this.articles = new ArrayList<Articles>();
+		for (Iterator<?> i$ = list.iterator(); i$.hasNext();) {
+			Object o = i$.next();
+			this.articles.add((Articles) o);
+		}
+		list.clear();
+		list = null;
+	}
+
+	public List<Articles> getArticles() {
+		return this.articles;
+	}
+
+	public void setArticles(List<Articles> articles) {
+		this.articles = articles;
+	}
 }

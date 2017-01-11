@@ -12,24 +12,22 @@
 // ========================================================================
 package org.jcommon.com.wechat.data;
 
-public class Text extends JsonObject
-{
+public class Text extends JsonObject {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-  private String content;
+	private String content;
 
-  public Text(String content)
-  {
-    this.content = content;
-  }
+	public Text(String content) {
+		this.content = content;
+	}
 
-  public String getContent() {
-    return this.content;
-  }
+	public String getContent() {
+		return this.content;
+	}
 
-  public void setContent(String content) {
-    this.content = content;
-  }
+	public void setContent(String content) {
+		this.content = content;
+	}
 }

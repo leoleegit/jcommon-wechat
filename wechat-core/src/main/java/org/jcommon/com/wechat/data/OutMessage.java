@@ -16,159 +16,159 @@ import java.util.List;
 
 import org.jcommon.com.wechat.utils.MsgType;
 
-public class OutMessage extends JsonObject{	
+public class OutMessage extends JsonObject {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-  private String touser;
-  private String msgtype;
-  private Text text;
-  private Image image;
-  private Voice voice;
-  private Video video;
-  private Music music;
-  private News news;
-  private Mpnews mpnews;
-  private Thumb thumb;
-  private List<Articles> articles;
-  private CustomService customservice;
+	private String touser;
+	private String msgtype;
+	private Text text;
+	private Image image;
+	private Voice voice;
+	private Video video;
+	private Music music;
+	private News news;
+	private Mpnews mpnews;
+	private Thumb thumb;
+	private List<Articles> articles;
+	private CustomService customservice;
 
-  public OutMessage(String data){
-    super(data);
-  }
+	public OutMessage(String data) {
+		super(data);
+	}
 
-  public OutMessage(MsgType type, String touser) {
-    this.touser = touser;
-    this.msgtype = type!=null?type.toString():null;
-  }
-  
-  public OutMessage() {
-  }
+	public OutMessage(MsgType type, String touser) {
+		this.touser = touser;
+		this.msgtype = type != null ? type.toString() : null;
+	}
 
-  public String getTouser() {
-    return this.touser;
-  }
+	public OutMessage() {
+	}
 
-  public void setTouser(String touser) {
-    this.touser = touser;
-  }
+	public String getTouser() {
+		return this.touser;
+	}
 
-  public String getMsgtype() {
-    return this.msgtype;
-  }
+	public void setTouser(String touser) {
+		this.touser = touser;
+	}
 
-  public void setMsgtype(String msgtype) {
-    this.msgtype = msgtype;
-  }
+	public String getMsgtype() {
+		return this.msgtype;
+	}
 
-  public Text getText() {
-    return this.text;
-  }
+	public void setMsgtype(String msgtype) {
+		this.msgtype = msgtype;
+	}
 
-  public void setText(Text text) {
-    this.text = text;
-  }
+	public Text getText() {
+		return this.text;
+	}
 
-  public Image getImage() {
-    return this.image;
-  }
+	public void setText(Text text) {
+		this.text = text;
+	}
 
-  public void setImage(Image image) {
-    this.image = image;
-  }
+	public Image getImage() {
+		return this.image;
+	}
 
-  public Voice getVoice() {
-    return this.voice;
-  }
+	public void setImage(Image image) {
+		this.image = image;
+	}
 
-  public void setVoice(Voice voice) {
-    this.voice = voice;
-  }
+	public Voice getVoice() {
+		return this.voice;
+	}
 
-  public Video getVideo() {
-    return this.video;
-  }
+	public void setVoice(Voice voice) {
+		this.voice = voice;
+	}
 
-  public void setVideo(Video video) {
-    this.video = video;
-  }
+	public Video getVideo() {
+		return this.video;
+	}
 
-  public Music getMusic() {
-    return this.music;
-  }
+	public void setVideo(Video video) {
+		this.video = video;
+	}
 
-  public void setMusic(Music music) {
-    this.music = music;
-  }
+	public Music getMusic() {
+		return this.music;
+	}
 
-  public News getNews() {
-    return this.news;
-  }
+	public void setMusic(Music music) {
+		this.music = music;
+	}
 
-  public void setNews(News news) {
-    this.news = news;
-  }
+	public News getNews() {
+		return this.news;
+	}
 
-  public void setMpnews(Mpnews mpnews) {
-	this.mpnews = mpnews;
-  }
+	public void setNews(News news) {
+		this.news = news;
+	}
 
-  public Mpnews getMpnews() {
-	return mpnews;
-  }
+	public void setMpnews(Mpnews mpnews) {
+		this.mpnews = mpnews;
+	}
 
-  public void setArticles(List<Articles> articles) {
-	this.articles = articles;
-  }
+	public Mpnews getMpnews() {
+		return mpnews;
+	}
 
-  public List<Articles> getArticles() {
-	return articles;
-  }
+	public void setArticles(List<Articles> articles) {
+		this.articles = articles;
+	}
 
-  public void setThumb(Thumb thumb) {
-  	this.thumb = thumb;
-  }
+	public List<Articles> getArticles() {
+		return articles;
+	}
 
-  public Thumb getThumb() {
-  	return thumb;
-  }
-  
-  public void setMedia(Media media){
-	  MsgType type = MsgType.getType(media.getType());
-	  if(type == MsgType.image)
-		  image = (Image) media;
-	  else if(type == MsgType.voice)
-		  voice = (Voice) media;
-	  else if(type == MsgType.video)
-		  video = (Video) media;
-	  else if(type == MsgType.mpnews)
-		  mpnews = (Mpnews) media;
-	  else if(type == MsgType.thumb)
-		  thumb = (Thumb) media;
-  }
-  
-  public Media getMedia() {
-	  Media media = null;
-	  MsgType type = MsgType.getType(msgtype);
-	  if(type == MsgType.image)
-		  media = image;
-	  else if(type == MsgType.voice)
-		  media = voice;
-	  else if(type == MsgType.video)
-		  media = video;
-	  else if(type == MsgType.mpnews)
-		  media = mpnews;
-	  else if(type == MsgType.thumb)
-		  media = thumb;
-	  return media;
-  }
+	public void setThumb(Thumb thumb) {
+		this.thumb = thumb;
+	}
 
-  public void setCustomservice(CustomService customservice) {
-	  this.customservice = customservice;
-  }
-	
-  public CustomService getCustomservice() {
-	  return customservice;
-  }
+	public Thumb getThumb() {
+		return thumb;
+	}
+
+	public void setMedia(Media media) {
+		MsgType type = MsgType.getType(media.getType());
+		if (type == MsgType.image)
+			image = (Image) media;
+		else if (type == MsgType.voice)
+			voice = (Voice) media;
+		else if (type == MsgType.video)
+			video = (Video) media;
+		else if (type == MsgType.mpnews)
+			mpnews = (Mpnews) media;
+		else if (type == MsgType.thumb)
+			thumb = (Thumb) media;
+	}
+
+	public Media getMedia() {
+		Media media = null;
+		MsgType type = MsgType.getType(msgtype);
+		if (type == MsgType.image)
+			media = image;
+		else if (type == MsgType.voice)
+			media = voice;
+		else if (type == MsgType.video)
+			media = video;
+		else if (type == MsgType.mpnews)
+			media = mpnews;
+		else if (type == MsgType.thumb)
+			media = thumb;
+		return media;
+	}
+
+	public void setCustomservice(CustomService customservice) {
+		this.customservice = customservice;
+	}
+
+	public CustomService getCustomservice() {
+		return customservice;
+	}
 }

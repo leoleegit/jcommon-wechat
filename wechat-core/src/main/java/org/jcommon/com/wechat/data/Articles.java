@@ -12,112 +12,111 @@
 // ========================================================================
 package org.jcommon.com.wechat.data;
 
-public class Articles extends Media{
+public class Articles extends Media {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-  private String title;
-  private String description;
-  private String picurl;
-  
-  //上传图文消息素材
-  private String author;
-  //private String title;
-  private String content_source_url;
-  private String content;
-  private String digest;
-  private int show_cover_pic = 1; // 1 or 0
+	private String title;
+	private String description;
+	private String picurl;
 
-  public Articles(String title, String description, String url, String picurl){
-    this.title = title;
-    this.description = description;
-    setUrl(url);
-    this.picurl = picurl;
-  }
-  
-  public Articles(String title,String content,String digest,String content_source_url,
-		  String author){
-	  this(title,content,digest,content_source_url,author,0);
-  }
-  
-  public Articles(String title,String content,String digest,String content_source_url,
-		  String author,int show_cover_pic){
-	 this.title = title;
-	 this.content = content;
-	 this.digest  = digest;
-	 this.content_source_url = content_source_url;
-	 this.show_cover_pic = show_cover_pic;
-	 this.author = author;
-  }
+	// 上传图文消息素材
+	private String author;
+	// private String title;
+	private String content_source_url;
+	private String content;
+	private String digest;
+	private int show_cover_pic = 1; // 1 or 0
 
-  public Articles(String data) {
-    super(data);
-  }
+	public Articles(String title, String description, String url, String picurl) {
+		this.title = title;
+		this.description = description;
+		setUrl(url);
+		this.picurl = picurl;
+	}
 
-  public String getTitle() {
-    return this.title;
-  }
+	public Articles(String title, String content, String digest,
+			String content_source_url, String author) {
+		this(title, content, digest, content_source_url, author, 0);
+	}
 
-  public void setTitle(String title) {
-    this.title = title;
-  }
+	public Articles(String title, String content, String digest,
+			String content_source_url, String author, int show_cover_pic) {
+		this.title = title;
+		this.content = content;
+		this.digest = digest;
+		this.content_source_url = content_source_url;
+		this.show_cover_pic = show_cover_pic;
+		this.author = author;
+	}
 
-  public String getDescription() {
-    return this.description;
-  }
+	public Articles(String data) {
+		super(data);
+	}
 
-  public void setDescription(String description) {
-    this.description = description;
-  }
+	public String getTitle() {
+		return this.title;
+	}
 
-  public String getPicurl() {
-    return this.picurl;
-  }
+	public void setTitle(String title) {
+		this.title = title;
+	}
 
-  public void setPicurl(String picurl) {
-    this.picurl = picurl;
-  }
-	
+	public String getDescription() {
+		return this.description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getPicurl() {
+		return this.picurl;
+	}
+
+	public void setPicurl(String picurl) {
+		this.picurl = picurl;
+	}
+
 	public String getAuthor() {
 		return author;
 	}
-	
+
 	public void setAuthor(String author) {
 		this.author = author;
 	}
-	
+
 	public String getContent_source_url() {
 		return content_source_url;
 	}
-	
+
 	public void setContent_source_url(String content_source_url) {
 		this.content_source_url = content_source_url;
 	}
-	
+
 	public String getContent() {
 		return content;
 	}
-	
+
 	public void setContent(String content) {
 		this.content = content;
 	}
-	
+
 	public String getDigest() {
 		return digest;
 	}
-	
+
 	public void setDigest(String digest) {
 		this.digest = digest;
 	}
-	
+
 	public int getShow_cover_pic() {
 		return show_cover_pic;
 	}
-	
+
 	public void setShow_cover_pic(int show_cover_pic) {
 		this.show_cover_pic = show_cover_pic;
 	}
-  
-  
+
 }

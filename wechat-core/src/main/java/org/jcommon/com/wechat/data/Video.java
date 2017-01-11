@@ -14,52 +14,48 @@ package org.jcommon.com.wechat.data;
 
 import org.jcommon.com.wechat.utils.MediaType;
 
-public class Video extends Media
-{
+public class Video extends Media {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-  private String title;
-  private String description;
+	private String title;
+	private String description;
 
-  public Video(String data)
-  {
-    super(data);
-    setType(MediaType.video.toString());
-  }
-  
-  public Video()
-  {
-    super();
-    setType(MediaType.video.toString());
-  }
-  
-  public Video(String title,String description)
-  {
-    super();
-    setType(MediaType.video.toString());
-    setTitle(title);
-    setDescription(description);
-  }
+	public Video(String data) {
+		super(data);
+		setType(MediaType.video.toString());
+	}
 
-  public String getTitle() {
-    return this.title;
-  }
+	public Video() {
+		super();
+		setType(MediaType.video.toString());
+	}
 
-  public void setTitle(String title) {
-    this.title = title;
-  }
+	public Video(String title, String description) {
+		super();
+		setType(MediaType.video.toString());
+		setTitle(title);
+		setDescription(description);
+	}
 
-  public String getDescription() {
-    return this.description;
-  }
+	public String getTitle() {
+		return this.title;
+	}
 
-  public void setDescription(String description) {
-    this.description = description;
-  }
-  
-  public String getType() {
-	return MediaType.video.name();
-  }
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public String getDescription() {
+		return this.description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public String getType() {
+		return MediaType.video.name();
+	}
 }

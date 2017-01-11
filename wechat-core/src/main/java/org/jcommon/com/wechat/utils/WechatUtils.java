@@ -48,6 +48,20 @@ public class WechatUtils {
 		return null;
 	}
 	
+	public static String createJsSignature(String noncestr, String jsapi_ticket, String timestamp, String url){
+		if(noncestr!=null && jsapi_ticket!=null && timestamp!=null&& url!=null){
+			  //jsapi_ticket=sM4AOVdWfPE4DxkXGEs8VMCPGGVi4C3VM0P37wVUCFvkVAy_90u5h9nbSlYy3-Sl-HhTdfl2fzFy1AOcHKP7qg&noncestr=Wm3WZYTPz0wzccnW&timestamp=1414587457&url=http://mp.weixin.qq.com?params=value
+ 
+			  StringBuilder sb = new StringBuilder();
+			  sb.append("jsapi_ticket=").append(jsapi_ticket).append("&")
+			    .append("noncestr=").append(noncestr).append("&")
+			    .append("timestamp=").append(timestamp).append("&")
+			    .append("url=").append(url);
+			  
+			  return encryptToSHA(sb.toString());
+		}
+		return null;
+	}	
 	  
     public static String encryptToSHA(String info) {  
       byte[] digesta = null;  

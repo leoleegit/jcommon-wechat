@@ -14,55 +14,60 @@ package org.jcommon.com.wechat.data;
 
 import org.jcommon.com.wechat.utils.ErrorType;
 
-public class Error extends JsonObject
-{
+public class Error extends JsonObject {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-  private String errmsg;
-  private int errcode;
-  private ErrorType type;
+	private String errmsg;
+	private int errcode;
+	private ErrorType type;
 
-  public Error(String json)
-  {
-    super(json);
-    setType(ErrorType.getError(this.errcode));
-  }
-  public Error()
-  {
-    super();
-  }
-  public Error(ErrorType type){
-	  super();
-	  this.type = type;
-	  if(type!=null){
-		  errmsg = type.message;
-		  errcode = type.error;
-	  }
-  }
-  public Error(String message,int errcode){
-	  super();
-	  this.errmsg = message;
-	  this.errcode = errcode;
-  }
+	public Error(String json) {
+		super(json);
+		setType(ErrorType.getError(this.errcode));
+	}
 
-  public String getErrmsg() {
-    return this.errmsg;
-  }
-  public void setErrmsg(String errmsg) {
-    this.errmsg = errmsg;
-  }
-  public int getErrcode() {
-    return this.errcode;
-  }
-  public void setErrcode(int errcode) {
-    this.errcode = errcode;
-  }
-  public ErrorType getType() {
-    return this.type;
-  }
-  public void setType(ErrorType type) {
-    this.type = type;
-  }
+	public Error() {
+		super();
+	}
+
+	public Error(ErrorType type) {
+		super();
+		this.type = type;
+		if (type != null) {
+			errmsg = type.message;
+			errcode = type.error;
+		}
+	}
+
+	public Error(String message, int errcode) {
+		super();
+		this.errmsg = message;
+		this.errcode = errcode;
+	}
+
+	public String getErrmsg() {
+		return this.errmsg;
+	}
+
+	public void setErrmsg(String errmsg) {
+		this.errmsg = errmsg;
+	}
+
+	public int getErrcode() {
+		return this.errcode;
+	}
+
+	public void setErrcode(int errcode) {
+		this.errcode = errcode;
+	}
+
+	public ErrorType getType() {
+		return this.type;
+	}
+
+	public void setType(ErrorType type) {
+		this.type = type;
+	}
 }

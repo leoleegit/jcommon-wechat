@@ -5,7 +5,6 @@ import org.jcommon.com.util.http.HttpRequest;
 import org.jcommon.com.wechat.RequestFactory;
 import org.jcommon.com.wechat.data.App;
 
-import com.sun.org.apache.bcel.internal.generic.AALOAD;
 
 public class AccessTokenTest extends TestBase implements HttpListener{
 

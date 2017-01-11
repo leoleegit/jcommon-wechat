@@ -1,6 +1,6 @@
 package org.jcommon.com.wechat.data;
 
-public class Encrypt extends XmlObject{
+public class Encrypt extends XmlObject {
 	private String ToUserName;
 	private String Encrypt;
 	private String encrypt_type;
@@ -8,15 +8,16 @@ public class Encrypt extends XmlObject{
 	private String signature;
 	private String timestamp;
 	private String nonce;
-	
-	public Encrypt(String encrypt_type, String msg_signature, String signature, String timestamp, String nonce, String xml) {
+
+	public Encrypt(String encrypt_type, String msg_signature, String signature,
+			String timestamp, String nonce, String xml) {
 		super(xml);
 		// TODO Auto-generated constructor stub
 		this.encrypt_type = encrypt_type;
 		this.msg_signature = msg_signature;
-		this.signature     = signature;
-		this.timestamp     = timestamp;
-		this.nonce         = nonce;
+		this.signature = signature;
+		this.timestamp = timestamp;
+		this.nonce = nonce;
 	}
 
 	public String getToUserName() {

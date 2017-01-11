@@ -8,7 +8,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Agent extends Media{
+public class Agent extends Media {
 	/**
 	 * 
 	 */
@@ -20,30 +20,30 @@ public class Agent extends Media{
 	private String nickname;
 	private String password;
 	private Set<Agent> kf_list;
-	
-	public Agent(String kf_account,String nickname,String password){
+
+	public Agent(String kf_account, String nickname, String password) {
 		this.kf_account = kf_account;
-		this.nickname   = nickname;
-		this.password   = password;
+		this.nickname = nickname;
+		this.password = password;
 	}
-	
-	public Agent(String json){
+
+	public Agent(String json) {
 		super(json);
-		JSONObject jsonO =  JsonUtils.getJSONObject(json);
-	    if (jsonO != null){
-	    	try {
-		        if (jsonO.has("kf_list")) {
-		        	JSONArray arr = JsonUtils.getJSONArray(jsonO.getString("kf_list"));
-		        	kf_list = new HashSet<Agent>();
-		        	for (int index = 0; index < arr.length(); index++) {
-		        		kf_list.add(new Agent(arr.getString(index)));
-		      	    }
-		        }
-		    }
-		    catch (JSONException e) {
-		        logger.error("", e);
-		    }
-	    }
+		JSONObject jsonO = JsonUtils.getJSONObject(json);
+		if (jsonO != null) {
+			try {
+				if (jsonO.has("kf_list")) {
+					JSONArray arr = JsonUtils.getJSONArray(jsonO
+							.getString("kf_list"));
+					kf_list = new HashSet<Agent>();
+					for (int index = 0; index < arr.length(); index++) {
+						kf_list.add(new Agent(arr.getString(index)));
+					}
+				}
+			} catch (JSONException e) {
+				logger.error("", e);
+			}
+		}
 	}
 
 	public String getKf_account() {
@@ -93,7 +93,7 @@ public class Agent extends Media{
 	public String getNickname() {
 		return nickname;
 	}
-	
+
 	public Set<Agent> getKf_list() {
 		return kf_list;
 	}

@@ -14,86 +14,97 @@ package org.jcommon.com.wechat.data;
 
 import org.jcommon.com.wechat.utils.WechatUtils;
 
-public class App extends JsonObject{
+public class App extends JsonObject {
 	/**
 	 * 
 	 */
-  private static final long serialVersionUID = 1L;
-  public  final static long default_delay   = 3000L;
-  public  final static long default_expires = 7200 * 1000;
-  private String access_token;
-  private String appid;
-  private String secret;
-  private String Token;
-  private long expires = default_expires;
-  private long delay   = default_delay;
-  private String start_time;
-  private String status = "not ready";
-  
-  
-  public App(String appid, String secret, String Token)
-  {
-    this.appid = appid;
-    this.secret = secret;
-    this.Token = Token;
-  }
+	private static final long serialVersionUID = 1L;
+	public final static long default_delay = 3000L;
+	public final static long default_expires = 7200 * 1000;
+	private String access_token;
+	private String appid;
+	private String secret;
+	private String Token;
+	private long expires = default_expires;
+	private long delay = default_delay;
+	private String start_time;
+	private String status = "not ready";
 
-  public App(String access_token, String appid, String secret, String Token) {
-    this.access_token = access_token;
-    this.appid = appid;
-    this.secret = secret;
-    this.Token = Token;
-  }
+	public App(String appid, String secret, String Token) {
+		this.appid = appid;
+		this.secret = secret;
+		this.Token = Token;
+	}
 
-  public String getAccess_token() {
-    return this.access_token;
-  }
-  public void setAccess_token(String access_token) {
-    this.access_token = access_token;
-    setStart_time(WechatUtils.getDate());
-  }
-  public String getAppid() {
-    return this.appid;
-  }
-  public void setAppid(String appid) {
-    this.appid = appid;
-  }
-  public String getSecret() {
-    return this.secret;
-  }
-  public void setSecret(String secret) {
-    this.secret = secret;
-  }
-  public String getToken() {
-    return this.Token;
-  }
-  public void setToken(String token) {
-    this.Token = token;
-  }
-  public long getExpires() {
-    return this.expires;
-  }
-  public void setExpires(long expires) {
-    this.expires = expires;
-  }
-  public String getStatus() {
-    return this.status;
-  }
-  public void setStatus(String status) {
-    this.status = status;
-  }
-  public String getStart_time() {
-	return start_time;
-  }
-  public void setStart_time(String start_time) {
-	this.start_time = start_time;
-  }
+	public App(String access_token, String appid, String secret, String Token) {
+		this.access_token = access_token;
+		this.appid = appid;
+		this.secret = secret;
+		this.Token = Token;
+	}
 
-  public void setDelay(long delay) {
-	this.delay = delay;
-  }
-	
-  public long getDelay() {
-	return delay;
-  }
+	public String getAccess_token() {
+		return this.access_token;
+	}
+
+	public void setAccess_token(String access_token) {
+		this.access_token = access_token;
+		setStart_time(WechatUtils.getDate());
+	}
+
+	public String getAppid() {
+		return this.appid;
+	}
+
+	public void setAppid(String appid) {
+		this.appid = appid;
+	}
+
+	public String getSecret() {
+		return this.secret;
+	}
+
+	public void setSecret(String secret) {
+		this.secret = secret;
+	}
+
+	public String getToken() {
+		return this.Token;
+	}
+
+	public void setToken(String token) {
+		this.Token = token;
+	}
+
+	public long getExpires() {
+		return this.expires;
+	}
+
+	public void setExpires(long expires) {
+		this.expires = expires;
+	}
+
+	public String getStatus() {
+		return this.status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public String getStart_time() {
+		return start_time;
+	}
+
+	public void setStart_time(String start_time) {
+		this.start_time = start_time;
+	}
+
+	public void setDelay(long delay) {
+		this.delay = delay;
+	}
+
+	public long getDelay() {
+		return delay;
+	}
 }

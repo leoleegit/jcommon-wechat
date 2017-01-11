@@ -8,7 +8,7 @@ import org.jcommon.com.util.JsonUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Group extends JsonObject{
+public class Group extends JsonObject {
 	/**
 	 * 
 	 */
@@ -17,50 +17,51 @@ public class Group extends JsonObject{
 	private String name;
 	private long count;
 	private List<Group> groups;
-	
-	public Group(String json){
+
+	public Group(String json) {
 		super(json);
 		groups = getGroups(json);
 	}
-	
-	public Group(String id, String name){
-		this.id  = id;
-		this.name= name;
+
+	public Group(String id, String name) {
+		this.id = id;
+		this.name = name;
 	}
-	
-	public static List<Group> getGroups(String json){
+
+	public static List<Group> getGroups(String json) {
 		JSONObject jsonO = JsonUtils.getJSONObject(json);
-	    if (jsonO != null)
-	      try {
-	        if (jsonO.has("groups")) {
-	          List<Object> list = json2Objects(Group.class, jsonO.getString("groups"));
-	          return resetGroups(list);
-	        }
-	      }
-	      catch (JSONException e) {
-	        logger.error("", e);
-	      }
-	    return null;
+		if (jsonO != null)
+			try {
+				if (jsonO.has("groups")) {
+					List<Object> list = json2Objects(Group.class,
+							jsonO.getString("groups"));
+					return resetGroups(list);
+				}
+			} catch (JSONException e) {
+				logger.error("", e);
+			}
+		return null;
 	}
-	
-	private static List<Group> resetGroups(List<Object> list){
-	    if (list == null) return null;
-	    List<Group> groups = new ArrayList<Group>();
-	    for (Iterator<?> i$ = list.iterator(); i$.hasNext(); ) {
-	      Object o = i$.next();
-	      groups.add((Group)o);
-	    }
-	    list.clear();
-	    list = null;
-	    return groups;
-    }
-	
-	public static String getGroupsStr(List<Group> groups){
-		if(groups==null)
+
+	private static List<Group> resetGroups(List<Object> list) {
+		if (list == null)
+			return null;
+		List<Group> groups = new ArrayList<Group>();
+		for (Iterator<?> i$ = list.iterator(); i$.hasNext();) {
+			Object o = i$.next();
+			groups.add((Group) o);
+		}
+		list.clear();
+		list = null;
+		return groups;
+	}
+
+	public static String getGroupsStr(List<Group> groups) {
+		if (groups == null)
 			return null;
 		return list2Json(groups);
 	}
-	  
+
 	public String getId() {
 		return id;
 	}

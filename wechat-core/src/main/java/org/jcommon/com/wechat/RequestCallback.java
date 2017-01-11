@@ -14,6 +14,6 @@ package org.jcommon.com.wechat;
 
 import org.jcommon.com.util.http.HttpListener;
 
-public abstract interface RequestCallback extends HttpListener{
-	
+public abstract interface RequestCallback extends HttpListener {
+
 }

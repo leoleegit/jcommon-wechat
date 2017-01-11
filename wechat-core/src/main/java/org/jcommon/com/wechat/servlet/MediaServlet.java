@@ -188,17 +188,12 @@ public class MediaServlet extends HttpServlet {
 					   out.write(b, 0, nRead);
 					}
 					try {
+						is.close();
 						out.close();
 						out.flush();
 					} catch (IOException e1) {
 						// TODO Auto-generated catch block
 						throw e1;
-					}
-					try {
-						is.close();
-					} catch (IOException e) {
-						// TODO Auto-generated catch block
-						throw e;
 					}
 				}catch(IOException e){
 					logger.error("", e);

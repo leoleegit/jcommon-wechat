@@ -27,95 +27,106 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.xml.DOMConfigurator;
 import org.jcommon.com.wechat.WechatSessionManager;
 
-public class Callback extends HttpServlet
-{
-  private static final long serialVersionUID = 1L;
-  private static Logger logger   = Logger.getLogger(Callback.class);
-  public static URL init_file_is = Callback.class.getResource("/wechat-log4j.xml");
+public class Callback extends HttpServlet {
+	private static final long serialVersionUID = 1L;
+	private static Logger logger = Logger.getLogger(Callback.class);
+	public static URL init_file_is = Callback.class
+			.getResource("/wechat-log4j.xml");
 
-  public void init(ServletConfig config)
-    throws ServletException
-  {
-    super.init(config);
-    logger.info("JcommonWechat running ...");
-  }
+	public void init(ServletConfig config) throws ServletException {
+		super.init(config);
+		logger.info("JcommonWechat running ...");
+	}
 
-  @SuppressWarnings("rawtypes")
-  protected void doGet(HttpServletRequest request, HttpServletResponse response) {
-	
-    try {
-    	request.setCharacterEncoding("utf-8");
-    	response.setCharacterEncoding("utf-8");
-    	
-      Map map = request.getParameterMap();
-      for (Iterator<?> i$ = map.keySet().iterator(); i$.hasNext(); ) { Object key = i$.next();
-        for (String value : (String[])map.get(key)) {
-          logger.info(new StringBuilder().append(key).append("\t:").append(value).toString());
-        }
-      }
-      String signature = request.getParameter("signature");
-      String timestamp = request.getParameter("timestamp");
-      String nonce = request.getParameter("nonce");
-      String echostr = request.getParameter("echostr");
-      if (WechatSessionManager.instance().appVerify(signature, timestamp, nonce)) {
-        PrintWriter servletOutput = response.getWriter();
-        response.setContentType("text/html");
-        servletOutput.println(echostr);
-      } else {
-        logger.warn("request verify failure!");
-      }
-    } catch (IOException e) { logger.error("", e); }
-  }
+	@SuppressWarnings("rawtypes")
+	protected void doGet(HttpServletRequest request,
+			HttpServletResponse response) {
 
-  @SuppressWarnings("rawtypes")
-  protected void doPost(HttpServletRequest request, HttpServletResponse response)
-  {
-    try {
-    	request.setCharacterEncoding("utf-8");
-        response.setCharacterEncoding("UTF-8");
-      StringBuilder xml = new StringBuilder();
-      BufferedReader reader = request.getReader();
-      String line;
-      while ((line = reader.readLine()) != null) {
-        xml.append(line);
-      }
-      reader.close();
-      
-      String post_data = xml.toString();
-      logger.info(new StringBuilder().append(request.getRemoteHost()).append(" wechat:").append(post_data).toString());
+		try {
+			request.setCharacterEncoding("utf-8");
+			response.setCharacterEncoding("utf-8");
 
-      String post_data_decode = org.jcommon.com.util.CoderUtils.decode(post_data);
-      logger.info(new StringBuilder().append(request.getRemoteHost()).append(" wechat decode:").append(post_data).toString());
+			Map map = request.getParameterMap();
+			for (Iterator<?> i$ = map.keySet().iterator(); i$.hasNext();) {
+				Object key = i$.next();
+				for (String value : (String[]) map.get(key)) {
+					logger.info(new StringBuilder().append(key).append("\t:")
+							.append(value).toString());
+				}
+			}
+			String signature = request.getParameter("signature");
+			String timestamp = request.getParameter("timestamp");
+			String nonce = request.getParameter("nonce");
+			String echostr = request.getParameter("echostr");
+			if (WechatSessionManager.instance().appVerify(signature, timestamp,
+					nonce)) {
+				PrintWriter servletOutput = response.getWriter();
+				response.setContentType("text/html");
+				servletOutput.println(echostr);
+			} else {
+				logger.warn("request verify failure!");
+			}
+		} catch (IOException e) {
+			logger.error("", e);
+		}
+	}
 
-      Map map = request.getParameterMap();
-      for (Iterator<?> i$ = map.keySet().iterator(); i$.hasNext(); ) { Object key = i$.next();
-        for (String value : (String[])map.get(key)) {
-          logger.info(new StringBuilder().append(key).append("\t:").append(value).toString());
-        }
-      }
-      
-      response.getWriter().println("");
-      String signature = request.getParameter("signature");
-      String timestamp = request.getParameter("timestamp");
-      String nonce = request.getParameter("nonce");
-      String msg_signature = request.getParameter("msg_signature");
-      String encrypt_type  = request.getParameter("encrypt_type");
-      if (WechatSessionManager.instance().appVerify(signature, timestamp, nonce)) {
-    	  if(msg_signature!=null){
-    		  WechatSessionManager.instance().onCallback(encrypt_type, msg_signature, signature, timestamp, nonce, post_data);
-    	  }else
-    		  WechatSessionManager.instance().onCallback(signature, timestamp, nonce, post_data_decode);
-      } 
-      else
-    	  logger.warn("Illegal Data!");
-    } catch (IOException e) {
-      logger.error("", e);
-    }
-  }
+	@SuppressWarnings("rawtypes")
+	protected void doPost(HttpServletRequest request,
+			HttpServletResponse response) {
+		try {
+			request.setCharacterEncoding("utf-8");
+			response.setCharacterEncoding("UTF-8");
+			StringBuilder xml = new StringBuilder();
+			BufferedReader reader = request.getReader();
+			String line;
+			while ((line = reader.readLine()) != null) {
+				xml.append(line);
+			}
+			reader.close();
 
-  static
-  {
-    if (init_file_is != null)
-      DOMConfigurator.configure(init_file_is);
-  }
+			String post_data = xml.toString();
+			logger.info(new StringBuilder().append(request.getRemoteHost())
+					.append(" wechat:").append(post_data).toString());
+
+			String post_data_decode = org.jcommon.com.util.CoderUtils
+					.decode(post_data);
+			logger.info(new StringBuilder().append(request.getRemoteHost())
+					.append(" wechat decode:").append(post_data).toString());
+
+			Map map = request.getParameterMap();
+			for (Iterator<?> i$ = map.keySet().iterator(); i$.hasNext();) {
+				Object key = i$.next();
+				for (String value : (String[]) map.get(key)) {
+					logger.info(new StringBuilder().append(key).append("\t:")
+							.append(value).toString());
+				}
+			}
+
+			response.getWriter().println("");
+			String signature = request.getParameter("signature");
+			String timestamp = request.getParameter("timestamp");
+			String nonce = request.getParameter("nonce");
+			String msg_signature = request.getParameter("msg_signature");
+			String encrypt_type = request.getParameter("encrypt_type");
+			if (WechatSessionManager.instance().appVerify(signature, timestamp,
+					nonce)) {
+				if (msg_signature != null) {
+					WechatSessionManager.instance().onCallback(encrypt_type,
+							msg_signature, signature, timestamp, nonce,
+							post_data);
+				} else
+					WechatSessionManager.instance().onCallback(signature,
+							timestamp, nonce, post_data_decode);
+			} else
+				logger.warn("Illegal Data!");
+		} catch (IOException e) {
+			logger.error("", e);
+		}
+	}
+
+	static {
+		if (init_file_is != null)
+			DOMConfigurator.configure(init_file_is);
+	}
 }

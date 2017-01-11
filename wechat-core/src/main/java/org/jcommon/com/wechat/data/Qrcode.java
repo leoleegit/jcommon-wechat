@@ -2,7 +2,7 @@ package org.jcommon.com.wechat.data;
 
 import org.jcommon.com.wechat.RequestFactory;
 
-public class Qrcode extends JsonObject{
+public class Qrcode extends JsonObject {
 	/**
 	 * 
 	 */
@@ -11,8 +11,8 @@ public class Qrcode extends JsonObject{
 	private String ticket;
 	private String expire_seconds;
 	private String url;
-	
-	public Qrcode(String json){
+
+	public Qrcode(String json) {
 		super(json);
 	}
 
@@ -39,9 +39,9 @@ public class Qrcode extends JsonObject{
 	public void setUrl(String url) {
 		this.url = url;
 	}
-	
-	public String getPicUrl(){
-		String url = RequestFactory.mp_url + "/showqrcode?ticket="+ticket;
+
+	public String getPicUrl() {
+		String url = RequestFactory.mp_url + "/showqrcode?ticket=" + ticket;
 		return url;
 	}
 }

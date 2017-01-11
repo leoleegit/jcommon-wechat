@@ -12,119 +12,137 @@
 // ========================================================================
 package org.jcommon.com.wechat.data;
 
-public class Event extends XmlObject{
-  private User from;
-  private String ToUserName;
-  private String FromUserName;
-  private long CreateTime;
-  private String MsgType;
-  private String Event;
-  private String EventKey;
-  private String Ticket;
-  private float Latitude;
-  private float Longitude;
-  private float Precision;
+public class Event extends XmlObject {
+	private User from;
+	private String ToUserName;
+	private String FromUserName;
+	private long CreateTime;
+	private String MsgType;
+	private String Event;
+	private String EventKey;
+	private String Ticket;
+	private float Latitude;
+	private float Longitude;
+	private float Precision;
 
-  private String signature;
-  private String timestamp;
-  private String nonce;
-  
-  private String Status;
-  private String MsgID;
-  
-  public Event(String xml){
-	    super(xml);
-  }
-  
-  public Event(String xml,String signature, String timestamp, String nonce){
-	    super(xml);
-	    this.signature  = signature;
-	    this.timestamp  = timestamp;
-	    this.nonce      = nonce;
-  }
+	private String signature;
+	private String timestamp;
+	private String nonce;
 
+	private String Status;
+	private String MsgID;
 
-  public String getToUserName(){
-    return this.ToUserName;
-  }
-  public void setToUserName(String toUserName) {
-    this.ToUserName = toUserName;
-  }
-  public String getFromUserName() {
-    return this.FromUserName;
-  }
-  public void setFromUserName(String fromUserName) {
-    this.FromUserName = fromUserName;
-  }
-  public long getCreateTime() {
-    return this.CreateTime;
-  }
-  public void setCreateTime(long createTime) {
-    this.CreateTime = createTime;
-  }
-  public String getMsgType() {
-    return this.MsgType;
-  }
-  public void setMsgType(String msgType) {
-    this.MsgType = msgType;
-  }
-  public String getEvent() {
-    return this.Event;
-  }
-  public void setEvent(String event) {
-    this.Event = event;
-  }
-  public String getEventKey() {
-    return this.EventKey;
-  }
-  public void setEventKey(String eventKey) {
-    this.EventKey = eventKey;
-  }
-  public String getTicket() {
-    return this.Ticket;
-  }
-  public void setTicket(String ticket) {
-    this.Ticket = ticket;
-  }
-  public float getLatitude() {
-    return this.Latitude;
-  }
-  public void setLatitude(float latitude) {
-    this.Latitude = latitude;
-  }
-  public float getLongitude() {
-    return this.Longitude;
-  }
-  public void setLongitude(float longitude) {
-    this.Longitude = longitude;
-  }
-  public float getPrecision() {
-    return this.Precision;
-  }
-  public void setPrecision(float precision) {
-    this.Precision = precision;
-  }
+	public Event(String xml) {
+		super(xml);
+	}
+
+	public Event(String xml, String signature, String timestamp, String nonce) {
+		super(xml);
+		this.signature = signature;
+		this.timestamp = timestamp;
+		this.nonce = nonce;
+	}
+
+	public String getToUserName() {
+		return this.ToUserName;
+	}
+
+	public void setToUserName(String toUserName) {
+		this.ToUserName = toUserName;
+	}
+
+	public String getFromUserName() {
+		return this.FromUserName;
+	}
+
+	public void setFromUserName(String fromUserName) {
+		this.FromUserName = fromUserName;
+	}
+
+	public long getCreateTime() {
+		return this.CreateTime;
+	}
+
+	public void setCreateTime(long createTime) {
+		this.CreateTime = createTime * 1000l;
+	}
+
+	public String getMsgType() {
+		return this.MsgType;
+	}
+
+	public void setMsgType(String msgType) {
+		this.MsgType = msgType;
+	}
+
+	public String getEvent() {
+		return this.Event;
+	}
+
+	public void setEvent(String event) {
+		this.Event = event;
+	}
+
+	public String getEventKey() {
+		return this.EventKey;
+	}
+
+	public void setEventKey(String eventKey) {
+		this.EventKey = eventKey;
+	}
+
+	public String getTicket() {
+		return this.Ticket;
+	}
+
+	public void setTicket(String ticket) {
+		this.Ticket = ticket;
+	}
+
+	public float getLatitude() {
+		return this.Latitude;
+	}
+
+	public void setLatitude(float latitude) {
+		this.Latitude = latitude;
+	}
+
+	public float getLongitude() {
+		return this.Longitude;
+	}
+
+	public void setLongitude(float longitude) {
+		this.Longitude = longitude;
+	}
+
+	public float getPrecision() {
+		return this.Precision;
+	}
+
+	public void setPrecision(float precision) {
+		this.Precision = precision;
+	}
 
 	public String getNonce() {
 		return nonce;
 	}
-	
+
 	public void setNonce(String nonce) {
 		this.nonce = nonce;
 	}
-	
+
 	public String getTimestamp() {
 		return timestamp;
 	}
-	
+
 	public void setTimestamp(String timestamp) {
 		this.timestamp = timestamp;
 	}
-	
+
 	public String getSignature() {
 		return signature;
 	}
-	
+
 	public void setSignature(String signature) {
 		this.signature = signature;
 	}

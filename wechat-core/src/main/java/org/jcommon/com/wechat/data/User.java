@@ -12,8 +12,7 @@
 // ========================================================================
 package org.jcommon.com.wechat.data;
 
-
-public class User extends JsonObject{
+public class User extends JsonObject {
 	/**
 	 * 
 	 */
@@ -31,15 +30,15 @@ public class User extends JsonObject{
 	private String unionid;
 	private String remark;
 	private String groupid;
-	
+
 	private long create_time;
-	
-	public User(String json){
-		super(json);	
+
+	public User(String json) {
+		super(json);
 		this.create_time = System.currentTimeMillis();
 	}
-	
-	public User(){	
+
+	public User() {
 	}
 
 	public String getSubscribe() {
@@ -154,5 +153,5 @@ public class User extends JsonObject{
 	public void setGroupid(String groupid) {
 		this.groupid = groupid;
 	}
-	
+
 }

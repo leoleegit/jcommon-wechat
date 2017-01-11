@@ -19,55 +19,52 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class Menus extends JsonObject
-{
+public class Menus extends JsonObject {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-  private List<Button> button;
+	private List<Button> button;
 
-  public Menus(String json)
-  {
-    super(json);
-    JSONObject jsonO = JsonUtils.getJSONObject(json);
-    if (jsonO != null)
-      try {
-        if (jsonO.has("menu")) {
-        	jsonO = JsonUtils.getJSONObject(jsonO.getString("menu"));
-        	if (jsonO.has("button")) {
-        		JSONArray arr = JsonUtils.getJSONArray(jsonO.getString("button"));
-        		button      = new ArrayList<Button>();
-	        	for (int index = 0; index < arr.length(); index++) {
-	        		button.add(new Button(arr.getString(index)));
-	      	    }
-	        }
-        }
-      }
-      catch (JSONException e) {
-        logger.error("", e);
-      }
-  }
+	public Menus(String json) {
+		super(json);
+		JSONObject jsonO = JsonUtils.getJSONObject(json);
+		if (jsonO != null)
+			try {
+				if (jsonO.has("menu")) {
+					jsonO = JsonUtils.getJSONObject(jsonO.getString("menu"));
+					if (jsonO.has("button")) {
+						JSONArray arr = JsonUtils.getJSONArray(jsonO
+								.getString("button"));
+						button = new ArrayList<Button>();
+						for (int index = 0; index < arr.length(); index++) {
+							button.add(new Button(arr.getString(index)));
+						}
+					}
+				}
+			} catch (JSONException e) {
+				logger.error("", e);
+			}
+	}
 
-  public Menus()
-  {
-  }
+	public Menus() {
+	}
 
-  public Menus(List<Button> button)
-  {
-    this.button = button;
-  }
+	public Menus(List<Button> button) {
+		this.button = button;
+	}
 
-  public void addButton(Button button) {
-    if (this.button == null) this.button = new ArrayList<Button>();
-    this.button.add(button);
-  }
+	public void addButton(Button button) {
+		if (this.button == null)
+			this.button = new ArrayList<Button>();
+		this.button.add(button);
+	}
 
-  public List<Button> getButton() {
-    return this.button;
-  }
+	public List<Button> getButton() {
+		return this.button;
+	}
 
-  public void setButton(List<Button> button) {
-    this.button = button;
-  }
+	public void setButton(List<Button> button) {
+		this.button = button;
+	}
 }
