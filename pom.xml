@@ -8,8 +8,9 @@
   
   <modules>
     <module>wechat-core</module>
-	<module>wechat-aes</module>
-	<module>wechat-router</module>
+	<!--<module>wechat-router</module>-->
+	<module>wechat-manage</module>
+	<module>wechat-baili</module>
   </modules>
   
   <name>jcommon wechat</name>
